@@ -18,13 +18,14 @@ body {
 }
 
 /* 제목만 카페24로 */
-h2, h3 {
+h1, h2, h3 {
   font-family: 'Cafe24Ssurround', sans-serif;
 }
 
 /* 헤더 영역 */
 header {
-  display: flex;
+
+ display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
