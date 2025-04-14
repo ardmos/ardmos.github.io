@@ -1,46 +1,115 @@
-﻿<!DOCTYPE html>
+<!-- index.html -->
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PuppystepsGames</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
+  <meta charset="UTF-8">
+  <title>PuppySteps Games</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+ </head>
 <body>
-    <header>
-        <h1>PuppystepsGames</h1>
-        <nav>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About Us</a></li>
-                <li><a href="#games">Games</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <section id="home">
-        <h2>Welcome to Our Studio!</h2>
-        <p>창의적이고 재미있는 게임을 만듭니다.</p>
-    </section>
+  <!-- 로고 + 네비 -->
+<header>
+  <div class="logo-area">
+    <img src="logo.png" alt="puppysteps 로고">
+    <div class="branding-text">
+      <h1>puppysteps games</h1>
+      <p class="slogan">Tiny steps, brave games.</p>
+    </div>
+  </div>
 
-    <section id="about">
-        <h2>About Us</h2>
-        <p>우리 팀은 열정적인 개발자들로 이루어져 있습니다.</p>
-    </section>
+  <nav>
+    <a href="#about">About</a>
+    <a href="#oursteps">Our Steps</a>
+  </nav>
+</header>
 
-    <section id="games">
-        <h2>Our Games</h2>
-        <p>곧 출시될 멋진 게임들을 기대해주세요!</p>
-    </section>
 
-    <section id="contact">
-        <h2>Contact Us</h2>
-        <p>Email: contact@puppystepsgames.com</p>
-    </section>
 
-    <footer>
-        <p>&copy; 2025 우리 게임 스튜디오. All Rights Reserved.</p>
-    </footer>
+  <!-- ABOUT -->
+  <section id="about">
+    <h2>
+  <img src="steps-icon.png" alt="" class="section-icon">
+  About
+</h2>
+  
+    <p> &nbsp; puppysteps는 보라의 발걸음에서 시작된 게임 외주 팀입니다. <br>
+    &nbsp; 우리는 작지만 따뜻한 한 걸음을 통해, 세상에 귀엽고 진심 어린 게임을 만들고자 합니다.</p>
+
+    <h3>👥 팀 소개</h3>
+
+<div class="team-new">
+
+  <!-- 프로그래머 -->
+  <div class="member-left">
+    <img src="programmer.png" alt="프로그래머">
+    <div class="info">
+      <p class="role">Programmer <span class="tag">대표</span></p>
+      <p class="name">최영수</p>
+    </div>
+  </div>
+
+  <!-- 디자이너 -->
+  <div class="member-right">
+    <div class="info right-align">
+      <p class="role">Designer <span class="tag">아트디렉터</span></p>
+      <p class="name">김혜인</p>
+    </div>
+    <img src="designer.png" alt="디자이너">
+  </div>
+
+</div>
+
+  </section>
+
+  <!-- OUR STEPS -->
+  <section id="oursteps">
+    <h2>
+  <img src="steps-icon.png" alt="" class="section-icon">
+  Our Steps
+</h2>
+   
+    <p> &nbsp; 우리가 함께 걸어온 길입니다.</p>
+    
+    <div class="projects">
+      <h3>💼 외주 프로젝트</h3>
+      <ul>
+        <li>게임A - UI 디자인, 캐릭터 도트</li>
+        <li>게임B - 3D 오브젝트 제작</li>
+      </ul>
+
+      <h3>🎮 자체 게임</h3>
+      <ul>
+        <li>곧 공개 예정입니다!</li>
+      </ul> 
+    </div>
+
+    <!-- ART WORKS 하위 섹션 -->
+    <div class="artworks">
+      <h3>🎨 Art Works</h3>
+      <div class="gallery">
+  <div class="art-item">
+    <img src="art1.png" alt="캐릭터A">
+    <p class="art-caption">귀여운 캐릭터 콘셉트 디자인 </p>
+  </div>
+  <div class="art-item">
+    <img src="art2.png" alt="캐릭터B">
+    <p class="art-caption">학생 스타일 코디 시안</p>
+  </div>
+  <div class="art-item">
+    <img src="art3.png" alt="캐릭터C">
+    <p class="art-caption">후드티 코스튬 디자인</p>
+  </div>
+</div>
+    </div>
+  </section>
+
+  <!-- CONTACT (푸터) -->
+  <footer>
+    <p>Email: contact@puppystepsgames.com | Tel: 010-1234-5678<br>
+    Address: 서울특별시 무슨구 무슨동 123-45 puppysteps</p>
+  </footer>
+
 </body>
 </html>
