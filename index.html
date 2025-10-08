@@ -146,22 +146,22 @@
       <div class="works-carousel">
         <button class="works-carousel-arrow works-carousel-prev" aria-label="이전">‹</button>
         <div class="works-carousel-track">
-          <div class="news-card">
-            <div class="news-image">
-              <img src="Works1.png" alt="작품 썸네일">
-            </div>
-            <h3>포토포토그래퍼 (모바일게임)</h3>
-            <p>사진 촬영과 퍼즐을 결합한 힐링 어드벤처. 다양한 로케이션을 탐험하며 순간을 수집하세요.</p>
-            <button onclick="window.open('https://www.youtube.com/watch?v=_w_-lsVcmpM','_blank')">영상 보기</button>
+        <div class="news-card">
+          <div class="news-image">
+            <img src="Works1.png" alt="작품 썸네일">
           </div>
-          <div class="news-card">
-            <div class="news-image">
-              <img src="Works2.png" alt="작품 썸네일">
-            </div>
-            <h3>Wizards and Knights (모바일게임)</h3>
-            <p>마법사팀과 기사팀의 실시간 멀티플레이 대전 게임. 팀워크와 전략적 사고가 필요한 액션 RPG입니다.</p>
-            <button onclick="window.open('https://www.youtube.com/watch?v=zjqmfqZdSvQ','_blank')">영상 보기</button>
+          <h3>포토포토그래퍼 (모바일게임)</h3>
+          <p>사진 촬영과 퍼즐을 결합한 힐링 어드벤처. 다양한 로케이션을 탐험하며 순간을 수집하세요.</p>
+          <button onclick="window.open('https://www.youtube.com/watch?v=_w_-lsVcmpM','_blank')">영상 보기</button>
+        </div>
+        <div class="news-card">
+          <div class="news-image">
+            <img src="Works2.png" alt="작품 썸네일">
           </div>
+          <h3>Wizards and Knights (모바일게임)</h3>
+          <p>마법사팀과 기사팀의 실시간 멀티플레이 대전 게임. 팀워크와 전략적 사고가 필요한 액션 RPG입니다.</p>
+          <button onclick="window.open('https://www.youtube.com/watch?v=zjqmfqZdSvQ','_blank')">영상 보기</button>
+        </div>
           <div class="news-card">
             <div class="news-image">
               <img src="Worksempty.png" alt="작품 썸네일">
@@ -251,7 +251,7 @@
               <img src="Clients4.png" alt="고객사 로고 4">
             </div>
           </div>
-          <div class="carousel-item">
+          <!-- <div class="carousel-item">
             <div class="client-logo">
               <img src="Clients5.png" alt="고객사 로고 5">
             </div>
@@ -271,6 +271,7 @@
               <img src="Clients8.png" alt="고객사 로고 8">
             </div>
           </div>
+          -->
         </div>
         <button class="carousel-arrow carousel-next" aria-label="다음">›</button>
       </div>
@@ -319,10 +320,9 @@
         <div class="footer-column">
           <h4>PuppyStepsGames 퍼피스텝스게임즈</h4>
           <ul>
-            <li>이메일: contact@puppystepsgames.com</li>
-            <li>대표: 최영수</li>
-            <li>문의연락처: 010-1234-5678</li>
-            <li>© 2024 PuppyStepsGames. All rights reserved.</li>
+            <li>이메일 contact@puppystepsgames.com</li>
+            <li>대표 최영수</li>
+            <li>© 2025 PuppyStepsGames. All rights reserved.</li>
           </ul>
         </div>
       </div>
@@ -397,130 +397,193 @@
         });
       });
 
+      // ========================================
       // 고객사 로고 캐러셀 기능 - 수정된 버전
-      var carouselTrack = document.querySelector('.carousel-track');
-      var carouselItems = document.querySelectorAll('.carousel-item');
-      var prevBtn = document.querySelector('.carousel-prev');
-      var nextBtn = document.querySelector('.carousel-next');
+      // ========================================
       
-      var currentIndex = 0;
-      var itemWidth = 240; // 아이템 너비 + 간격 (원래대로)
-      var isAnimating = false;
-      var isAutoMode = true;
-      var autoScrollTimer = null;
-      var manualModeTimer = null;
+      // 1. HTML에서 캐러셀 관련 요소들을 찾아서 변수에 저장
+      var carouselTrack = document.querySelector('.carousel-track');     // 캐러셀 아이템들이 들어있는 컨테이너
+      var carouselItems = document.querySelectorAll('.carousel-item');   // 모든 캐러셀 아이템들 (배열)
+      var prevBtn = document.querySelector('.carousel-prev');           // 이전 버튼
+      var nextBtn = document.querySelector('.carousel-next');           // 다음 버튼
       
-      // 자동 스크롤 함수
+      // 2. 캐러셀 동작을 위한 변수들
+      var currentIndex = 0;        // 현재 중앙에 있는 아이템의 번호 (0부터 시작)
+      var itemWidth = 240;         // 각 아이템의 너비 + 아이템 사이 간격
+      var isAnimating = false;     // 현재 애니메이션이 진행 중인지 확인하는 변수
+      var isAutoMode = true;       // 자동으로 움직이는 모드인지 확인하는 변수
+      var autoScrollTimer = null;  // 자동 스크롤을 위한 타이머
+      var manualModeTimer = null;  // 수동 모드에서 자동 모드로 돌아가기 위한 타이머
+      
+      // ========================================
+      // 3. 자동 스크롤 함수 (3초마다 자동으로 다음 아이템으로 이동)
+      // ========================================
       function startAutoScroll() {
+        // 자동 모드가 아니면 함수를 종료
         if (!isAutoMode) return;
         
+        // 3초 후에 실행될 코드
         autoScrollTimer = setTimeout(function() {
+          // 다시 한번 자동 모드인지 확인 (사용자가 수동으로 조작했을 수도 있으므로)
           if (!isAutoMode) return;
           
+          // 다음 아이템으로 이동
           moveToNext();
-          startAutoScroll(); // 재귀 호출로 계속 실행
-        }, 3000); // 3초마다 이동
+          // 자기 자신을 다시 호출해서 계속 자동 스크롤이 되도록 함
+          startAutoScroll();
+        }, 3000); // 3000밀리초 = 3초
       }
       
-      // 다음으로 이동
+      // ========================================
+      // 4. 다음 아이템으로 이동하는 함수
+      // ========================================
       function moveToNext() {
+        // 현재 애니메이션이 진행 중이면 함수를 종료 (중복 실행 방지)
         if (isAnimating) return;
         
-        currentIndex = (currentIndex + 1) % carouselItems.length; // 완전한 무한 루프
+        // 현재 인덱스를 1 증가시키고, 아이템 개수를 넘어가면 0으로 돌아감
+        // 예: 아이템이 4개(0,1,2,3)이고 현재가 3이면, 다음은 0이 됨
+        currentIndex = (currentIndex + 1) % carouselItems.length;
+        
+        // 캐러셀 화면을 업데이트
         updateCarousel();
       }
       
-      // 이전으로 이동
+      // ========================================
+      // 5. 이전 아이템으로 이동하는 함수
+      // ========================================
       function moveToPrev() {
+        // 현재 애니메이션이 진행 중이면 함수를 종료 (중복 실행 방지)
         if (isAnimating) return;
         
+        // 현재 인덱스를 1 감소시키고, 0보다 작아지면 마지막 아이템으로 이동
+        // 예: 아이템이 4개(0,1,2,3)이고 현재가 0이면, 이전은 3이 됨
         currentIndex = currentIndex === 0 ? carouselItems.length - 1 : currentIndex - 1;
+        
+        // 캐러셀 화면을 업데이트
         updateCarousel();
       }
       
-      // 캐러셀 업데이트
+      // ========================================
+      // 6. 캐러셀 화면을 업데이트하는 함수 (가장 중요한 함수!)
+      // ========================================
       function updateCarousel() {
+        // 현재 애니메이션이 진행 중이면 함수를 종료
         if (isAnimating) return;
-        isAnimating = true;
+        isAnimating = true; // 애니메이션 시작을 표시
         
-        // 모든 아이템의 강조 효과 제거
+        // ========================================
+        // 6-1. 모든 아이템의 강조 효과를 제거 (작게 만들고 투명하게)
+        // ========================================
         carouselItems.forEach(function(item) {
+          // 각 아이템에서 로고 부분을 찾음
           var logo = item.querySelector('.client-logo');
-          logo.style.opacity = '0.6';
-          logo.style.transform = 'scale(0.8)';
-          logo.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
-          logo.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+          
+          // 로고를 작게 만들고 투명하게 설정
+          logo.style.opacity = '0.6';                    // 투명도 60% (어둡게)
+          logo.style.transform = 'scale(0.8)';           // 크기를 80%로 축소
+          logo.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)'; // 그림자 효과
+          logo.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)'; // 부드러운 애니메이션
+          
+          // 로고 안의 이미지도 작게 설정
           var img = logo.querySelector('img');
-          img.style.width = '120px';
-          img.style.height = '120px';
-          img.style.objectFit = 'cover';
-          img.style.borderRadius = '50%';
-          img.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+          img.style.width = '120px';        // 이미지 너비
+          img.style.height = '120px';       // 이미지 높이
+          img.style.objectFit = 'cover';   // 이미지가 영역에 맞게 크롭
+          img.style.borderRadius = '50%';  // 원형으로 만들기
+          img.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)'; // 부드러운 애니메이션
         });
 
-        // 현재 중앙 아이템 강조 (현재 인덱스의 로고가 중앙에 확대)
-        var centerIndex = currentIndex; // 현재 선택된 로고가 중앙에 확대
+        // ========================================
+        // 6-2. 현재 중앙에 있는 아이템을 강조 (크게 만들고 밝게)
+        // ========================================
+        var centerIndex = currentIndex; // 현재 선택된 아이템의 번호
         
+        // 해당 아이템이 존재하는지 확인
         if (carouselItems[centerIndex]) {
           var centerLogo = carouselItems[centerIndex].querySelector('.client-logo');
-          centerLogo.style.opacity = '1';
-          centerLogo.style.transform = 'scale(1.2)';
-          centerLogo.style.boxShadow = '0 12px 35px rgba(0,0,0,0.2)';
-          centerLogo.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+          
+          // 중앙 아이템을 크게 만들고 밝게 설정
+          centerLogo.style.opacity = '1';                    // 투명도 100% (밝게)
+          centerLogo.style.transform = 'scale(1.2)';        // 크기를 120%로 확대
+          centerLogo.style.boxShadow = '0 12px 35px rgba(0,0,0,0.2)'; // 더 진한 그림자
+          centerLogo.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)'; // 부드러운 애니메이션
+          
+          // 중앙 아이템의 이미지도 크게 설정
           var centerImg = centerLogo.querySelector('img');
-          centerImg.style.width = '160px';
-          centerImg.style.height = '160px';
-          centerImg.style.objectFit = 'cover';
-          centerImg.style.borderRadius = '50%';
-          centerImg.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+          centerImg.style.width = '160px';        // 이미지를 더 크게
+          centerImg.style.height = '160px';       // 이미지를 더 크게
+          centerImg.style.objectFit = 'cover';   // 이미지가 영역에 맞게 크롭
+          centerImg.style.borderRadius = '50%';  // 원형으로 만들기
+          centerImg.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)'; // 부드러운 애니메이션
         }
 
-        // 트랙 이동 - 선택된 로고가 항상 중앙에 오도록 고정
-        var centerPosition = (carouselItems.length - 1) * itemWidth / 2; // 중앙 위치 계산
-        var targetPosition = currentIndex * itemWidth; // 현재 로고의 위치
-        var translateX = centerPosition - targetPosition; // 중앙으로 이동시키기 위한 계산
+        // ========================================
+        // 6-3. 캐러셀 트랙을 이동시켜서 선택된 아이템이 중앙에 오도록 함
+        // ========================================
         
+        // 전체 아이템들의 중앙 위치를 계산
+        var centerPosition = (carouselItems.length - 1) * itemWidth / 2;
+        
+        // 현재 선택된 아이템의 위치를 계산
+        var targetPosition = currentIndex * itemWidth;
+        
+        // 중앙으로 이동시키기 위해 얼마나 이동해야 하는지 계산
+        var translateX = centerPosition - targetPosition;
+        
+        // 실제로 캐러셀 트랙을 이동시킴
         carouselTrack.style.transform = 'translateX(' + translateX + 'px)';
         
+        // 0.8초 후에 애니메이션 완료를 표시
         setTimeout(function() {
           isAnimating = false;
         }, 800);
       }
       
-      // 수동 모드로 전환
+      // ========================================
+      // 7. 수동 모드로 전환하는 함수 (사용자가 버튼을 클릭했을 때)
+      // ========================================
       function switchToManualMode() {
-        isAutoMode = false;
+        isAutoMode = false; // 자동 모드를 끔
+        
+        // 현재 실행 중인 자동 스크롤 타이머를 취소
         if (autoScrollTimer) {
           clearTimeout(autoScrollTimer);
           autoScrollTimer = null;
         }
         
-        // 5초 후 자동 모드로 복귀
+        // 5초 후에 다시 자동 모드로 돌아가기 위한 타이머 설정
         if (manualModeTimer) {
-          clearTimeout(manualModeTimer);
+          clearTimeout(manualModeTimer); // 기존 타이머가 있으면 취소
         }
         manualModeTimer = setTimeout(function() {
-          isAutoMode = true;
-          startAutoScroll();
-        }, 5000);
+          isAutoMode = true;        // 자동 모드를 다시 켜기
+          startAutoScroll();        // 자동 스크롤을 다시 시작
+        }, 5000); // 5초 후에 실행
       }
 
-      // 화살표 버튼 이벤트
+      // ========================================
+      // 8. 화살표 버튼에 클릭 이벤트 연결
+      // ========================================
       if (prevBtn && nextBtn) {
+        // 이전 버튼을 클릭했을 때
         prevBtn.addEventListener('click', function() {
-          switchToManualMode();
-          moveToPrev();
+          switchToManualMode(); // 수동 모드로 전환
+          moveToPrev();         // 이전 아이템으로 이동
         });
 
+        // 다음 버튼을 클릭했을 때
         nextBtn.addEventListener('click', function() {
-          switchToManualMode();
-          moveToNext();
+          switchToManualMode(); // 수동 모드로 전환
+          moveToNext();         // 다음 아이템으로 이동
         });
       }
 
-      // 초기 설정
-      updateCarousel();
-      startAutoScroll(); // 자동 스크롤 시작
+      // ========================================
+      // 9. 페이지가 로드되면 캐러셀을 초기화하고 자동 스크롤 시작
+      // ========================================
+      updateCarousel();    // 처음 화면을 그리기
+      startAutoScroll();   // 자동 스크롤 시작
     })();
 
     // Works 캐러셀 기능 - 독립적으로 작동
