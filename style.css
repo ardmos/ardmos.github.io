@@ -397,6 +397,7 @@ nav a:hover {
   padding: 100px 0;
   background: #333;
   color: white;
+  scroll-margin-top: 90px; /* Works 섹션을 30픽셀 아래로 조정 */
 }
 
 .news-container {
@@ -492,12 +493,40 @@ nav a:hover {
   gap: 30px;
   transition: transform 0.5s ease-in-out;
   padding: 20px 0;
+  align-items: stretch; /* 모든 카드가 같은 높이를 가지도록 */
 }
 
 .works-carousel .news-card {
   flex-shrink: 0;
   width: 448px; /* 560px * 0.8 = 448px */
   min-width: 448px;
+  display: flex;
+  flex-direction: column;
+  height: 520px; /* 높이를 늘려서 더 여유롭게 */
+}
+
+.works-carousel .news-card .news-image {
+  flex-shrink: 0;
+}
+
+.works-carousel .news-card h3 {
+  flex-shrink: 0;
+  margin-bottom: 15px;
+}
+
+.works-carousel .news-card p {
+  flex-grow: 1;
+  margin-bottom: 20px;
+  min-height: 80px; /* 최소 높이 설정으로 버튼 위치 고정 */
+}
+
+.works-carousel .news-card button {
+  flex-shrink: 0;
+  margin-top: auto;
+  margin-bottom: 20px; /* 하단에서 띄우기 */
+  width: 25%; /* 카드 너비의 1/4로 더 축소 */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .works-carousel-arrow {
