@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="AR/VR 일러스트">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ffe9cc"/>
+      <stop offset="100%" stop-color="#ffd3a1"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1200" height="800" rx="40" fill="url(#g1)"/>
+  <!-- Headset -->
+  <rect x="250" y="300" width="700" height="200" rx="60" fill="#2f2f3b"/>
+  <rect x="280" y="330" width="300" height="140" rx="24" fill="#5ed0ff"/>
+  <rect x="620" y="330" width="300" height="140" rx="24" fill="#8be0ff"/>
+  <rect x="230" y="360" width="40" height="80" rx="20" fill="#2f2f3b"/>
+  <rect x="930" y="360" width="40" height="80" rx="20" fill="#2f2f3b"/>
+  <!-- Stylized stars -->
+  <circle cx="180" cy="160" r="10" fill="#ff8a00"/>
+  <circle cx="1020" cy="180" r="8" fill="#ff6b35"/>
+  <circle cx="1060" cy="620" r="10" fill="#ff8a00"/>
+  <circle cx="160" cy="640" r="8" fill="#ff6b35"/>
+  <!-- AR cube -->
+  <g transform="translate(560 160)">
+    <polygon points="0,60 120,0 240,60 120,120" fill="#ffffff" opacity="0.85"/>
+    <polygon points="0,60 0,180 120,240 120,120" fill="#d6f4ff"/>
+    <polygon points="240,60 240,180 120,240 120,120" fill="#b9ecff"/>
+  </g>
+</svg>
+

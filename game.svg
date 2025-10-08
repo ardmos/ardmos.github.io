@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="2D/3D 게임 일러스트">
+  <defs>
+    <linearGradient id="bg2" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fff0f0"/>
+      <stop offset="100%" stop-color="#ffd9e0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1200" height="800" rx="40" fill="url(#bg2)"/>
+  <!-- Gamepad -->
+  <path d="M360 480 C360 420 410 380 470 380 H730 C790 380 840 420 840 480 C840 520 815 550 780 560 C740 570 710 540 680 520 H520 C490 540 460 570 420 560 C385 550 360 520 360 480 Z" fill="#2d2d2d"/>
+  <circle cx="470" cy="470" r="26" fill="#3fd0a7"/>
+  <circle cx="520" cy="430" r="18" fill="#3fd0a7"/>
+  <circle cx="520" cy="510" r="18" fill="#3fd0a7"/>
+  <circle cx="570" cy="470" r="18" fill="#3fd0a7"/>
+  <circle cx="740" cy="450" r="16" fill="#ff6b35"/>
+  <circle cx="770" cy="470" r="16" fill="#ffcb74"/>
+  <circle cx="740" cy="490" r="16" fill="#6aa9ff"/>
+  <circle cx="710" cy="470" r="16" fill="#b987ff"/>
+  <!-- 3D cube -->
+  <g transform="translate(480 160)">
+    <polygon points="0,60 100,10 200,60 100,110" fill="#ffffff" opacity="0.9"/>
+    <polygon points="0,60 0,160 100,210 100,110" fill="#e9f2ff"/>
+    <polygon points="200,60 200,160 100,210 100,110" fill="#d8e8ff"/>
+  </g>
+</svg>
+

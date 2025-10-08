@@ -4,22 +4,24 @@
     <meta charset="UTF-8">
     <link rel="icon" href="https://puppystepsgames.com/steps-icon.png" type="image/x-icon">
     <title>PuppySteps Games | 퍼피스텝스게임즈</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 </head>
 <body>
 
   <!-- 헤더 -->
   <header>
     <div class="header-container">
-      <div class="logo">
+      <a href="#" class="logo">
         <img src="logo.png" alt="puppysteps 로고">
-      </div>
+      </a>
       <nav>
         <a href="#about">About</a>
         <a href="#service">Service</a>
         <a href="#works">Works</a>
         <a href="#clients">Clients</a>
+        <a href="#team">Team</a>
       </nav>
     </div>
   </header>
@@ -37,6 +39,49 @@
     </div>
   </section>
 
+  <!-- Service 상세 모달들 -->
+  <div id="modal-arvr" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-overlay" data-modal-close></div>
+    <div class="modal-dialog" role="document">
+      <button class="modal-close" aria-label="닫기" data-modal-close>×</button>
+      <h3>AR/VR</h3>
+      <p>현장 업무와 전시·교육 목적에 최적화된 AR/VR 솔루션을 제공합니다. 기획 단계에서 사용자 흐름을 정의하고, 디바이스 특성에 맞춘 UX, 렌더링 최적화, 멀티플랫폼 배포까지 전 과정을 지원합니다.</p>
+      <ul class="modal-list">
+        <li>AR Foundation/VR SDK 기반 크로스 플랫폼</li>
+        <li>공간 매핑·핸드 트래킹·멀티유저 동기화</li>
+        <li>운영 대시보드·원격 업데이트 시스템</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="modal-simulator" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-overlay" data-modal-close></div>
+    <div class="modal-dialog" role="document">
+      <button class="modal-close" aria-label="닫기" data-modal-close>×</button>
+      <h3>시뮬레이터</h3>
+      <p>실제 환경과 유사한 물리/시각 모델을 구축하여 안전 교육과 장비 운용 훈련을 고효율로 제공합니다. 하드웨어 센서·모션 플랫폼 연동 및 로그 분석까지 일괄 제공됩니다.</p>
+      <ul class="modal-list">
+        <li>현실 기반 물리 시뮬레이션 및 시나리오 스크립팅</li>
+        <li>모션 시트·HMD·컨트롤러·IoT 연동</li>
+        <li>훈련 데이터 기록·리포트 자동 생성</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="modal-game" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-overlay" data-modal-close></div>
+    <div class="modal-dialog" role="document">
+      <button class="modal-close" aria-label="닫기" data-modal-close>×</button>
+      <h3>2D/3D 게임</h3>
+      <p>아이디어 검증부터 라이브 운영까지, 플랫폼별 최적화와 콘텐츠 업데이트 파이프라인을 갖춘 2D/3D 게임 개발 서비스를 제공합니다.</p>
+      <ul class="modal-list">
+        <li>모바일·PC·웹(웹GL) 동시 개발</li>
+        <li>아트 파이프라인 및 빌드 자동화</li>
+        <li>운영 지표 기반 밸런싱·이벤트 설계</li>
+      </ul>
+    </div>
+  </div>
+
   <!-- About 섹션 -->
   <section id="about" class="about">
     <div class="about-container">
@@ -45,12 +90,13 @@
           <img src="steps-icon.png" alt="" class="section-icon">
           About
         </h2>
-        <p>강아지의 발걸음처럼, 작고 소중한 재미를 만듭니다.</p>
-        <p>우리는 작은 발걸음에서 시작된 큰 꿈을 가지고 있습니다. 매일매일 작은 걸음으로 나아가며, 사용자들에게 진정한 즐거움을 선사하는 게임을 만들어가고 있습니다.</p>
-        <p>PuppyStepsGames는 단순히 게임을 만드는 것이 아니라, 사람들의 마음을 움직이는 경험을 제공하고자 합니다.</p>
+        <p class="about-lead">강아지의 발걸음처럼, 작고 소중한 재미를 만듭니다.</p>
+        <p>안녕하세요, 퍼피스텝스게임즈입니다. 저희는 작은 강아지가 처음 세상을 향해 내딛는 발걸음, 그 순수한 설렘을 담아 시작된 게임 스튜디오입니다.</p>
+        <p>크고 화려한 성공을 쫓기보다는, 한 걸음 한 걸음에 진심을 담아 모두에게 따스한 위로와 즐거움을 줄 수 있는 게임을 만들고자 합니다.</p>
+        <p>다양한 프로젝트를 경험하며 다져온 탄탄한 기술력으로 귀엽고 사랑스러운 게임들을 선보입니다. 저희의 작은 발걸음이 여러분의 일상에 즐거움으로 남기를 바랍니다.</p>
       </div>
       <div class="about-image">
-        <img src="programmer.png" alt="사무실 이미지">
+        <img src="About_Image1.png" alt="About 이미지">
       </div>
     </div>
   </section>
@@ -58,132 +104,177 @@
   <!-- Service 섹션 -->
   <section id="service" class="service">
     <div class="service-container">
-      <h2>Industry's Standard Dummy Tei</h2>
+      <h2>Service</h2>
       <div class="service-cards">
         <div class="service-card">
           <div class="card-image">
-            <img src="art1.png" alt="서비스 이미지">
+            <img src="arvr.svg" alt="AR/VR 일러스트">
           </div>
-          <h3>Typesetting</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          <a href="#" class="card-link">Comes froe →</a>
+          <h3>AR/VR</h3>
+          <p>맞춤형 증강/가상현실 콘텐츠를 기획·개발합니다. 실감형 인터랙션과 퍼포먼스 최적화로 현장 적용까지 지원합니다.</p>
+          <a href="#" class="card-link open-modal" data-modal="#modal-arvr">자세히 보기 →</a>
         </div>
         <div class="service-card">
           <div class="card-image">
-            <img src="art2.png" alt="서비스 이미지">
+            <img src="simulator.svg" alt="시뮬레이터 일러스트">
           </div>
-          <h3>Readabli</h3>
-          <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-          <a href="#" class="card-link">Comes froe →</a>
+          <h3>시뮬레이터</h3>
+          <p>교육·훈련·안전 분야를 위한 현실 기반 시뮬레이터를 제작합니다. 하드웨어 연동과 데이터 로깅 기능을 제공합니다.</p>
+          <a href="#" class="card-link open-modal" data-modal="#modal-simulator">자세히 보기 →</a>
         </div>
         <div class="service-card">
           <div class="card-image">
-            <img src="art3.png" alt="서비스 이미지">
+            <img src="game.svg" alt="게임 일러스트">
           </div>
-          <h3>Sometimes The</h3>
-          <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-          <a href="#" class="card-link">Comes froe →</a>
+          <h3>2D/3D 게임</h3>
+          <p>모바일·PC·웹을 아우르는 2D/3D 게임을 개발합니다. 컨셉부터 출시·라이브 서비스까지 원스톱으로 진행합니다.</p>
+          <a href="#" class="card-link open-modal" data-modal="#modal-game">자세히 보기 →</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Contact 섹션 -->
-  <section class="contact">
-    <div class="contact-container">
-      <h2>You a Complete system</h2>
-      <p>Every pleasure is to be welcomed and every we can work together</p>
-      <div class="contact-form">
-        <input type="text" placeholder="psum used sinci">
-        <input type="text" placeholder="Power Cho">
-        <button>Ipsum Is Therefore Alway</button>
-      </div>
-    </div>
-  </section>
+  
 
-  <!-- News 섹션 -->
-  <section class="news">
+  <!-- Works 섹션 -->
+  <section id="works" class="news">
     <div class="news-container">
-      <h2>MicroEDLab in the News</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      <h2>Works</h2>
+      <p>퍼피스텝스게임즈에서 자체 제작한 게임입니다.</p>
       <div class="news-cards">
         <div class="news-card">
           <div class="news-image">
-            <img src="designer.png" alt="뉴스 이미지">
+            <img src="works1.png" alt="작품 썸네일">
           </div>
-          <h3>Non-Characteristic Word: Of The Word</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          <button>Ethics Very</button>
+          <h3>포토포토그래퍼 (모바일게임)</h3>
+          <p>사진 촬영과 퍼즐을 결합한 힐링 어드벤처. 다양한 로케이션을 탐험하며 순간을 수집하세요.</p>
+          <button onclick="window.open('https://www.youtube.com/watch?v=_w_-lsVcmpM','_blank')">영상 보기</button>
         </div>
         <div class="news-card">
           <div class="news-image">
-            <img src="programmer.png" alt="뉴스 이미지">
+            <img src="works2.png" alt="작품 썸네일">
           </div>
-          <h3>Another News Title</h3>
-          <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-          <button>Read More</button>
+          <h3>Wizards and Knights (모바일게임)</h3>
+          <p>마법사팀과 기사팀의 실시간 멀티플레이 대전 게임. 팀워크와 전략적 사고가 필요한 액션 RPG입니다.</p>
+          <button onclick="window.open('https://www.youtube.com/watch?v=zjqmfqZdSvQ','_blank')">영상 보기</button>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Testimonials 섹션 -->
-  <section class="testimonials">
+  <!-- Clients 섹션 -->
+  <section id="clients" class="testimonials">
     <div class="testimonials-container">
-      <h2>Passage, And Going The No Renaissance First Line Is</h2>
+      <h2>Clients</h2>
+      <p>아래 후기는 퍼피스텝스게임즈와 함께한 협력사들이 직접 남긴 실제 리뷰입니다.</p>
       <div class="testimonial-cards">
         <div class="testimonial-card">
           <div class="quote-icon">"</div>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+          <p>정말 꼼꼼하시고 완성도 있는 결과물을 제작해주셔서 너무 감사드립니다.<br>
+          앞으로도 게임은 개발자님과 함께 개발할거예요!<br>
+          완벽한 작업 경험이었어요 너무 감사합니다.</p>
           <div class="testimonial-author">
             <div class="author-avatar">
               <img src="programmer.png" alt="프로필">
             </div>
             <div class="author-info">
-              <h4>Prof. Dignissi Ducimus</h4>
-              <p>Game Developer</p>
+              <h4>잼***</h4>
+              <p>협력사</p>
             </div>
           </div>
         </div>
         <div class="testimonial-card">
           <div class="quote-icon">"</div>
-          <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+          <p>진행하면서 정말 만족스러운 경험이었습니다. 진심으로 감사드립니다! 작업 내내 친절하고 사려 깊은 소통을 해 주신 덕분에, 개발 기간 동안 매일이 따뜻한 기분이었습니다. 특히, 매일 진행 상황을 구체적으로 공유해 주셔서 프로젝트의 흐름을 명확하게 파악할 수 있었고, 아이디어를 함께 고민해 주신 덕분에 예상보다 훨씬 완성도 높은 게임이 탄생했다고 생각합니다.</p>
           <div class="testimonial-author">
             <div class="author-avatar">
               <img src="designer.png" alt="프로필">
             </div>
             <div class="author-info">
-              <h4>Dr. Rackhoe</h4>
-              <p>Design Director</p>
+              <h4>해****</h4>
+              <p>협력사</p>
             </div>
           </div>
         </div>
       </div>
     </div>
+    
+    <!-- 고객사 로고 캐러셀 -->
+    <div class="clients-carousel">
+      <div class="carousel-container">
+        <button class="carousel-arrow carousel-prev" aria-label="이전">‹</button>
+        <div class="carousel-track">
+          <div class="carousel-item">
+            <div class="client-logo">
+              <img src="Clients1.png" alt="고객사 로고 1">
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="client-logo">
+              <img src="Clients2.png" alt="고객사 로고 2">
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="client-logo">
+              <img src="Clients3.png" alt="고객사 로고 3">
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="client-logo">
+              <img src="Clients4.png" alt="고객사 로고 4">
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="client-logo">
+              <img src="Clients5.png" alt="고객사 로고 5">
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="client-logo">
+              <img src="Clients6.png" alt="고객사 로고 6">
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="client-logo">
+              <img src="Clients7.png" alt="고객사 로고 7">
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="client-logo">
+              <img src="Clients8.png" alt="고객사 로고 8">
+            </div>
+          </div>
+        </div>
+        <button class="carousel-arrow carousel-next" aria-label="다음">›</button>
+      </div>
+    </div>
   </section>
 
   <!-- Team 섹션 -->
-  <section class="team">
+  <section id="team" class="team">
     <div class="team-container">
-      <h2>Perferendis Doloi</h2>
+      <h2>Team</h2>
       <div class="team-members">
         <div class="team-member">
           <div class="member-avatar">
             <img src="programmer.png" alt="팀원">
           </div>
-          <h4>Accusamus etc</h4>
+          <h4>최영수</h4>
+          <p class="team-role">CEO / programmer</p>
         </div>
         <div class="team-member">
           <div class="member-avatar">
             <img src="designer.png" alt="팀원">
           </div>
-          <h4>Et Harumestr</h4>
+          <h4>김혜인</h4>
+          <p class="team-role">designer</p>
         </div>
         <div class="team-member">
           <div class="member-avatar">
             <img src="logo.png" alt="팀원">
           </div>
-          <h4>Avoids Paines</h4>
+          <h4>Andrey</h4>
+          <p class="team-role">programmer</p>
         </div>
       </div>
     </div>
@@ -196,43 +287,205 @@
         <div class="footer-logo">
           <img src="logo.png" alt="로고">
         </div>
-        <h3>COMPANY</h3>
-        <p>Your Slogan Here</p>
       </div>
       <div class="footer-center">
         <div class="footer-column">
-          <h4>Principlei</h4>
+          <h4>PuppyStepsGames 퍼피스텝스게임즈</h4>
           <ul>
-            <li>Labor Ur</li>
-            <li>Three Key Lointe</li>
-            <li>Use in Touc</li>
-            <li>is the Team</li>
-            <li>passage of</li>
-            <li>Our team</li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h4>Contact</h4>
-          <ul>
-            <li>office: basa cen</li>
-            <li>Text or call: -2</li>
-            <li>E-mail: service@</li>
+            <li>이메일: contact@puppystepsgames.com</li>
+            <li>대표: 최영수</li>
+            <li>문의연락처: 010-1234-5678</li>
+            <li>© 2024 PuppyStepsGames. All rights reserved.</li>
           </ul>
         </div>
       </div>
       <div class="footer-right">
-        <h4>Subscribe</h4>
-        <p>On the other hand, we denounce with righte who fall in their duty through weakness.</p>
-        <div class="subscribe-form">
-          <input type="text" placeholder="psum used sin">
-          <button>Use in touc</button>
-        </div>
+        <!-- 빈 공간 -->
       </div>
-    </div>
-    <div class="footer-bottom">
-      <p>Copyright @ Lorem ipsum is simply dummy text of the printing and typesetting industry</p>
     </div>
   </footer>
 
+  <script>
+    (function() {
+      var openButtons = document.querySelectorAll('.open-modal');
+      var activeModal = null;
+
+      function openModal(selector) {
+        var modal = document.querySelector(selector);
+        if (!modal) return;
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        activeModal = modal;
+      }
+
+      function closeModal() {
+        if (!activeModal) return;
+        activeModal.classList.remove('open');
+        activeModal.setAttribute('aria-hidden', 'true');
+        activeModal = null;
+      }
+
+      openButtons.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          var target = btn.getAttribute('data-modal');
+          openModal(target);
+        });
+      });
+
+      document.addEventListener('click', function(e) {
+        if (e.target && e.target.hasAttribute('data-modal-close')) {
+          closeModal();
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeModal();
+        }
+      });
+
+      // 부드러운 스크롤 네비게이션
+      var navLinks = document.querySelectorAll('nav a[href^="#"]');
+      navLinks.forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          var targetId = this.getAttribute('href');
+          var targetElement = document.querySelector(targetId);
+          
+          if (targetElement) {
+            var headerHeight = document.querySelector('header').offsetHeight;
+            var targetPosition = targetElement.offsetTop - headerHeight;
+            
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+
+      // 고객사 로고 캐러셀 기능 - 수정된 버전
+      var carouselTrack = document.querySelector('.carousel-track');
+      var carouselItems = document.querySelectorAll('.carousel-item');
+      var prevBtn = document.querySelector('.carousel-prev');
+      var nextBtn = document.querySelector('.carousel-next');
+      
+      var currentIndex = 0;
+      var itemWidth = 240; // 아이템 너비 + 간격 (원래대로)
+      var isAnimating = false;
+      var isAutoMode = true;
+      var autoScrollTimer = null;
+      var manualModeTimer = null;
+      
+      // 자동 스크롤 함수
+      function startAutoScroll() {
+        if (!isAutoMode) return;
+        
+        autoScrollTimer = setTimeout(function() {
+          if (!isAutoMode) return;
+          
+          moveToNext();
+          startAutoScroll(); // 재귀 호출로 계속 실행
+        }, 3000); // 3초마다 이동
+      }
+      
+      // 다음으로 이동
+      function moveToNext() {
+        if (isAnimating) return;
+        
+        currentIndex = (currentIndex + 1) % carouselItems.length; // 완전한 무한 루프
+        updateCarousel();
+      }
+      
+      // 이전으로 이동
+      function moveToPrev() {
+        if (isAnimating) return;
+        
+        currentIndex = currentIndex === 0 ? carouselItems.length - 1 : currentIndex - 1;
+        updateCarousel();
+      }
+      
+      // 캐러셀 업데이트
+      function updateCarousel() {
+        if (isAnimating) return;
+        isAnimating = true;
+        
+        // 모든 아이템의 강조 효과 제거
+        carouselItems.forEach(function(item) {
+          var logo = item.querySelector('.client-logo');
+          logo.style.opacity = '0.6';
+          logo.style.transform = 'scale(0.8)';
+          logo.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
+          var img = logo.querySelector('img');
+          img.style.width = '120px';
+          img.style.height = '120px';
+          img.style.objectFit = 'cover';
+          img.style.borderRadius = '50%';
+        });
+
+        // 현재 중앙 아이템 강조 (현재 인덱스의 로고가 중앙에 확대)
+        var centerIndex = currentIndex; // 현재 선택된 로고가 중앙에 확대
+        
+        if (carouselItems[centerIndex]) {
+          var centerLogo = carouselItems[centerIndex].querySelector('.client-logo');
+          centerLogo.style.opacity = '1';
+          centerLogo.style.transform = 'scale(1.2)';
+          centerLogo.style.boxShadow = '0 12px 35px rgba(0,0,0,0.2)';
+          var centerImg = centerLogo.querySelector('img');
+          centerImg.style.width = '160px';
+          centerImg.style.height = '160px';
+          centerImg.style.objectFit = 'cover';
+          centerImg.style.borderRadius = '50%';
+        }
+
+        // 트랙 이동 - 선택된 로고가 항상 중앙에 오도록 고정
+        var centerPosition = (carouselItems.length - 1) * itemWidth / 2; // 중앙 위치 계산
+        var targetPosition = currentIndex * itemWidth; // 현재 로고의 위치
+        var translateX = centerPosition - targetPosition; // 중앙으로 이동시키기 위한 계산
+        
+        carouselTrack.style.transform = 'translateX(' + translateX + 'px)';
+        
+        setTimeout(function() {
+          isAnimating = false;
+        }, 800);
+      }
+      
+      // 수동 모드로 전환
+      function switchToManualMode() {
+        isAutoMode = false;
+        if (autoScrollTimer) {
+          clearTimeout(autoScrollTimer);
+          autoScrollTimer = null;
+        }
+        
+        // 5초 후 자동 모드로 복귀
+        if (manualModeTimer) {
+          clearTimeout(manualModeTimer);
+        }
+        manualModeTimer = setTimeout(function() {
+          isAutoMode = true;
+          startAutoScroll();
+        }, 5000);
+      }
+
+      // 화살표 버튼 이벤트
+      if (prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', function() {
+          switchToManualMode();
+          moveToPrev();
+        });
+
+        nextBtn.addEventListener('click', function() {
+          switchToManualMode();
+          moveToNext();
+        });
+      }
+
+      // 초기 설정
+      updateCarousel();
+      startAutoScroll(); // 자동 스크롤 시작
+    })();
+  </script>
 </body>
 </html>
