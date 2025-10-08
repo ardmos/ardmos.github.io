@@ -818,8 +818,8 @@ footer {
 
 .footer-column li {
   color: #666;
-  margin-bottom: 6px; /* 문장간 간격 줄임 */
-  line-height: 1.4; /* 줄 간격도 약간 줄임 */
+  margin-bottom: 3px; /* 문장간 간격 더 줄임 */
+  line-height: 1.3; /* 줄 간격도 더 줄임 */
   font-size: 0.85rem; /* 폰트 크기 2포인트 작게 */
 }
 
