@@ -555,35 +555,25 @@ nav a:hover {
 .testimonial-author {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 15px;
+  justify-content: center; /* 가운데 정렬 */
   position: absolute;
-  left: 30px;
-  bottom: 30px; /* 카드 좌측 하단 고정 */
-}
-
-.author-avatar img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.author-avatar {
-  flex: 0 0 60px; /* 양쪽 카드에서 동일한 시작 위치 확보 */
+  left: 0;
+  right: 0; /* 전체 너비 사용 */
+  bottom: 45px; /* 카드 하단에서 조금 더 위로 이동 */
 }
 
 .author-info h4 {
   font-size: 1.2rem;
   color: #333;
-  margin-bottom: 5px;
+  margin: 0; /* 기본 마진 제거 */
+  text-align: center; /* 텍스트 가운데 정렬 */
 }
 
-.author-info p {
-  color: #666;
+.company-type {
   font-size: 0.9rem;
-  margin: 0;
-  padding: 0;
+  color: #ccc; /* 아주 옅은 회색으로 변경 */
+  font-weight: normal;
+  margin-left: 8px; /* 회사 이름과 약간의 간격 */
 }
 
 /* 고객사 로고 캐러셀 */
@@ -592,6 +582,26 @@ nav a:hover {
   background: #fff8f0;
   overflow: hidden;
   min-height: 400px; /* 최소 높이 설정으로 영역 확보 */
+}
+
+.carousel-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.carousel-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.carousel-title h3 {
+  font-size: 1.4rem;
+  color: #666; /* 회색으로 변경 */
+  margin: 0;
+  font-weight: 600;
 }
 
 .carousel-container {
@@ -641,21 +651,7 @@ nav a:hover {
   border-radius: 50%; /* 이미지도 동그라미로 크롭 */
 }
 
-/* 중앙 로고 강조 - 1개만 확대 */
-.carousel-item:nth-child(4) .client-logo {
-  opacity: 1;
-  transform: scale(1.2); /* 원래 확대 비율로 */
-  box-shadow: 0 12px 35px rgba(0,0,0,0.2);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.carousel-item:nth-child(4) .client-logo img {
-  width: 160px; /* 중앙 로고 이미지 원래 크기로 */
-  height: 160px;
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  object-fit: cover; /* contain에서 cover로 변경 */
-  border-radius: 50%; /* 이미지도 동그라미로 크롭 */
-}
+/* 중앙 로고 강조 - CSS 고정 스타일 제거, JavaScript로 동적 제어 */
 
 /* 화살표 버튼 */
 .carousel-arrow {
@@ -741,11 +737,18 @@ nav a:hover {
 }
 
 .member-avatar img {
-  width: 120px;
-  height: 120px;
+  width: 150px; /* 크기 증가 */
+  height: 150px; /* 크기 증가 */
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 20px;
+  border: 5px solid #EEBE6C; /* 아웃라인 두께 증가 */
+  transition: all 0.3s ease; /* 부드러운 전환 효과 */
+}
+
+.member-avatar img:hover {
+  transform: scale(1.05); /* 호버 시 살짝 확대 */
+  box-shadow: 0 6px 20px rgba(238, 190, 108, 0.3); /* 메인 컬러로 그림자 효과 */
 }
 
 .team-member h4 {
