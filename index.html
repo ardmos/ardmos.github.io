@@ -141,23 +141,53 @@
     <div class="news-container">
       <h2>Works</h2>
       <p>퍼피스텝스게임즈에서 자체 제작한 게임입니다.</p>
-      <div class="news-cards">
-        <div class="news-card">
-          <div class="news-image">
-            <img src="Works1.png" alt="작품 썸네일">
+      
+      <!-- Works 캐러셀 -->
+      <div class="works-carousel">
+        <button class="works-carousel-arrow works-carousel-prev" aria-label="이전">‹</button>
+        <div class="works-carousel-track">
+          <div class="news-card">
+            <div class="news-image">
+              <img src="Works1.png" alt="작품 썸네일">
+            </div>
+            <h3>포토포토그래퍼 (모바일게임)</h3>
+            <p>사진 촬영과 퍼즐을 결합한 힐링 어드벤처. 다양한 로케이션을 탐험하며 순간을 수집하세요.</p>
+            <button onclick="window.open('https://www.youtube.com/watch?v=_w_-lsVcmpM','_blank')">영상 보기</button>
           </div>
-          <h3>포토포토그래퍼 (모바일게임)</h3>
-          <p>사진 촬영과 퍼즐을 결합한 힐링 어드벤처. 다양한 로케이션을 탐험하며 순간을 수집하세요.</p>
-          <button onclick="window.open('https://www.youtube.com/watch?v=_w_-lsVcmpM','_blank')">영상 보기</button>
-        </div>
-        <div class="news-card">
-          <div class="news-image">
-            <img src="Works2.png" alt="작품 썸네일">
+          <div class="news-card">
+            <div class="news-image">
+              <img src="Works2.png" alt="작품 썸네일">
+            </div>
+            <h3>Wizards and Knights (모바일게임)</h3>
+            <p>마법사팀과 기사팀의 실시간 멀티플레이 대전 게임. 팀워크와 전략적 사고가 필요한 액션 RPG입니다.</p>
+            <button onclick="window.open('https://www.youtube.com/watch?v=zjqmfqZdSvQ','_blank')">영상 보기</button>
           </div>
-          <h3>Wizards and Knights (모바일게임)</h3>
-          <p>마법사팀과 기사팀의 실시간 멀티플레이 대전 게임. 팀워크와 전략적 사고가 필요한 액션 RPG입니다.</p>
-          <button onclick="window.open('https://www.youtube.com/watch?v=zjqmfqZdSvQ','_blank')">영상 보기</button>
+          <div class="news-card">
+            <div class="news-image">
+              <img src="Worksempty.png" alt="작품 썸네일">
+            </div>
+            <h3>NPC (PC게임)</h3>
+            <p>도트 기반 스토리 PC 게임입니다. 가까운 미래시점을 배경으로, 게임을 플레이하다가 의문의 죽음을 맞은 한 남자에 얽힌 수수께끼를 풀어나가는 미스테리 추리 게임입니다.</p>
+            <button onclick="window.open('https://www.youtube.com/watch?v=HInUm1h_87I&t=374s','_blank')">영상 보기</button>
+          </div>
+          <div class="news-card">
+            <div class="news-image">
+              <img src="Worksempty.png" alt="작품 썸네일">
+            </div>
+            <h3>지우개전쟁 (모바일게임)</h3>
+            <p>2000년대 초등학교를 배경으로 한 추억의 게임. 지우개똥으로 전함을 만들고, 책상 위에서 아기자기한 전투를 벌이는 게임입니다.</p>
+            <button onclick="window.open('https://www.youtube.com/watch?v=7s9jNbn3vv4','_blank')">영상 보기</button>
+          </div>
+          <div class="news-card">
+            <div class="news-image">
+              <img src="Worksempty.png" alt="작품 썸네일">
+            </div>
+            <h3>밀씨 드랍 (Seed drop) (PC게임)</h3>
+            <p>지구 밖에서 밀씨를 떨어트려 바늘위에 꽂는 기상천외한 미션의 게임. - 제작중</p>
+            <button onclick="alert('제작중입니다. 곧 공개될 예정입니다.')">영상 보기</button>
+          </div>
         </div>
+        <button class="works-carousel-arrow works-carousel-next" aria-label="다음">›</button>
       </div>
     </div>
   </section>
@@ -486,6 +516,70 @@
       // 초기 설정
       updateCarousel();
       startAutoScroll(); // 자동 스크롤 시작
+    })();
+
+    // Works 캐러셀 기능 - 독립적으로 작동
+    (function() {
+      var worksCarousel = document.querySelector('.works-carousel');
+      if (!worksCarousel) return;
+      
+      var worksTrack = worksCarousel.querySelector('.works-carousel-track');
+      var worksCards = worksCarousel.querySelectorAll('.news-card');
+      var prevBtn = worksCarousel.querySelector('.works-carousel-prev');
+      var nextBtn = worksCarousel.querySelector('.works-carousel-next');
+      
+      var worksCurrentIndex = 0;
+      var worksCardWidth = 448 + 30; // 카드 너비 + 간격 (448px + 30px)
+      var worksVisibleCards = Math.floor(worksCarousel.offsetWidth / worksCardWidth);
+      var worksMaxIndex = Math.max(0, worksCards.length - worksVisibleCards);
+      
+      // 화면 크기 변경 시 업데이트
+      function updateWorksCarouselSize() {
+        worksVisibleCards = Math.floor(worksCarousel.offsetWidth / worksCardWidth);
+        worksMaxIndex = Math.max(0, worksCards.length - worksVisibleCards);
+        updateWorksCarousel();
+      }
+      
+      // 캐러셀 업데이트
+      function updateWorksCarousel() {
+        var translateX = -worksCurrentIndex * worksCardWidth;
+        worksTrack.style.transform = 'translateX(' + translateX + 'px)';
+        
+        // 버튼 상태 업데이트
+        if (prevBtn) prevBtn.style.opacity = worksCurrentIndex > 0 ? '1' : '0.5';
+        if (nextBtn) nextBtn.style.opacity = worksCurrentIndex < worksMaxIndex ? '1' : '0.5';
+      }
+      
+      // 이전으로 이동
+      function moveWorksPrev() {
+        if (worksCurrentIndex > 0) {
+          worksCurrentIndex--;
+          updateWorksCarousel();
+        }
+      }
+      
+      // 다음으로 이동
+      function moveWorksNext() {
+        if (worksCurrentIndex < worksMaxIndex) {
+          worksCurrentIndex++;
+          updateWorksCarousel();
+        }
+      }
+      
+      // 버튼 이벤트
+      if (prevBtn) {
+        prevBtn.addEventListener('click', moveWorksPrev);
+      }
+      
+      if (nextBtn) {
+        nextBtn.addEventListener('click', moveWorksNext);
+      }
+      
+      // 화면 크기 변경 감지
+      window.addEventListener('resize', updateWorksCarouselSize);
+      
+      // 초기 설정
+      updateWorksCarouselSize();
     })();
   </script>
 </body>

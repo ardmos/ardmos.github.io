@@ -478,6 +478,66 @@ nav a:hover {
   cursor: pointer;
 }
 
+/* Works 캐러셀 */
+.works-carousel {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: hidden;
+  padding: 0 60px; /* 좌우 여백 추가로 화살표 공간 확보 */
+}
+
+.works-carousel-track {
+  display: flex;
+  gap: 30px;
+  transition: transform 0.5s ease-in-out;
+  padding: 20px 0;
+}
+
+.works-carousel .news-card {
+  flex-shrink: 0;
+  width: 448px; /* 560px * 0.8 = 448px */
+  min-width: 448px;
+}
+
+.works-carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #ff6b35;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff6b35;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.works-carousel-prev {
+  left: 10px;
+}
+
+.works-carousel-next {
+  right: 10px;
+}
+
+.works-carousel:hover .works-carousel-arrow {
+  opacity: 1;
+}
+
+.works-carousel-arrow:hover {
+  background: #ff6b35;
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+}
+
 /* Testimonials 섹션 */
 .testimonials {
   padding: 100px 0;
