@@ -585,6 +585,49 @@
       // ========================================
       updateCarousel();    // 처음 화면을 그리기
       startAutoScroll();   // 자동 스크롤 시작
+      
+      // ========================================
+      // 10. 터치 스와이프 기능 추가 (모바일)
+      // ========================================
+      var touchStartX = 0;
+      var touchEndX = 0;
+      var touchStartY = 0;
+      var touchEndY = 0;
+      
+      // 터치 시작 지점 기록
+      if (carouselTrack) {
+        carouselTrack.addEventListener('touchstart', function(e) {
+          touchStartX = e.changedTouches[0].screenX;
+          touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+        
+        // 터치 종료 시 스와이프 방향 판단
+        carouselTrack.addEventListener('touchend', function(e) {
+          touchEndX = e.changedTouches[0].screenX;
+          touchEndY = e.changedTouches[0].screenY;
+          handleClientsSwipe();
+        }, { passive: true });
+      }
+      
+      function handleClientsSwipe() {
+        var diffX = touchStartX - touchEndX;
+        var diffY = touchStartY - touchEndY;
+        
+        // 수평 스와이프가 수직 스와이프보다 크면 캐러셀 이동
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+          // 최소 50px 이상 스와이프해야 인식
+          if (Math.abs(diffX) > 50) {
+            switchToManualMode(); // 수동 모드로 전환
+            if (diffX > 0) {
+              // 왼쪽으로 스와이프 -> 다음
+              moveToNext();
+            } else {
+              // 오른쪽으로 스와이프 -> 이전
+              moveToPrev();
+            }
+          }
+        }
+      }
     })();
 
     // Works 캐러셀 기능 - 독립적으로 작동 (반응형 개선)
@@ -683,6 +726,42 @@
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(updateWorksCarouselSize, 100);
       });
+      
+      // 터치 스와이프 기능 추가
+      var touchStartX = 0;
+      var touchEndX = 0;
+      var touchStartY = 0;
+      var touchEndY = 0;
+      
+      worksCarousel.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+      }, { passive: true });
+      
+      worksCarousel.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleWorksSwipe();
+      }, { passive: true });
+      
+      function handleWorksSwipe() {
+        var diffX = touchStartX - touchEndX;
+        var diffY = touchStartY - touchEndY;
+        
+        // 수평 스와이프가 수직 스와이프보다 크면 캐러셀 이동
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+          // 최소 50px 이상 스와이프해야 인식
+          if (Math.abs(diffX) > 50) {
+            if (diffX > 0) {
+              // 왼쪽으로 스와이프 -> 다음
+              moveWorksNext();
+            } else {
+              // 오른쪽으로 스와이프 -> 이전
+              moveWorksPrev();
+            }
+          }
+        }
+      }
       
       // 초기 설정
       updateWorksCarouselSize();
