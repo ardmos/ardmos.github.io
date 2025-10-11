@@ -216,7 +216,7 @@ nav a:hover {
 
 .service-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: 40px;
   margin-top: 60px;
 }
@@ -435,7 +435,7 @@ nav a:hover {
 
 .news-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
   gap: 40px;
 }
 
@@ -608,7 +608,7 @@ nav a:hover {
 
 .testimonial-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
   gap: 40px;
   margin-top: 60px;
 }
@@ -966,27 +966,12 @@ footer {
 }
 
 /* 반응형 디자인 */
-@media (max-width: 768px) {
-  .header-container {
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  nav {
-    gap: 20px;
-  }
-  
-  .hero-content h1 {
-    font-size: 2.5rem;
-  }
-  
-  .about-container {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-  
+
+/* 태블릿 & 모바일 공통 */
+@media (max-width: 1024px) {
   .service-cards {
     grid-template-columns: 1fr;
+    gap: 30px;
   }
   
   .news-cards {
@@ -995,6 +980,193 @@ footer {
   
   .testimonial-cards {
     grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .works-carousel {
+    padding: 0 20px;
+  }
+  
+  .works-carousel .news-card {
+    width: 100%;
+    max-width: 500px;
+    min-width: auto;
+  }
+}
+
+/* 태블릿 */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .header-container {
+    flex-direction: column;
+    gap: 15px;
+    padding: 0 15px;
+  }
+  
+  .logo img {
+    height: 60px;
+  }
+  
+  nav {
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  nav a {
+    font-size: 16px;
+  }
+  
+  .hero {
+    padding: 80px 15px 40px;
+    min-height: 70vh;
+  }
+  
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+  
+  .hero-content p {
+    font-size: 1rem;
+    padding: 0 10px;
+  }
+  
+  .hero-icons {
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  .footprint-icon {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .about {
+    padding: 60px 0;
+  }
+  
+  .about-container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 0 15px;
+  }
+  
+  .about-content h2 {
+    font-size: 2rem;
+  }
+  
+  .about-content p {
+    font-size: 1rem;
+  }
+  
+  .about-image img {
+    height: 300px;
+  }
+  
+  .service {
+    padding: 60px 0;
+  }
+  
+  .service-container {
+    padding: 0 15px;
+  }
+  
+  .service-container h2 {
+    font-size: 2rem;
+  }
+  
+  .service-card {
+    padding: 25px;
+  }
+  
+  .card-image img {
+    height: 180px;
+  }
+  
+  .news {
+    padding: 60px 0;
+  }
+  
+  .news-container {
+    padding: 0 15px;
+  }
+  
+  .news-container h2 {
+    font-size: 2rem;
+  }
+  
+  .news-container p {
+    font-size: 1.1rem;
+  }
+  
+  .works-carousel {
+    padding: 0 15px;
+  }
+  
+  .works-carousel .news-card {
+    width: 100%;
+    max-width: 400px;
+    min-width: auto;
+    height: auto;
+    min-height: 480px;
+  }
+  
+  .works-carousel-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  
+  .testimonials {
+    padding: 60px 0;
+  }
+  
+  .testimonials-container {
+    padding: 0 15px;
+  }
+  
+  .testimonials-container h2 {
+    font-size: 2rem;
+  }
+  
+  .testimonials-container p {
+    font-size: 1.1rem;
+  }
+  
+  .testimonial-card {
+    padding: 30px;
+    padding-bottom: 90px;
+  }
+  
+  .client-logo {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .client-logo img {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .carousel-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  
+  .team {
+    padding: 60px 0;
+  }
+  
+  .team-container {
+    padding: 0 15px;
+  }
+  
+  .team-container h2 {
+    font-size: 2rem;
   }
   
   .team-members {
@@ -1002,16 +1174,367 @@ footer {
     gap: 40px;
   }
   
+  .member-avatar img {
+    width: 120px;
+    height: 120px;
+  }
+  
+  footer {
+    padding: 40px 0 15px;
+  }
+  
   .footer-container {
     grid-template-columns: 1fr;
     gap: 30px;
+    padding: 0 15px;
+  }
+  
+  .footer-logo img {
+    height: 100px;
   }
   
   .footer-center {
     grid-template-columns: 1fr;
+    gap: 25px;
   }
   
   .subscribe-form {
     flex-direction: column;
+  }
+}
+
+/* 모바일 (작은 화면) */
+@media (max-width: 480px) {
+  body {
+    font-size: 13px;
+  }
+  
+  header {
+    padding: 15px 0;
+  }
+  
+  .header-container {
+    gap: 10px;
+    padding: 0 10px;
+  }
+  
+  .logo img {
+    height: 50px;
+  }
+  
+  nav {
+    gap: 10px;
+  }
+  
+  nav a {
+    font-size: 14px;
+  }
+  
+  .hero {
+    padding: 70px 10px 30px;
+    min-height: 60vh;
+  }
+  
+  .hero-content h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+  
+  .hero-content p {
+    font-size: 0.9rem;
+    padding: 0 5px;
+  }
+  
+  .hero-icons {
+    bottom: 15px;
+    right: 15px;
+  }
+  
+  .footprint-icon {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .about {
+    padding: 40px 0;
+  }
+  
+  .about-container {
+    gap: 30px;
+    padding: 0 10px;
+  }
+  
+  .about-content h2 {
+    font-size: 1.6rem;
+    gap: 10px;
+  }
+  
+  .section-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .about-content p {
+    font-size: 0.95rem;
+  }
+  
+  .about-lead {
+    font-size: 1.1rem;
+  }
+  
+  .about-image img {
+    height: 250px;
+  }
+  
+  .service {
+    padding: 40px 0;
+  }
+  
+  .service-container {
+    padding: 0 10px;
+  }
+  
+  .service-container h2 {
+    font-size: 1.6rem;
+  }
+  
+  .service-cards {
+    margin-top: 40px;
+    gap: 25px;
+  }
+  
+  .service-card {
+    padding: 20px;
+  }
+  
+  .service-card h3 {
+    font-size: 1.3rem;
+  }
+  
+  .card-image img {
+    height: 150px;
+  }
+  
+  .news {
+    padding: 40px 0;
+  }
+  
+  .news-container {
+    padding: 0 10px;
+  }
+  
+  .news-container h2 {
+    font-size: 1.6rem;
+  }
+  
+  .news-container p {
+    font-size: 1rem;
+    margin-bottom: 40px;
+  }
+  
+  .works-carousel {
+    padding: 0 10px;
+  }
+  
+  .works-carousel .news-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: auto;
+    height: auto;
+    min-height: 450px;
+    padding: 20px;
+  }
+  
+  .works-carousel .news-card h3 {
+    font-size: 1.3rem;
+  }
+  
+  .works-carousel .news-card p {
+    font-size: 0.95rem;
+  }
+  
+  .works-carousel .news-card button {
+    width: 40%;
+  }
+  
+  .works-carousel-arrow {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
+  
+  .works-carousel-prev {
+    left: 5px;
+  }
+  
+  .works-carousel-next {
+    right: 5px;
+  }
+  
+  .testimonials {
+    padding: 40px 0;
+  }
+  
+  .testimonials-container {
+    padding: 0 10px;
+  }
+  
+  .testimonials-container h2 {
+    font-size: 1.6rem;
+  }
+  
+  .testimonials-container p {
+    font-size: 1rem;
+    margin-bottom: 30px;
+  }
+  
+  .testimonial-cards {
+    margin-top: 40px;
+    gap: 25px;
+  }
+  
+  .testimonial-card {
+    padding: 25px;
+    padding-bottom: 80px;
+  }
+  
+  .quote-icon {
+    font-size: 3rem;
+    top: 15px;
+    left: 20px;
+  }
+  
+  .testimonial-card p {
+    font-size: 0.95rem;
+    margin: 28px 0 20px;
+    padding-left: 15px;
+  }
+  
+  .testimonial-author {
+    bottom: 35px;
+  }
+  
+  .author-info h4 {
+    font-size: 1.1rem;
+  }
+  
+  .clients-carousel {
+    padding: 80px 0 0 0;
+    min-height: 300px;
+  }
+  
+  .carousel-title h3 {
+    font-size: 1.1rem;
+  }
+  
+  .carousel-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .carousel-container {
+    min-height: 250px;
+  }
+  
+  .client-logo {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .client-logo img {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .carousel-arrow {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
+  
+  .carousel-prev {
+    left: 5px;
+  }
+  
+  .carousel-next {
+    right: 5px;
+  }
+  
+  .team {
+    padding: 40px 0;
+  }
+  
+  .team-container {
+    padding: 0 10px;
+  }
+  
+  .team-container h2 {
+    font-size: 1.6rem;
+  }
+  
+  .team-members {
+    margin-top: 40px;
+    gap: 30px;
+  }
+  
+  .member-avatar img {
+    width: 100px;
+    height: 100px;
+    border: 3px solid #EEBE6C;
+  }
+  
+  .team-member h4 {
+    font-size: 1.2rem;
+  }
+  
+  .team-role {
+    font-size: 0.9rem;
+  }
+  
+  footer {
+    padding: 30px 0 10px;
+  }
+  
+  .footer-container {
+    gap: 25px;
+    padding: 0 10px;
+  }
+  
+  .footer-logo img {
+    height: 80px;
+  }
+  
+  .footer-column h4 {
+    font-size: 0.95rem;
+  }
+  
+  .footer-column li {
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+  }
+  
+  .modal-dialog {
+    margin: 35vh auto;
+    padding: 25px 20px 20px;
+    max-width: 90%;
+  }
+  
+  .modal-dialog h3 {
+    font-size: 1.3rem;
+  }
+  
+  .modal-dialog p {
+    font-size: 0.95rem;
+  }
+  
+  .modal-list {
+    font-size: 0.9rem;
+  }
+  
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    line-height: 32px;
   }
 }

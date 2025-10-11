@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://puppystepsgames.com/steps-icon.png" type="image/x-icon">
     <title>PuppySteps Games | 퍼피스텝스게임즈</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
@@ -586,7 +587,7 @@
       startAutoScroll();   // 자동 스크롤 시작
     })();
 
-    // Works 캐러셀 기능 - 독립적으로 작동
+    // Works 캐러셀 기능 - 독립적으로 작동 (반응형 개선)
     (function() {
       var worksCarousel = document.querySelector('.works-carousel');
       if (!worksCarousel) return;
@@ -597,14 +598,47 @@
       var nextBtn = worksCarousel.querySelector('.works-carousel-next');
       
       var worksCurrentIndex = 0;
-      var worksCardWidth = 448 + 30; // 카드 너비 + 간격 (448px + 30px)
-      var worksVisibleCards = Math.floor(worksCarousel.offsetWidth / worksCardWidth);
-      var worksMaxIndex = Math.max(0, worksCards.length - worksVisibleCards);
+      var worksCardWidth = 0;
+      var worksVisibleCards = 0;
+      var worksMaxIndex = 0;
+      
+      // 현재 카드의 실제 너비를 계산하는 함수
+      function calculateCardWidth() {
+        if (worksCards.length > 0) {
+          var card = worksCards[0];
+          var cardStyle = window.getComputedStyle(card);
+          var cardWidth = card.offsetWidth;
+          var marginRight = parseInt(cardStyle.marginRight) || 0;
+          // gap을 고려 (CSS에서 gap: 30px 사용)
+          var gap = 30;
+          return cardWidth + gap;
+        }
+        return 478; // 기본값 (448px + 30px gap)
+      }
       
       // 화면 크기 변경 시 업데이트
       function updateWorksCarouselSize() {
-        worksVisibleCards = Math.floor(worksCarousel.offsetWidth / worksCardWidth);
+        worksCardWidth = calculateCardWidth();
+        var carouselWidth = worksCarousel.offsetWidth;
+        
+        // 작은 화면에서는 한 번에 1개씩, 큰 화면에서는 여러 개 표시
+        if (window.innerWidth <= 480) {
+          worksVisibleCards = 1;
+        } else if (window.innerWidth <= 768) {
+          worksVisibleCards = 1;
+        } else if (window.innerWidth <= 1024) {
+          worksVisibleCards = Math.max(1, Math.floor(carouselWidth / worksCardWidth));
+        } else {
+          worksVisibleCards = Math.max(1, Math.floor(carouselWidth / worksCardWidth));
+        }
+        
         worksMaxIndex = Math.max(0, worksCards.length - worksVisibleCards);
+        
+        // 현재 인덱스가 최대값을 넘지 않도록 조정
+        if (worksCurrentIndex > worksMaxIndex) {
+          worksCurrentIndex = worksMaxIndex;
+        }
+        
         updateWorksCarousel();
       }
       
@@ -643,8 +677,12 @@
         nextBtn.addEventListener('click', moveWorksNext);
       }
       
-      // 화면 크기 변경 감지
-      window.addEventListener('resize', updateWorksCarouselSize);
+      // 화면 크기 변경 감지 (디바운싱 적용)
+      var resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(updateWorksCarouselSize, 100);
+      });
       
       // 초기 설정
       updateWorksCarouselSize();
