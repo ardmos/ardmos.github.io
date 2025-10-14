@@ -182,6 +182,61 @@ nav a:hover {
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
+/* History 섹션 */
+.history {
+  padding: 60px 0;
+  background: #fff8f0;
+}
+
+.history-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.history-container h2 {
+  font-size: 2.5rem;
+  margin-bottom: 80px;
+  color: #333;
+  position: relative;
+}
+
+.history-container h2::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 6px;
+  background: #EEBE6C;
+  border-radius: 0;
+}
+
+.history-image {
+  margin: 10px auto 0;
+  max-width: 2566px;
+}
+
+.history-image img {
+  width: 100%;
+  height: auto;
+  max-width: 1276px;
+}
+
+/* History 섹션 반응형 */
+@media (max-width: 768px) {
+  .history-container h2 {
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+  
+  .history-image {
+    max-width: 100%;
+  }
+}
+
 /* Service 섹션 */
 .service {
   padding: 100px 0;
