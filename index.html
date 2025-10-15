@@ -896,6 +896,46 @@
         centerActiveProfile(currentReview);
       });
       
+      // 터치 드래그 기능 추가 (모바일용)
+      var reviewTouchStartX = 0;
+      var reviewTouchEndX = 0;
+      var reviewTouchStartY = 0;
+      var reviewTouchEndY = 0;
+      
+      // 리뷰 섹션에 터치 이벤트 추가
+      var reviewSection = document.querySelector('.review-section');
+      if (reviewSection) {
+        reviewSection.addEventListener('touchstart', function(e) {
+          reviewTouchStartX = e.changedTouches[0].screenX;
+          reviewTouchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+        
+        reviewSection.addEventListener('touchend', function(e) {
+          reviewTouchEndX = e.changedTouches[0].screenX;
+          reviewTouchEndY = e.changedTouches[0].screenY;
+          handleReviewSwipe();
+        }, { passive: true });
+      }
+      
+      function handleReviewSwipe() {
+        var diffX = reviewTouchStartX - reviewTouchEndX;
+        var diffY = reviewTouchStartY - reviewTouchEndY;
+        
+        // 수평 스와이프가 수직 스와이프보다 크면 리뷰 변경
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+          // 최소 50px 이상 스와이프해야 인식
+          if (Math.abs(diffX) > 50) {
+            if (diffX > 0) {
+              // 왼쪽으로 스와이프 -> 다음 리뷰
+              nextReview();
+            } else {
+              // 오른쪽으로 스와이프 -> 이전 리뷰
+              prevReview();
+            }
+          }
+        }
+      }
+      
       // 초기 설정 (첫 번째 후기 표시)
       updateReview(0);
     })();
