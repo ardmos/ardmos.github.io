@@ -591,16 +591,16 @@ nav a:hover {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  border: 2px solid #ff6b35;
+  background: white;
+  border: 2px solid #EEBE6C;
   font-size: 24px;
   font-weight: bold;
-  color: #ff6b35;
+  color: #EEBE6C;
   cursor: pointer;
   opacity: 0.8;
   transition: all 0.3s ease;
   z-index: 10;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .works-carousel-prev {
@@ -616,10 +616,10 @@ nav a:hover {
 }
 
 .works-carousel-arrow:hover {
-  background: #ff6b35;
+  background: #EEBE6C;
   color: white;
   transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* Testimonials 섹션 */
@@ -637,7 +637,7 @@ nav a:hover {
 
 .testimonials-container h2 {
   font-size: 2.5rem;
-  margin-bottom: 20px;
+  margin-bottom: 60px;
   color: #333;
   position: relative;
 }
@@ -654,71 +654,171 @@ nav a:hover {
   border-radius: 0;
 }
 
-.testimonials-container p {
-  font-size: 1.25rem;
-  font-weight: normal; /* bold 제거 */
-  color: #666;
-  margin-bottom: 40px;
+/* 새로운 리뷰 섹션 */
+.review-section {
+  margin-bottom: 80px;
 }
 
-.testimonial-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
-  gap: 40px;
-  margin-top: 60px;
+.review-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
 }
 
-.testimonial-card {
+.review-arrow {
+  position: absolute;
+  top: 35%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   background: white;
-  padding: 36px;
-  padding-bottom: 100px; /* 고정된 프로필 영역 공간 확보, 높이 약간 축소 */
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  border: 2px solid #EEBE6C;
+  font-size: 24px;
+  font-weight: bold;
+  color: #EEBE6C;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.review-arrow:hover {
+  background: #EEBE6C;
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.review-prev {
+  left: -70px;
+}
+
+.review-next {
+  right: -70px;
+}
+
+.review-content {
+  flex: 1;
+  text-align: center;
   position: relative;
 }
 
-.quote-icon {
-  font-size: 4rem;
+.quote-left, .quote-right {
+  font-size: 3rem;
   color: #EEBE6C;
   font-weight: bold;
   position: absolute;
-  top: 20px;
-  left: 30px;
+  top: -10px;
 }
 
-.testimonial-card p {
-  font-family: 'Gowun Dodum', sans-serif; /* 리뷰만 둥근 한글 폰트 */
-  font-size: 1rem; /* 살짝 축소 */
-  font-weight: normal; /* bold 제거 */
-  line-height: 1.55;
-  color: #666;
-  margin: 34px 0 24px; /* 상하 여백 소폭 축소 */
-  padding-left: 20px;
+.quote-left {
+  left: -20px;
 }
 
-.testimonial-author {
+.quote-right {
+  right: -20px;
+}
+
+.review-text {
+  font-family: 'Gowun Dodum', sans-serif;
+  font-size: 1.3rem;
+  line-height: 1.8;
+  color: #333;
+  padding: 0 60px;
+  margin: 0;
+}
+
+/* 클라이언트 프로필 섹션 */
+.clients-profiles-wrapper {
+  position: relative;
+  max-width: 800px;
+  margin: 40px auto 0;
+}
+
+.clients-profiles {
+  overflow: hidden;
+}
+
+.clients-profiles-container {
+  display: flex;
+  gap: 30px;
+  transition: transform 0.5s ease-in-out;
+  width: max-content;
+}
+
+.client-profile {
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 15px;
+  border-radius: 15px;
+  min-width: 140px;
+  flex-shrink: 0;
+  opacity: 0.6;
+  filter: grayscale(30%);
+}
+
+
+.client-profile:hover {
+  transform: translateY(-5px);
+  opacity: 0.8;
+  filter: grayscale(10%);
+}
+
+.client-profile.active {
+  transform: translateY(-5px);
+  opacity: 1;
+  filter: grayscale(0%);
+}
+
+.client-profile.active .profile-name {
+  color: #EEBE6C;
+  font-weight: 700;
+}
+
+.profile-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  border: 3px solid #ddd;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
-  justify-content: center; /* 가운데 정렬 */
-  position: absolute;
-  left: 0;
-  right: 0; /* 전체 너비 사용 */
-  bottom: 45px; /* 카드 하단에서 조금 더 위로 이동 */
+  justify-content: center;
+  transition: all 0.3s ease;
 }
 
-.author-info h4 {
+.client-profile.active .profile-avatar {
+  border-color: #EEBE6C;
+  transform: scale(1.1);
+}
+
+.avatar-letter {
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.profile-stars {
+  color: #ffd700;
   font-size: 1.2rem;
-  color: #333;
-  margin: 0; /* 기본 마진 제거 */
-  text-align: center; /* 텍스트 가운데 정렬 */
+  margin-bottom: 10px;
 }
 
-.company-type {
-  font-size: 0.9rem;
-  color: #ccc; /* 아주 옅은 회색으로 변경 */
-  font-weight: normal;
-  margin-left: 8px; /* 회사 이름과 약간의 간격 */
+.profile-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+  transition: all 0.3s ease;
 }
+
 
 /* 고객사 로고 캐러셀 */
 .clients-carousel {
@@ -805,16 +905,16 @@ nav a:hover {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
+  background: white;
+  border: 2px solid #EEBE6C;
   font-size: 24px;
   font-weight: bold;
-  color: #333;
+  color: #EEBE6C;
   cursor: pointer;
   opacity: 0;
   transition: all 0.3s ease;
   z-index: 10;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .carousel-prev {
@@ -830,9 +930,10 @@ nav a:hover {
 }
 
 .carousel-arrow:hover {
-  background: white;
+  background: #EEBE6C;
+  color: white;
   transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* 자동 스크롤 애니메이션 제거 - JavaScript로 제어 */

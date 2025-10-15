@@ -207,28 +207,86 @@
   <section id="clients" class="testimonials">
     <div class="testimonials-container">
       <h2>Clients</h2>
-      <p>아래 후기는 퍼피스텝스게임즈와 함께한 협력사들이 직접 남긴 실제 리뷰입니다.</p>
-      <div class="testimonial-cards">
-        <div class="testimonial-card">
-          <div class="quote-icon">"</div>
-          <p>정말 꼼꼼하시고 완성도 있는 결과물을 제작해주셔서 너무 감사드립니다.<br>
-          앞으로도 게임은 개발자님과 함께 개발할거예요!<br>
-          완벽한 작업 경험이었어요 너무 감사합니다.</p>
-          <div class="testimonial-author">
-            <div class="author-info">
-              <h4>잼*** <span class="company-type">협력사</span></h4>
+      
+      <!-- 새로운 리뷰 섹션 -->
+      <div class="review-section">
+        <div class="review-container">
+          <div class="review-content">
+            <div class="quote-left">"</div>
+            <div class="review-text" id="review-text">
+              정말 꼼꼼하시고 완성도 있는 결과물을 제작해주셔서 너무 감사드립니다.<br>
+              앞으로도 게임은 개발자님과 함께 개발할거예요!<br>
+              완벽한 작업 경험이었어요 너무 감사합니다.
             </div>
+            <div class="quote-right">"</div>
           </div>
         </div>
-        <div class="testimonial-card">
-          <div class="quote-icon">"</div>
-          <p>진행하면서 정말 만족스러운 경험이었습니다. 진심으로 감사드립니다! 작업 내내 친절하고 사려 깊은 소통을 해 주신 덕분에, 개발 기간 동안 매일이 따뜻한 기분이었습니다. 특히, 매일 진행 상황을 구체적으로 공유해 주셔서 프로젝트의 흐름을 명확하게 파악할 수 있었고, 아이디어를 함께 고민해 주신 덕분에 예상보다 훨씬 완성도 높은 게임이 탄생했다고 생각합니다.</p>
-          <div class="testimonial-author">
-            <div class="author-info">
-              <h4>해**** <span class="company-type">협력사</span></h4>
+      </div>
+
+      <!-- 클라이언트 프로필 섹션 -->
+      <div class="clients-profiles-wrapper">
+        <button class="review-arrow review-prev" aria-label="이전">‹</button>
+        <div class="clients-profiles">
+          <div class="clients-profiles-container">
+          <div class="client-profile" data-review="0">
+            <div class="profile-avatar">
+              <span class="avatar-letter">잼</span>
             </div>
+            <div class="profile-stars">★★★★★</div>
+            <div class="profile-name">잼***</div>
+          </div>
+          <div class="client-profile" data-review="1">
+            <div class="profile-avatar">
+              <span class="avatar-letter">해</span>
+            </div>
+            <div class="profile-stars">★★★★★</div>
+            <div class="profile-name">해****</div>
+          </div>
+          <div class="client-profile active" data-review="2">
+            <div class="profile-avatar">
+              <span class="avatar-letter">뭄</span>
+            </div>
+            <div class="profile-stars">★★★★★</div>
+            <div class="profile-name">뭄***</div>
+          </div>
+          <div class="client-profile" data-review="3">
+            <div class="profile-avatar">
+              <span class="avatar-letter">반</span>
+            </div>
+            <div class="profile-stars">★★★★★</div>
+            <div class="profile-name">반***</div>
+          </div>
+          <div class="client-profile" data-review="4">
+            <div class="profile-avatar">
+              <span class="avatar-letter">예</span>
+            </div>
+            <div class="profile-stars">★★★★★</div>
+            <div class="profile-name">예***</div>
+          </div>
+          <div class="client-profile" data-review="5">
+            <div class="profile-avatar">
+              <span class="avatar-letter">K</span>
+            </div>
+            <div class="profile-stars">★★★★★</div>
+            <div class="profile-name">K***</div>
+          </div>
+          <div class="client-profile" data-review="6">
+            <div class="profile-avatar">
+              <span class="avatar-letter">파</span>
+            </div>
+            <div class="profile-stars">★★★★★</div>
+            <div class="profile-name">파***</div>
+          </div>
+          <div class="client-profile" data-review="7">
+            <div class="profile-avatar">
+              <span class="avatar-letter">?</span>
+            </div>
+            <div class="profile-stars">★★★★★</div>
+            <div class="profile-name">***</div>
+          </div>
           </div>
         </div>
+        <button class="review-arrow review-next" aria-label="다음">›</button>
       </div>
     </div>
     
@@ -262,27 +320,6 @@
               <img src="Clients4.png" alt="고객사 로고 4">
             </div>
           </div>
-          <!-- <div class="carousel-item">
-            <div class="client-logo">
-              <img src="Clients5.png" alt="고객사 로고 5">
-            </div>
-          </div>
-          <div class="carousel-item">
-            <div class="client-logo">
-              <img src="Clients6.png" alt="고객사 로고 6">
-            </div>
-          </div>
-          <div class="carousel-item">
-            <div class="client-logo">
-              <img src="Clients7.png" alt="고객사 로고 7">
-            </div>
-          </div>
-          <div class="carousel-item">
-            <div class="client-logo">
-              <img src="Clients8.png" alt="고객사 로고 8">
-            </div>
-          </div>
-          -->
         </div>
         <button class="carousel-arrow carousel-next" aria-label="다음">›</button>
       </div>
@@ -776,6 +813,92 @@
       // 초기 설정
       updateWorksCarouselSize();
     })();
+
+    // 새로운 리뷰 캐러셀 기능
+    (function() {
+      var currentReview = 0;
+      var reviews = [
+        "정말 꼼꼼하시고 완성도 있는 결과물을 제작해주셔서 너무 감사드립니다.<br>앞으로도 게임은 개발자님과 함께 개발할거예요!<br>완벽한 작업 경험이었어요 너무 감사합니다.",
+        "진행하면서 정말 만족스러운 경험이었습니다. 진심으로 감사드립니다! 작업 내내 친절하고 사려 깊은 소통을 해 주신 덕분에, 개발 기간 동안 매일이 따뜻한 기분이었습니다. 특히, 매일 진행 상황을 구체적으로 공유해 주셔서 프로젝트의 흐름을 명확하게 파악할 수 있었고, 아이디어를 함께 고민해 주신 덕분에 예상보다 훨씬 완성도 높은 게임이 탄생했다고 생각합니다.",
+        "정말 좋은 분을 만난거 같아서 행복합니다! 작업 퀄리티부터 소통까지 너무 완벽했습니다. 저만 알고 싶지만 재능이 아까우셔서 많은 분들이 이용하셨으면 좋겠습니다! 앞으로 계속 이용 의사 100%입니다!! 감사해요~!",
+        "작업 시작하기 전, 상의를 자세하고 꼼꼼히 해주셔서 코딩에 약한 분들도 개발하기 편할것같습니다! 작업 후에도 하루에 한번씩 꾸준히 확인해주시고, 작업 내용을 전달받아서 작업을 맞추기 용이했습니다~ 전체적으로 너무 친절하셔서 다음에 또 부탁드리고 싶습니다! 너무 잘 만들었습니다:)!",
+        "이렇게 친절하신분이 있을수가있다니, 응대도 너무 완벽하시고 작업물도 너무 완벽하십니다. 이쪽 비슷한 문의하실분들 이쪽 문의하시면 진짜 편하게 상담받으실수있을거에요",
+        "매일 작업 현황을 보내주셔서 너무 좋았습니다! 양방향 소통하며 함께 디벨롭할 수 있어서 함께 하시기 너무 좋은 파트너로 강력 추천합니다!",
+        "작업물을 정말 제가 원했던 그대로, 아니 그 이상으로 완성해주셨어요! 처음 요청드릴 때부터 제가 원하는 방향과 세세한 디테일까지 꼼꼼히 들어주시고, 중간중간 매일 진행 상황을 공유해주셔서 안심하고 맡길 수 있었습니다. 특히 제가 미처 생각하지 못한 부분까지 섬세하게 챙겨주신 덕분에 결과물이 훨씬 더 완성도 있게 나왔어요.",
+        "원하는 방향을 명확하고 빠르게 이해해주시고 작업을 진행해주십니다. 이해되지 않는 부분에 대한 질문도 쉽고 친절하게 답변해주시는 전문가이십니다. 좋은 결과물을 내주셔서 정말 감사드립니다!:)"
+      ];
+      
+      var reviewText = document.getElementById('review-text');
+      var clientProfiles = document.querySelectorAll('.client-profile');
+      var prevBtn = document.querySelector('.review-prev');
+      var nextBtn = document.querySelector('.review-next');
+      
+      function updateReview(index) {
+        currentReview = index;
+        reviewText.innerHTML = reviews[index];
+        
+        // 모든 프로필에서 active 클래스 제거
+        clientProfiles.forEach(function(profile) {
+          profile.classList.remove('active');
+        });
+        
+        // 현재 선택된 프로필에 active 클래스 추가
+        if (clientProfiles[index]) {
+          clientProfiles[index].classList.add('active');
+        }
+        
+        // 선택된 프로필이 중앙에 오도록 캐러셀 이동
+        centerActiveProfile(index);
+      }
+      
+      function centerActiveProfile(activeIndex) {
+        var profilesContainer = document.querySelector('.clients-profiles-container');
+        var profiles = document.querySelectorAll('.client-profile');
+        var containerWidth = document.querySelector('.clients-profiles-wrapper').offsetWidth;
+        var profileWidth = 140 + 30; // 프로필 너비 + 간격
+        
+        // 컨테이너 중앙에 오도록 계산
+        var centerOffset = (containerWidth - profileWidth) / 2;
+        var targetPosition = centerOffset - (activeIndex * profileWidth);
+        
+        profilesContainer.style.transform = 'translateX(' + targetPosition + 'px)';
+      }
+      
+      function nextReview() {
+        var next = (currentReview + 1) % reviews.length;
+        updateReview(next);
+      }
+      
+      function prevReview() {
+        var prev = currentReview === 0 ? reviews.length - 1 : currentReview - 1;
+        updateReview(prev);
+      }
+      
+      // 화살표 버튼 이벤트
+      if (prevBtn) {
+        prevBtn.addEventListener('click', prevReview);
+      }
+      
+      if (nextBtn) {
+        nextBtn.addEventListener('click', nextReview);
+      }
+      
+      // 프로필 클릭 이벤트
+      clientProfiles.forEach(function(profile, index) {
+        profile.addEventListener('click', function() {
+          updateReview(index);
+        });
+      });
+      
+      // 화면 크기 변경 시 중앙 정렬 유지
+      window.addEventListener('resize', function() {
+        centerActiveProfile(currentReview);
+      });
+      
+      // 초기 설정 (첫 번째 후기 표시)
+      updateReview(0);
+    })();
+
   </script>
 </body>
 </html>
