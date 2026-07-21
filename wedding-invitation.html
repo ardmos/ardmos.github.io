@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>민준 ♥ 서연 결혼합니다</title>
+
+<!-- ============================================================
+     폰트: 국문 세리프(제목) + 국문 산세리프(본문) + 영문 악센트 세리프
+============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet" />
+
+<style>
+/* =====================================================================
+   0. 디자인 토큰 (Design Tokens)
+   ---------------------------------------------------------------------
+   Color   : ivory(바탕) / wine(포인트, 짙은 로즈우드) / gold(경계·장식)
+             blush(보조 배경) / ink(본문 텍스트)
+   Type    : display = Noto Serif KR (국문 제목)
+             accent  = Cormorant Garamond italic (영문/숫자 악센트)
+             body    = Noto Sans KR (본문)
+   Motif   : 아치(arch) — 히어로 프레임, 섹션 구분선, 게임 카드 상단에
+             반복 사용되는 이 청첩장의 시그니처 형태. 화살이 위로
+             솟아오르는 궤적과도 은유적으로 연결된다.
+===================================================================== */
+:root{
+  --ivory:#FBF6EE;
+  --ivory-deep:#F3ECE0;
+  --outer-bg:#E9E2D6;
+  --wine:#7A2E38;
+  --wine-dark:#5C232B;
+  --gold:#C6A15B;
+  --gold-soft:#E4D2A6;
+  --blush:#F0DDD6;
+  --ink:#332A22;
+  --ink-soft:#7A6F62;
+  --white:#FFFFFF;
+
+  --shadow-sm: 0 2px 10px rgba(51,42,34,0.08);
+  --shadow-md: 0 10px 28px rgba(51,42,34,0.14);
+  --shadow-lg: 0 18px 44px rgba(51,42,34,0.20);
+
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 10px;
+
+  --font-display: 'Noto Serif KR', serif;
+  --font-accent: 'Cormorant Garamond', serif;
+  --font-body: 'Noto Sans KR', sans-serif;
+
+  --page-max: 480px;
+}
+
+*{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html,body{
+  margin:0; padding:0;
+  background: var(--outer-bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: none;
+}
+img{ max-width:100%; display:block; }
+button{ font-family: inherit; border:none; background:none; cursor:pointer; }
+a{ color: inherit; text-decoration:none; }
+::selection{ background: var(--gold-soft); }
+
+/* 모든 화면이 부드럽게 스크롤되는 세로 전용 카드 레이아웃 */
+#page{
+  max-width: var(--page-max);
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--ivory);
+  overflow-x: hidden;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+/* =====================================================================
+   1. 공통 컴포넌트: 아치 디바이더 / 섹션 래퍼 / 이너 타이틀
+===================================================================== */
+.section{
+  padding: 64px 28px;
+  position: relative;
+}
+.section.tight{ padding-top: 40px; padding-bottom: 40px; }
+.section.on-blush{ background: var(--blush); }
+
+.eyebrow{
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: 15px;
+  letter-spacing: 0.28em;
+  color: var(--gold);
+  text-align:center;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+.section-title{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 24px;
+  text-align: center;
+  color: var(--wine-dark);
+  margin: 0 0 28px;
+  letter-spacing: 0.02em;
+}
+
+.arch-divider{ display:flex; justify-content:center; padding: 6px 0 2px; }
+.arch-divider svg{ width: 120px; height: 34px; }
+
+/* =====================================================================
+   2. 히어로 (메인 사진 + 신랑신부 이름 + 날짜)
+===================================================================== */
+.hero{
+  position: relative;
+  padding: 56px 32px 40px;
+  text-align:center;
+  background:
+    radial-gradient(120% 60% at 50% 0%, var(--blush) 0%, var(--ivory) 60%);
+}
+.hero-eyebrow{
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.hero-frame{
+  width: 78%;
+  max-width: 300px;
+  margin: 0 auto 26px;
+  aspect-ratio: 3 / 4;
+  border-radius: 160px 160px 14px 14px; /* 아치형 프레임 시그니처 */
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 6px solid var(--white);
+  outline: 1px solid var(--gold-soft);
+}
+.hero-frame img{ width:100%; height:100%; object-fit: cover; }
+
+.hero-names{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 30px;
+  color: var(--wine-dark);
+  line-height: 1.5;
+  margin: 4px 0 8px;
+}
+.hero-names .amp{
+  font-family: var(--font-accent);
+  font-style: italic;
+  color: var(--gold);
+  font-size: 24px;
+  margin: 0 10px;
+}
+.hero-date{
+  font-family: var(--font-accent);
+  font-size: 19px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+.hero-venue{
+  font-size: 14px;
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+}
+.scroll-cue{
+  margin-top: 30px;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  animation: bob 2.2s ease-in-out infinite;
+}
+@keyframes bob{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(6px);} }
+
+/* =====================================================================
+   3. 인사말
+===================================================================== */
+.greeting-text{
+  font-size: 15.5px;
+  line-height: 2;
+  text-align:center;
+  color: var(--ink);
+  white-space: pre-line;
+  margin: 0 0 30px;
+}
+.couple-block{
+  display:flex; justify-content:center; align-items:center; gap: 18px;
+  font-size: 14.5px;
+  color: var(--ink-soft);
+}
+.couple-block .side{ text-align:center; line-height:1.7; }
+.couple-block .side b{ display:block; color: var(--wine-dark); font-family: var(--font-display); font-size: 16.5px; margin-top: 2px; }
+.couple-block .divider-amp{ font-family: var(--font-accent); font-style:italic; color: var(--gold); font-size: 20px; }
+
+/* =====================================================================
+   4. 날짜 / 오시는 길
+===================================================================== */
+.countdown{
+  display:flex; justify-content:center; gap: 10px; margin: 22px 0 30px;
+}
+.countdown .unit{
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 12px 6px;
+  width: 68px;
+  text-align:center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gold-soft);
+}
+.countdown .unit .num{
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--wine);
+}
+.countdown .unit .lbl{
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  letter-spacing: 0.08em;
+  margin-top: 3px;
+}
+
+.info-card{
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gold-soft);
+  text-align:center;
+  margin-bottom: 16px;
+}
+.info-card .venue-name{ font-family: var(--font-display); font-size: 18px; color: var(--wine-dark); margin-bottom: 6px; }
+.info-card .venue-addr{ font-size: 13.5px; color: var(--ink-soft); margin-bottom: 14px; }
+
+.map-box{
+  height: 170px;
+  border-radius: var(--radius-sm);
+  background:
+    repeating-linear-gradient(45deg, var(--ivory-deep), var(--ivory-deep) 10px, var(--blush) 10px, var(--blush) 20px);
+  display:flex; align-items:center; justify-content:center;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.map-box::after{
+  content:"📍";
+  position:absolute; font-size: 26px; filter: drop-shadow(0 3px 3px rgba(0,0,0,.2));
+}
+.map-links{ display:flex; gap: 8px; }
+.pill-btn{
+  flex:1;
+  padding: 11px 8px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  background: var(--ivory-deep);
+  color: var(--wine-dark);
+  border: 1px solid var(--gold-soft);
+  transition: transform .15s ease, background .15s ease;
+}
+.pill-btn:active{ transform: scale(0.96); background: var(--gold-soft); }
+.pill-btn.solid{ background: var(--wine); color: var(--white); border-color: var(--wine); }
+
+/* =====================================================================
+   5. 갤러리
+===================================================================== */
+.gallery-scroll{
+  display:flex; gap: 10px; overflow-x:auto; padding: 4px 4px 14px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.gallery-scroll::-webkit-scrollbar{ display:none; }
+.gallery-item{
+  flex: 0 0 78%;
+  scroll-snap-align: center;
+  border-radius: var(--radius-md);
+  overflow:hidden;
+  box-shadow: var(--shadow-sm);
+  aspect-ratio: 4/5;
+}
+.gallery-item img{ width:100%; height:100%; object-fit:cover; }
+.gallery-dots{ display:flex; justify-content:center; gap:6px; }
+.gallery-dots span{ width:6px; height:6px; border-radius:50%; background: var(--gold-soft); transition: background .2s, transform .2s; }
+.gallery-dots span.active{ background: var(--wine); transform: scale(1.3); }
+
+.lightbox{
+  position: fixed; inset:0; background: rgba(20,14,10,0.92);
+  z-index: 300; display:none; align-items:center; justify-content:center;
+  touch-action: pan-y;
+}
+.lightbox.open{ display:flex; }
+.lightbox img{ max-width:92%; max-height:78%; border-radius: 10px; }
+.lightbox .lb-close{
+  position:absolute; top: 22px; right: 22px; color:#fff; font-size: 22px;
+  width: 40px; height:40px; border-radius:50%; background: rgba(255,255,255,0.12);
+  display:flex; align-items:center; justify-content:center;
+}
+.lightbox .lb-nav{
+  position:absolute; top:50%; transform: translateY(-50%);
+  color:#fff; font-size: 26px; width:44px; height:44px;
+  display:flex; align-items:center; justify-content:center;
+  background: rgba(255,255,255,0.1); border-radius:50%;
+}
+.lightbox .lb-prev{ left: 14px; } .lightbox .lb-next{ right:14px; }
+
+/* =====================================================================
+   6. 계좌번호
+===================================================================== */
+.accordion{ margin-bottom: 12px; border-radius: var(--radius-md); overflow:hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--gold-soft); }
+.acc-head{
+  width:100%; display:flex; align-items:center; justify-content:space-between;
+  padding: 16px 20px; background: var(--white); font-family: var(--font-display);
+  font-size: 15.5px; color: var(--wine-dark);
+}
+.acc-head .chev{ transition: transform .25s ease; color: var(--gold); font-size: 13px; }
+.acc-head[aria-expanded="true"] .chev{ transform: rotate(180deg); }
+.acc-body{ max-height:0; overflow:hidden; background: var(--ivory-deep); transition: max-height .3s ease; }
+.acc-row{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 20px; font-size: 13.5px; border-top: 1px dashed var(--gold-soft);
+}
+.acc-row .who{ color: var(--ink-soft); width: 46px; flex-shrink:0; }
+.acc-row .bank-info{ flex:1; }
+.acc-row .bank-info .bank{ color: var(--ink-soft); font-size: 12px; }
+.acc-row .bank-info .num{ font-weight:600; letter-spacing: 0.02em; }
+.copy-btn{
+  font-size: 11.5px; padding: 6px 10px; border-radius: 999px;
+  background: var(--white); border: 1px solid var(--gold-soft); color: var(--wine);
+  flex-shrink:0;
+}
+.copy-btn.copied{ background: var(--wine); color:#fff; border-color: var(--wine); }
+
+/* =====================================================================
+   7. 연락하기
+===================================================================== */
+.contact-grid{ display:flex; flex-direction:column; gap: 10px; }
+.contact-row{
+  display:flex; align-items:center; justify-content:space-between;
+  background: var(--white); border-radius: var(--radius-sm); padding: 14px 18px;
+  box-shadow: var(--shadow-sm); border: 1px solid var(--gold-soft);
+}
+.contact-row .who{ font-size: 14px; }
+.contact-row .who .role{ display:block; font-size: 11px; color: var(--ink-soft); }
+.contact-icons{ display:flex; gap:8px; }
+.icon-btn{
+  width: 36px; height:36px; border-radius:50%;
+  background: var(--ivory-deep); display:flex; align-items:center; justify-content:center;
+  font-size: 15px;
+}
+.icon-btn:active{ background: var(--gold-soft); }
+
+/* =====================================================================
+   8. 게임 섹션 — Cupid Arrow
+===================================================================== */
+.game-section{
+  background: linear-gradient(180deg, var(--wine-dark) 0%, var(--wine) 100%);
+  padding: 56px 22px 60px;
+  position: relative;
+}
+.game-section .eyebrow{ color: var(--gold-soft); }
+.game-section .section-title{ color: var(--ivory); }
+.game-section .section-sub{
+  text-align:center; color: rgba(255,255,255,0.72); font-size: 13px;
+  margin: -18px 0 26px; line-height:1.7;
+}
+.game-card{
+  background: var(--ivory);
+  border-radius: 30px 30px var(--radius-md) var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  position: relative;
+}
+.game-card::before{
+  /* 상단 아치 시그니처 — 히어로 프레임과 짝을 이루는 장식 */
+  content:"";
+  position:absolute; top:-1px; left:0; right:0; height: 26px;
+  background: radial-gradient(60% 200% at 50% -60%, var(--gold-soft) 0%, transparent 70%);
+  pointer-events:none;
+}
+#gameCanvas{ display:block; width:100%; touch-action:none; background: linear-gradient(180deg,#FDF9F2 0%, #F6ECDD 55%, #EFE1C9 100%); }
+
+.game-overlay{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding: 30px 26px;
+  background: rgba(251,246,238,0.96);
+  gap: 14px;
+}
+.game-overlay.hidden{ display:none; }
+.game-overlay h3{ font-family: var(--font-display); font-size: 21px; color: var(--wine-dark); margin: 0; }
+.game-overlay p{ font-size: 13px; color: var(--ink-soft); line-height:1.8; margin: 0; max-width: 280px; }
+.big-btn{
+  margin-top: 6px;
+  padding: 14px 34px;
+  border-radius: 999px;
+  background: var(--wine);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  box-shadow: 0 8px 18px rgba(122,46,56,0.35);
+  transition: transform .15s ease;
+}
+.big-btn:active{ transform: scale(0.95); }
+.ghost-btn{
+  padding: 10px 22px; border-radius: 999px; font-size: 13px; color: var(--wine);
+  border: 1px solid var(--gold); background: transparent;
+}
+
+.rules-list{ text-align:left; font-size: 12.5px; color: var(--ink-soft); line-height: 2; margin: 0; padding: 0; list-style:none; }
+.rules-list li{ display:flex; gap: 8px; }
+.rules-list li::before{ content:"·"; color: var(--gold); font-weight:700; }
+
+.hud{
+  position:absolute; top:0; left:0; right:0;
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 14px 16px; font-family: var(--font-display); color: var(--wine-dark);
+  pointer-events:none; z-index: 5;
+}
+.hud .chip{
+  background: rgba(255,255,255,0.85);
+  border-radius: 999px; padding: 5px 13px; font-size: 12.5px; box-shadow: var(--shadow-sm);
+}
+.hud .chip b{ font-size: 14px; }
+
+.charge-gauge-wrap{
+  position:absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+  width: 64%; height: 8px; background: rgba(122,46,56,0.15); border-radius: 999px;
+  overflow:hidden; z-index:5; pointer-events:none;
+}
+.charge-gauge{
+  height:100%; width:0%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold), var(--wine));
+  transition: width .04s linear;
+}
+
+.nickname-form{ display:flex; gap: 8px; width:100%; max-width: 280px; }
+.nickname-form input{
+  flex:1; padding: 12px 14px; border-radius: 999px; border: 1px solid var(--gold-soft);
+  background: #fff; font-size: 14px; color: var(--ink); outline:none;
+}
+.nickname-form input:focus{ border-color: var(--wine); }
+
+.rank-toggle{ margin-top: 2px; }
+
+.rank-panel{
+  width:100%; max-width: 320px; max-height: 220px; overflow-y:auto;
+  background: #fff; border-radius: var(--radius-sm); border: 1px solid var(--gold-soft);
+  box-shadow: var(--shadow-sm);
+}
+.rank-row{
+  display:flex; align-items:center; gap: 10px; padding: 9px 14px;
+  font-size: 13px; border-bottom: 1px solid var(--ivory-deep);
+}
+.rank-row:last-child{ border-bottom:none; }
+.rank-row .rk{ width: 22px; font-family: var(--font-display); color: var(--gold); font-weight:700; text-align:center; }
+.rank-row .nm{ flex:1; text-align:left; color: var(--ink); }
+.rank-row .sc{ font-weight:700; color: var(--wine); }
+.rank-row.me{ background: var(--blush); }
+.rank-row.top1 .rk{ color:#C9A227; }
+.rank-row.top2 .rk{ color:#9BA3AD; }
+.rank-row.top3 .rk{ color:#B0793F; }
+
+/* =====================================================================
+   9. 푸터
+===================================================================== */
+.footer{
+  text-align:center; padding: 40px 24px 56px; color: var(--ink-soft); font-size: 12px;
+}
+.footer .heart{ color: var(--wine); font-size: 15px; margin-bottom: 8px; }
+
+/* 토스트 */
+#toast{
+  position: fixed; left:50%; bottom: 28px; transform: translateX(-50%) translateY(20px);
+  background: rgba(46,38,32,0.92); color:#fff; padding: 10px 18px; border-radius: 999px;
+  font-size: 12.5px; opacity:0; pointer-events:none; transition: all .25s ease; z-index: 999;
+  max-width: 82%; text-align:center;
+}
+#toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="page">
+
+  <!-- ================= 1. 히어로 ================= -->
+  <section class="hero">
+    <div class="hero-eyebrow">The Wedding Of</div>
+    <div class="hero-frame">
+      <img src="https://picsum.photos/seed/wedding-main/480/640" alt="신랑 신부 메인 사진" />
+    </div>
+    <h1 class="hero-names">민준<span class="amp">&amp;</span>서연</h1>
+    <div class="hero-date">2026. 11. 07 SAT · 12:30 PM</div>
+    <div class="hero-venue">라움 컨벤션 · 3층 그랜드홀</div>
+    <div class="scroll-cue">SCROLL<br/>▾</div>
+  </section>
+
+  <!-- ================= 2. 인사말 ================= -->
+  <section class="section">
+    <div class="eyebrow">Invitation</div>
+    <h2 class="section-title">소중한 분들을 초대합니다</h2>
+    <p class="greeting-text">서로 다른 길을 걷던 두 사람이
+한 방향을 바라보며 걷기로 했습니다.
+
+오랜 시간 지켜봐 주시고 아껴주신 만큼
+저희 두 사람이 시작하는 새로운 하루를
+따뜻한 마음으로 축복해 주시면 감사하겠습니다.</p>
+    <div class="couple-block">
+      <div class="side">이경호 · 박정애의 장남<b>민준</b></div>
+      <div class="divider-amp">&amp;</div>
+      <div class="side">최태호 · 한서희의 차녀<b>서연</b></div>
+    </div>
+  </section>
+
+  <div class="arch-divider" aria-hidden="true">
+    <svg viewBox="0 0 120 34"><path d="M2 30 C 2 8, 118 8, 118 30" fill="none" stroke="var(--gold)" stroke-width="1.4"/><circle cx="60" cy="12" r="2.6" fill="var(--gold)"/></svg>
+  </div>
+
+  <!-- ================= 3. 날짜 / 오시는 길 ================= -->
+  <section class="section on-blush">
+    <div class="eyebrow">Save The Date</div>
+    <h2 class="section-title">예식 안내</h2>
+
+    <div class="countdown" id="countdown">
+      <div class="unit"><div class="num" id="cd-days">00</div><div class="lbl">DAYS</div></div>
+      <div class="unit"><div class="num" id="cd-hours">00</div><div class="lbl">HOUR</div></div>
+      <div class="unit"><div class="num" id="cd-mins">00</div><div class="lbl">MIN</div></div>
+      <div class="unit"><div class="num" id="cd-secs">00</div><div class="lbl">SEC</div></div>
+    </div>
+
+    <div class="info-card">
+      <div class="venue-name">라움 컨벤션 그랜드홀</div>
+      <div class="venue-addr">서울특별시 강남구 언주로 723 라움빌딩 3F</div>
+      <div class="map-box">지도가 이 영역에 표시됩니다</div>
+      <div class="map-links">
+        <a class="pill-btn" target="_blank" rel="noopener" href="https://map.naver.com/p/search/라움%20컨벤션">네이버지도</a>
+        <a class="pill-btn" target="_blank" rel="noopener" href="https://map.kakao.com/link/search/라움%20컨벤션">카카오맵</a>
+        <a class="pill-btn solid" target="_blank" rel="noopener" href="https://tmap.life/f0d2f01c">티맵</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="arch-divider" aria-hidden="true">
+    <svg viewBox="0 0 120 34"><path d="M2 30 C 2 8, 118 8, 118 30" fill="none" stroke="var(--gold)" stroke-width="1.4"/><circle cx="60" cy="12" r="2.6" fill="var(--gold)"/></svg>
+  </div>
+
+  <!-- ================= 4. 갤러리 ================= -->
+  <section class="section">
+    <div class="eyebrow">Gallery</div>
+    <h2 class="section-title">우리의 순간들</h2>
+    <div class="gallery-scroll" id="gallery">
+      <!-- JS로 이미지 채움 -->
+    </div>
+    <div class="gallery-dots" id="galleryDots"></div>
+  </section>
+
+  <!-- ================= 5. 계좌번호 ================= -->
+  <section class="section on-blush">
+    <div class="eyebrow">Gift</div>
+    <h2 class="section-title">마음 전하실 곳</h2>
+
+    <div class="accordion">
+      <button class="acc-head" aria-expanded="false" data-target="acc-groom">신랑측 계좌번호 <span class="chev">▾</span></button>
+      <div class="acc-body" id="acc-groom">
+        <div class="acc-row"><span class="who">신랑</span><span class="bank-info"><span class="bank">신한은행</span><span class="num">110-482-773910</span></span><button class="copy-btn" data-copy="110-482-773910">복사</button></div>
+        <div class="acc-row"><span class="who">부</span><span class="bank-info"><span class="bank">국민은행</span><span class="num">552-21-0442-119</span></span><button class="copy-btn" data-copy="552-21-0442-119">복사</button></div>
+        <div class="acc-row"><span class="who">모</span><span class="bank-info"><span class="bank">우리은행</span><span class="num">1002-663-981231</span></span><button class="copy-btn" data-copy="1002-663-981231">복사</button></div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="acc-head" aria-expanded="false" data-target="acc-bride">신부측 계좌번호 <span class="chev">▾</span></button>
+      <div class="acc-body" id="acc-bride">
+        <div class="acc-row"><span class="who">신부</span><span class="bank-info"><span class="bank">카카오뱅크</span><span class="num">3333-12-9048231</span></span><button class="copy-btn" data-copy="3333-12-9048231">복사</button></div>
+        <div class="acc-row"><span class="who">부</span><span class="bank-info"><span class="bank">하나은행</span><span class="num">237-910022-33105</span></span><button class="copy-btn" data-copy="237-910022-33105">복사</button></div>
+        <div class="acc-row"><span class="who">모</span><span class="bank-info"><span class="bank">농협은행</span><span class="num">352-1163-2210-63</span></span><button class="copy-btn" data-copy="352-1163-2210-63">복사</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 6. 연락하기 ================= -->
+  <section class="section">
+    <div class="eyebrow">Contact</div>
+    <h2 class="section-title">연락하기</h2>
+    <div class="contact-grid">
+      <div class="contact-row"><span class="who">이민준<span class="role">신랑</span></span>
+        <span class="contact-icons"><a class="icon-btn" href="tel:01012345678">📞</a><a class="icon-btn" href="sms:01012345678">💬</a></span></div>
+      <div class="contact-row"><span class="who">최서연<span class="role">신부</span></span>
+        <span class="contact-icons"><a class="icon-btn" href="tel:01098765432">📞</a><a class="icon-btn" href="sms:01098765432">💬</a></span></div>
+      <div class="contact-row"><span class="who">이경호<span class="role">신랑 아버지</span></span>
+        <span class="contact-icons"><a class="icon-btn" href="tel:01011112222">📞</a><a class="icon-btn" href="sms:01011112222">💬</a></span></div>
+      <div class="contact-row"><span class="who">최태호<span class="role">신부 아버지</span></span>
+        <span class="contact-icons"><a class="icon-btn" href="tel:01033334444">📞</a><a class="icon-btn" href="sms:01033334444">💬</a></span></div>
+    </div>
+  </section>
+
+  <!-- ================= 7. Wedding Mini Game ================= -->
+  <section class="section game-section">
+    <div class="eyebrow">Wedding Mini Game</div>
+    <h2 class="section-title">Cupid Arrow</h2>
+    <p class="section-sub">화면을 길게 눌러 활시위를 당기고,<br/>과녁이 가운데 올 때 손을 떼어 화살을 명중시켜 보세요.</p>
+
+    <div class="game-card">
+      <div class="hud">
+        <div class="chip">ROUND <b id="hudRound">1</b></div>
+        <div class="chip">BEST <b id="hudBest">0</b></div>
+      </div>
+
+      <canvas id="gameCanvas"></canvas>
+
+      <div class="charge-gauge-wrap" id="chargeWrap" style="display:none;">
+        <div class="charge-gauge" id="chargeGauge"></div>
+      </div>
+
+      <!-- 시작 화면 -->
+      <div class="game-overlay" id="overlayStart">
+        <h3>사랑의 화살, Cupid Arrow</h3>
+        <ul class="rules-list">
+          <li>화면 하단을 길게 누르면 활시위가 당겨집니다.</li>
+          <li>손을 떼는 순간 화살이 곧장 위로 발사됩니다.</li>
+          <li>당기는 시간이 길수록 화살은 더 빠르게 날아갑니다.</li>
+          <li>좌우로 움직이는 과녁 중앙에 맞히면 다음 라운드!</li>
+          <li>빗맞히는 순간 게임이 종료됩니다.</li>
+        </ul>
+        <button class="big-btn" id="btnStart">게임 시작</button>
+      </div>
+
+      <!-- 게임오버 화면 -->
+      <div class="game-overlay hidden" id="overlayGameOver">
+        <h3>Score : <span id="finalScore">0</span></h3>
+        <p>최고 기록 <b id="bestScoreText">0</b>라운드<br/>닉네임을 남기고 랭킹에 도전해 보세요.</p>
+        <form class="nickname-form" id="nicknameForm">
+          <input type="text" id="nicknameInput" placeholder="닉네임 (최대 10자)" maxlength="10" autocomplete="off" />
+          <button type="submit" class="big-btn" style="padding:12px 20px; font-size:13px;">등록</button>
+        </form>
+        <button class="ghost-btn" id="btnRetry">다시하기</button>
+        <button class="ghost-btn rank-toggle" id="btnShowRank">🏆 랭킹 보기</button>
+        <div class="rank-panel" id="rankPanelInline" style="display:none;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 8. 푸터 ================= -->
+  <section class="footer">
+    <div class="heart">♥</div>
+    저희의 새로운 시작을 함께해 주셔서 감사합니다.<br/>
+    민준 · 서연 올림
+  </section>
+
+</div>
+
+<!-- 갤러리 라이트박스 -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-close" id="lbClose">✕</div>
+  <div class="lb-nav lb-prev" id="lbPrev">‹</div>
+  <img id="lbImg" src="" alt="" />
+  <div class="lb-nav lb-next" id="lbNext">›</div>
+</div>
+
+<div id="toast"></div>
+
+<!-- =====================================================================
+     Firebase Firestore (선택 사항)
+     ---------------------------------------------------------------------
+     아래 firebaseConfig 값을 실제 프로젝트 설정으로 채워 넣으면
+     랭킹 데이터가 Firestore(rankings 컬렉션)에 실시간으로 저장됩니다.
+     값을 채우지 않으면 자동으로 이 브라우저의 localStorage를 사용하는
+     오프라인 랭킹 모드로 동작하므로, 별도 설정 없이도 정상적으로
+     테스트할 수 있습니다.
+===================================================================== */-->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+(function(){
+"use strict";
+
+/* =====================================================================
+   0. 공통 유틸리티
+===================================================================== */
+function $(sel, ctx){ return (ctx||document).querySelector(sel); }
+function $all(sel, ctx){ return Array.prototype.slice.call((ctx||document).querySelectorAll(sel)); }
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+function lerp(a,b,t){ return a + (b-a)*t; }
+function rand(min,max){ return Math.random()*(max-min)+min; }
+function pad2(n){ return String(n).padStart(2,'0'); }
+
+var toastEl = $('#toast');
+var toastTimer = null;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 1800);
+}
+
+/* =====================================================================
+   1. 카운트다운 (D-day)
+===================================================================== */
+(function initCountdown(){
+  var target = new Date('2026-11-07T12:30:00+09:00').getTime();
+  var elD = $('#cd-days'), elH = $('#cd-hours'), elM = $('#cd-mins'), elS = $('#cd-secs');
+  function tick(){
+    var diff = target - Date.now();
+    if(diff < 0) diff = 0;
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    elD.textContent = pad2(d); elH.textContent = pad2(h);
+    elM.textContent = pad2(m); elS.textContent = pad2(s);
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+
+/* =====================================================================
+   2. 갤러리 (가로 스크롤 + 도트 인디케이터 + 라이트박스)
+===================================================================== */
+(function initGallery(){
+  var seeds = ['gal-1','gal-2','gal-3','gal-4','gal-5','gal-6'];
+  var urls = seeds.map(function(s){ return 'https://picsum.photos/seed/' + s + '/500/620'; });
+
+  var track = $('#gallery');
+  var dotsWrap = $('#galleryDots');
+  track.innerHTML = urls.map(function(u, i){
+    return '<div class="gallery-item" data-index="'+i+'"><img src="'+u+'" alt="갤러리 사진 '+(i+1)+'" loading="lazy"/></div>';
+  }).join('');
+  dotsWrap.innerHTML = urls.map(function(_, i){
+    return '<span data-index="'+i+'" class="'+(i===0?'active':'')+'"></span>';
+  }).join('');
+
+  var dots = $all('span', dotsWrap);
+  track.addEventListener('scroll', function(){
+    var idx = Math.round(track.scrollLeft / (track.firstChild.getBoundingClientRect().width + 10));
+    dots.forEach(function(d,i){ d.classList.toggle('active', i===idx); });
+  });
+
+  // 라이트박스
+  var lightbox = $('#lightbox'), lbImg = $('#lbImg');
+  var currentIndex = 0;
+  function openLightbox(i){
+    currentIndex = i;
+    lbImg.src = urls[i];
+    lightbox.classList.add('open');
+  }
+  function closeLightbox(){ lightbox.classList.remove('open'); }
+  function navLightbox(dir){
+    currentIndex = (currentIndex + dir + urls.length) % urls.length;
+    lbImg.src = urls[currentIndex];
+  }
+  $all('.gallery-item', track).forEach(function(item){
+    item.addEventListener('click', function(){ openLightbox(Number(item.dataset.index)); });
+  });
+  $('#lbClose').addEventListener('click', closeLightbox);
+  $('#lbPrev').addEventListener('click', function(){ navLightbox(-1); });
+  $('#lbNext').addEventListener('click', function(){ navLightbox(1); });
+  lightbox.addEventListener('click', function(e){ if(e.target === lightbox) closeLightbox(); });
+
+  // 스와이프로 라이트박스 이미지 넘기기
+  var touchStartX = 0;
+  lightbox.addEventListener('touchstart', function(e){ touchStartX = e.touches[0].clientX; }, {passive:true});
+  lightbox.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    if(Math.abs(dx) > 40) navLightbox(dx < 0 ? 1 : -1);
+  }, {passive:true});
+})();
+
+/* =====================================================================
+   3. 계좌번호 아코디언 + 복사
+===================================================================== */
+(function initAccordion(){
+  $all('.acc-head').forEach(function(head){
+    head.addEventListener('click', function(){
+      var body = $('#' + head.dataset.target);
+      var expanded = head.getAttribute('aria-expanded') === 'true';
+      head.setAttribute('aria-expanded', String(!expanded));
+      body.style.maxHeight = expanded ? '0px' : (body.scrollHeight + 'px');
+    });
+  });
+
+  $all('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var text = btn.dataset.copy;
+      copyToClipboard(text).then(function(){
+        btn.textContent = '완료';
+        btn.classList.add('copied');
+        showToast('계좌번호가 복사되었습니다');
+        setTimeout(function(){ btn.textContent = '복사'; btn.classList.remove('copied'); }, 1400);
+      });
+    });
+  });
+
+  function copyToClipboard(text){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(text);
+    }
+    // 구형 브라우저 대응
+    return new Promise(function(resolve){
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); }catch(e){}
+      document.body.removeChild(ta);
+      resolve();
+    });
+  }
+})();
+
+/* =====================================================================
+   4. Cupid Arrow — Wedding Mini Game
+   ---------------------------------------------------------------------
+   구조:
+     GameConfig   : 밸런스 수치 (쉽게 튜닝 가능)
+     TargetTypes  : 과녁 종류를 배열로 관리 (추후 아이템/과녁 추가 지점)
+     GameState    : 라운드/점수/오브젝트 상태
+     RankingStore : Firestore 또는 localStorage 로 랭킹 저장/조회
+     Renderer     : Canvas 드로잉
+     Loop         : requestAnimationFrame 루프 + 입력 처리
+===================================================================== */
+(function initGame(){
+
+  /* ---------- 4-1. 설정값 ---------- */
+  var GameConfig = {
+    canvasLogicalWidth: 380,     // 기준 논리 좌표계 너비 (실제는 비율로 리사이즈)
+    canvasLogicalHeight: 480,
+    bowMarginBottom: 46,         // 하단에서 활 위치까지 거리
+    targetMarginTop: 78,         // 상단에서 과녁 라인까지 거리
+    targetRadius: 24,
+    arrowLength: 30,
+    minChargeMs: 0,              // 차징 시작
+    maxChargeMs: 1000,           // 이 이상은 더 늘어나지 않음
+    minArrowSpeed: 260,          // px/sec (약하게)
+    maxArrowSpeed: 1500,         // px/sec (최대 장력)
+    baseTargetSpeed: 78,         // px/sec, Round 1 기준 과녁 이동속도
+    roundAnchors: [ [1,1], [5,1.5], [10,2], [20,3] ], // 라운드별 배속 보간 기준점
+    speedCap: 6                  // 배속 상한 (과도한 난이도 방지)
+  };
+
+  /* 추후 과녁 종류를 쉽게 추가할 수 있도록 구조화한 테이블.
+     type을 늘리고 pickTargetType()의 가중치만 조정하면 확장 가능. */
+  var TargetTypes = [
+    { id: 'classic', color: '#7A2E38', ringColor:'#C6A15B', label:'과녁', weight: 1 }
+  ];
+  function pickTargetType(){
+    return TargetTypes[0]; // 현재는 단일 과녁, 확장 지점
+  }
+
+  /* ---------- 4-2. 라운드 배속 계산 (구간 선형보간) ---------- */
+  function getRoundMultiplier(round){
+    var pts = GameConfig.roundAnchors;
+    if(round <= pts[0][0]) return pts[0][1];
+    for(var i=0;i<pts.length-1;i++){
+      var a = pts[i], b = pts[i+1];
+      if(round >= a[0] && round <= b[0]){
+        var t = (round - a[0]) / (b[0] - a[0]);
+        return lerp(a[1], b[1], t);
+      }
+    }
+    var last = pts[pts.length-1], prev = pts[pts.length-2];
+    var slope = (last[1]-prev[1]) / (last[0]-prev[0]);
+    var m = last[1] + slope * (round - last[0]);
+    return Math.min(m, GameConfig.speedCap);
+  }
+
+  /* ---------- 4-3. 사운드 (Web Audio 합성 — 외부 파일 불필요) ---------- */
+  var AudioCtx = window.AudioContext || window.webkitAudioContext;
+  var actx = null;
+  function ensureAudio(){ if(!actx && AudioCtx) actx = new AudioCtx(); }
+  function beep(freq, duration, type, gainStart){
+    if(!actx) return;
+    var osc = actx.createOscillator();
+    var gain = actx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    gain.gain.value = gainStart || 0.08;
+    gain.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + duration);
+    osc.connect(gain); gain.connect(actx.destination);
+    osc.start();
+    osc.stop(actx.currentTime + duration);
+  }
+  function sfxRelease(){ beep(320, 0.12, 'triangle', 0.07); }
+  function sfxHit(){ beep(880, 0.09, 'sine', 0.09); setTimeout(function(){ beep(1320,0.14,'sine',0.07); }, 60); }
+  function sfxMiss(){ beep(160, 0.35, 'sawtooth', 0.08); }
+
+  /* ---------- 4-4. Canvas 세팅 & 반응형 리사이즈 ---------- */
+  var canvas = $('#gameCanvas');
+  var ctx = canvas.getContext('2d');
+  var cssWidth = 0, cssHeight = 0, dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+
+  function resizeCanvas(){
+    var wrapWidth = canvas.parentElement.clientWidth;
+    cssWidth = wrapWidth;
+    cssHeight = Math.round(wrapWidth * (GameConfig.canvasLogicalHeight / GameConfig.canvasLogicalWidth));
+    canvas.style.width = cssWidth + 'px';
+    canvas.style.height = cssHeight + 'px';
+    canvas.width = Math.round(cssWidth * dpr);
+    canvas.height = Math.round(cssHeight * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    scale = cssWidth / GameConfig.canvasLogicalWidth; // 논리좌표 -> 실제좌표 배율
+  }
+  var scale = 1;
+  window.addEventListener('resize', resizeCanvas);
+
+  /* ---------- 4-5. 게임 상태 ---------- */
+  var LW = GameConfig.canvasLogicalWidth, LH = GameConfig.canvasLogicalHeight;
+  var bowX = LW/2, bowY = LH - GameConfig.bowMarginBottom;
+  var targetY = GameConfig.targetMarginTop;
+
+  var state = {
+    phase: 'idle',         // idle | charging | flying | roundTransition | gameover
+    round: 1,
+    best: Number(localStorage.getItem('cupidArrow_best') || 0),
+    target: null,
+    arrow: null,
+    particles: [],
+    chargeStart: 0,
+    lastTs: 0
+  };
+
+  function spawnTarget(round){
+    var mult = getRoundMultiplier(round);
+    var type = pickTargetType();
+    var dir = Math.random() < 0.5 ? -1 : 1;
+    return {
+      x: rand(GameConfig.targetRadius + 20, LW - GameConfig.targetRadius - 20),
+      y: targetY,
+      vx: GameConfig.baseTargetSpeed * mult * dir,
+      radius: GameConfig.targetRadius,
+      color: type.color,
+      ringColor: type.ringColor
+    };
+  }
+
+  function spawnParticles(x, y, kind){
+    var count = kind === 'hit' ? 18 : 10;
+    for(var i=0;i<count;i++){
+      var angle = rand(0, Math.PI*2);
+      var speed = rand(60, 220);
+      state.particles.push({
+        x:x, y:y,
+        vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed,
+        life: rand(0.5, 0.9), age:0,
+        kind: kind,
+        size: rand(3,7)
+      });
+    }
+  }
+
+  /* ---------- 4-6. HUD / 오버레이 DOM ---------- */
+  var hudRound = $('#hudRound'), hudBest = $('#hudBest');
+  var overlayStart = $('#overlayStart');
+  var overlayGameOver = $('#overlayGameOver');
+  var chargeWrap = $('#chargeWrap'), chargeGauge = $('#chargeGauge');
+  var finalScoreEl = $('#finalScore'), bestScoreText = $('#bestScoreText');
+
+  function updateHud(){
+    hudRound.textContent = state.round;
+    hudBest.textContent = state.best;
+  }
+
+  /* ---------- 4-7. 입력 처리 (터치/마우스 겸용) ---------- */
+  var pointerActive = false;
+
+  function pointerDown(e){
+    if(state.phase !== 'idle') return;
+    ensureAudio();
+    pointerActive = true;
+    state.phase = 'charging';
+    state.chargeStart = performance.now();
+    chargeWrap.style.display = 'block';
+    e.preventDefault && e.preventDefault();
+  }
+  function pointerUp(e){
+    if(state.phase !== 'charging') return;
+    pointerActive = false;
+    var held = clamp(performance.now() - state.chargeStart, GameConfig.minChargeMs, GameConfig.maxChargeMs);
+    var t = held / GameConfig.maxChargeMs;
+    var speed = lerp(GameConfig.minArrowSpeed, GameConfig.maxArrowSpeed, t);
+    fireArrow(speed);
+    chargeWrap.style.display = 'none';
+    e.preventDefault && e.preventDefault();
+  }
+
+  function fireArrow(speed){
+    state.phase = 'flying';
+    state.arrow = { x: bowX, y: bowY, speed: speed, active: true };
+    sfxRelease();
+  }
+
+  canvas.addEventListener('touchstart', pointerDown, {passive:false});
+  canvas.addEventListener('touchend', pointerUp, {passive:false});
+  canvas.addEventListener('touchcancel', pointerUp, {passive:false});
+  canvas.addEventListener('mousedown', pointerDown);
+  window.addEventListener('mouseup', pointerUp);
+
+  /* ---------- 4-8. 라운드 진행 ---------- */
+  function startGame(){
+    state.round = 1;
+    state.particles = [];
+    state.arrow = null;
+    state.target = spawnTarget(1);
+    state.phase = 'idle';
+    overlayStart.classList.add('hidden');
+    overlayGameOver.classList.add('hidden');
+    updateHud();
+  }
+
+  function onHit(hitX, hitY){
+    sfxHit();
+    spawnParticles(hitX, hitY, 'hit');
+    state.round += 1;
+    if(navigator.vibrate) navigator.vibrate(20);
+    state.phase = 'roundTransition';
+    setTimeout(function(){
+      state.target = spawnTarget(state.round);
+      state.arrow = null;
+      state.phase = 'idle';
+      updateHud();
+    }, 260);
+    updateHud();
+  }
+
+  function onMiss(missX, missY){
+    sfxMiss();
+    spawnParticles(missX, missY, 'miss');
+    state.phase = 'gameover';
+    var score = state.round - 1;
+    if(score > state.best){
+      state.best = score;
+      localStorage.setItem('cupidArrow_best', String(score));
+    }
+    updateHud();
+    setTimeout(showGameOver.bind(null, score), 500);
+  }
+
+  function showGameOver(score){
+    finalScoreEl.textContent = score;
+    bestScoreText.textContent = state.best;
+    overlayGameOver.classList.remove('hidden');
+    $('#nicknameInput').value = '';
+    $('#rankPanelInline').style.display = 'none';
+    $('#rankPanelInline').innerHTML = '';
+  }
+
+  $('#btnStart').addEventListener('click', function(){ startGame(); });
+  $('#btnRetry').addEventListener('click', function(){
+    overlayGameOver.classList.add('hidden');
+    startGame();
+  });
+
+  /* ---------- 4-9. 업데이트 & 렌더 루프 ---------- */
+  function update(dt){
+    // 차징 게이지
+    if(state.phase === 'charging'){
+      var held = clamp(performance.now() - state.chargeStart, 0, GameConfig.maxChargeMs);
+      chargeGauge.style.width = (held / GameConfig.maxChargeMs * 100) + '%';
+    }
+
+    // 과녁 이동 (좌우 바운스)
+    if(state.target){
+      var tgt = state.target;
+      tgt.x += tgt.vx * dt;
+      var minX = tgt.radius + 10, maxX = LW - tgt.radius - 10;
+      if(tgt.x <= minX){ tgt.x = minX; tgt.vx = Math.abs(tgt.vx); }
+      if(tgt.x >= maxX){ tgt.x = maxX; tgt.vx = -Math.abs(tgt.vx); }
+    }
+
+    // 화살 이동
+    if(state.arrow && state.arrow.active){
+      var ar = state.arrow;
+      ar.y -= ar.speed * dt;
+      if(ar.y <= state.target.y){
+        ar.active = false;
+        var dx = Math.abs(bowX - state.target.x);
+        var tolerance = state.target.radius + 6; // 화살촉 폭 여유
+        if(dx <= tolerance){
+          onHit(state.target.x, state.target.y);
+        } else {
+          onMiss(bowX, state.target.y);
+        }
+      }
+    }
+
+    // 파티클
+    state.particles.forEach(function(p){
+      p.age += dt;
+      p.x += p.vx * dt; p.y += p.vy * dt;
+      p.vy += 240 * dt; // 중력
+    });
+    state.particles = state.particles.filter(function(p){ return p.age < p.life; });
+  }
+
+  function toPx(v){ return v * scale; }
+
+  function draw(){
+    ctx.clearRect(0,0,cssWidth,cssHeight);
+
+    // 배경 은은한 아치 라인 장식
+    ctx.save();
+    ctx.strokeStyle = 'rgba(198,161,91,0.25)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(toPx(0), toPx(targetY + 30));
+    ctx.quadraticCurveTo(toPx(LW/2), toPx(targetY - 30), toPx(LW), toPx(targetY + 30));
+    ctx.stroke();
+    ctx.restore();
+
+    // 과녁
+    if(state.target){
+      drawTarget(state.target);
+    }
+
+    // 화살 궤적 가이드 라인 (희미하게)
+    ctx.save();
+    ctx.strokeStyle = 'rgba(122,46,56,0.12)';
+    ctx.lineWidth = toPx(2);
+    ctx.setLineDash([toPx(4), toPx(6)]);
+    ctx.beginPath();
+    ctx.moveTo(toPx(bowX), toPx(bowY));
+    ctx.lineTo(toPx(bowX), toPx(targetY));
+    ctx.stroke();
+    ctx.restore();
+
+    // 활 + 화살
+    drawBow();
+    if(state.arrow && state.arrow.active){
+      drawArrow(state.arrow);
+    }
+
+    // 파티클
+    state.particles.forEach(drawParticle);
+  }
+
+  function drawTarget(t){
+    var x = toPx(t.x), y = toPx(t.y), r = toPx(t.radius);
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle = '#FBF6EE'; ctx.fill();
+    ctx.lineWidth = toPx(3); ctx.strokeStyle = t.ringColor; ctx.stroke();
+
+    ctx.beginPath(); ctx.arc(x,y,r*0.62,0,Math.PI*2);
+    ctx.fillStyle = t.ringColor; ctx.globalAlpha = 0.35; ctx.fill(); ctx.globalAlpha = 1;
+
+    ctx.beginPath(); ctx.arc(x,y,r*0.3,0,Math.PI*2);
+    ctx.fillStyle = t.color; ctx.fill();
+    ctx.restore();
+  }
+
+  function drawBow(){
+    var x = toPx(bowX), y = toPx(bowY);
+    var charging = state.phase === 'charging';
+    var held = charging ? clamp(performance.now() - state.chargeStart, 0, GameConfig.maxChargeMs) : 0;
+    var pull = toPx(lerp(0, 22, held / GameConfig.maxChargeMs));
+
+    ctx.save();
+    // 활 몸체 (곡선)
+    ctx.strokeStyle = '#7A2E38';
+    ctx.lineWidth = toPx(4);
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(x - toPx(4), y - toPx(34));
+    ctx.quadraticCurveTo(x - toPx(26), y, x - toPx(4), y + toPx(34));
+    ctx.stroke();
+
+    // 시위
+    ctx.strokeStyle = 'rgba(51,42,34,0.55)';
+    ctx.lineWidth = toPx(1.6);
+    ctx.beginPath();
+    ctx.moveTo(x - toPx(4), y - toPx(34));
+    ctx.lineTo(x - toPx(4) + pull, y);
+    ctx.lineTo(x - toPx(4), y + toPx(34));
+    ctx.stroke();
+
+    // 시위에 걸린 화살(발사 전)
+    if(state.phase === 'idle' || state.phase === 'charging'){
+      ctx.strokeStyle = '#332A22';
+      ctx.lineWidth = toPx(3);
+      ctx.beginPath();
+      ctx.moveTo(x - toPx(4) + pull, y);
+      ctx.lineTo(x + toPx(28), y);
+      ctx.stroke();
+      // 화살촉
+      ctx.fillStyle = '#C6A15B';
+      ctx.beginPath();
+      ctx.moveTo(x + toPx(28), y);
+      ctx.lineTo(x + toPx(22), y - toPx(4));
+      ctx.lineTo(x + toPx(22), y + toPx(4));
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawArrow(a){
+    var x = toPx(a.x), y = toPx(a.y);
+    var len = toPx(GameConfig.arrowLength);
+    ctx.save();
+    ctx.strokeStyle = '#332A22';
+    ctx.lineWidth = toPx(3);
+    ctx.beginPath();
+    ctx.moveTo(x, y + len*0.7);
+    ctx.lineTo(x, y - len*0.3);
+    ctx.stroke();
+    ctx.fillStyle = '#C6A15B';
+    ctx.beginPath();
+    ctx.moveTo(x, y - len*0.55);
+    ctx.lineTo(x - toPx(5), y - len*0.22);
+    ctx.lineTo(x + toPx(5), y - len*0.22);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  function drawParticle(p){
+    var x = toPx(p.x), y = toPx(p.y);
+    var alpha = 1 - (p.age / p.life);
+    ctx.save();
+    ctx.globalAlpha = clamp(alpha, 0, 1);
+    if(p.kind === 'hit'){
+      ctx.fillStyle = Math.random() < 0.5 ? '#C6A15B' : '#7A2E38';
+      ctx.font = toPx(p.size*2.4) + 'px serif';
+      ctx.fillText('♥', x, y);
+    } else {
+      ctx.fillStyle = '#7A6F62';
+      ctx.beginPath(); ctx.arc(x,y, toPx(p.size*0.6), 0, Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function loop(ts){
+    if(!state.lastTs) state.lastTs = ts;
+    var dt = Math.min((ts - state.lastTs) / 1000, 0.05);
+    state.lastTs = ts;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  resizeCanvas();
+  state.target = spawnTarget(1);
+  updateHud();
+  requestAnimationFrame(loop);
+
+  /* =====================================================================
+     4-10. 랭킹 저장/조회 — Firebase Firestore 또는 localStorage 폴백
+  ===================================================================== */
+
+  // 실제 서비스에 연결하려면 이 값을 채워 넣으세요. (Firebase 콘솔 > 프로젝트 설정)
+  var firebaseConfig = {
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: ""
+  };
+
+  var firestoreDb = null;
+  var useFirebase = false;
+  try{
+    if(firebaseConfig.apiKey && firebaseConfig.projectId && window.firebase){
+      firebase.initializeApp(firebaseConfig);
+      firestoreDb = firebase.firestore();
+      useFirebase = true;
+    }
+  }catch(err){
+    console.warn('Firebase 초기화 실패, localStorage 모드로 전환합니다.', err);
+    useFirebase = false;
+  }
+
+  var LOCAL_KEY = 'cupidArrow_rankings';
+  function loadLocalRankings(){
+    try{ return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); }
+    catch(e){ return []; }
+  }
+  function saveLocalRankings(list){
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
+  }
+
+  function sortRankings(list){
+    return list.slice().sort(function(a,b){
+      if(b.score !== a.score) return b.score - a.score;
+      return a.createdAt - b.createdAt; // 동점이면 먼저 기록한 사람이 위
+    });
+  }
+
+  function submitScore(nickname, score){
+    var entry = { nickname: nickname, score: score, createdAt: Date.now() };
+    if(useFirebase && firestoreDb){
+      return firestoreDb.collection('rankings').add({
+        nickname: nickname,
+        score: score,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(function(){ return entry; });
+    }
+    var list = loadLocalRankings();
+    list.push(entry);
+    list = sortRankings(list).slice(0, 100);
+    saveLocalRankings(list);
+    return Promise.resolve(entry);
+  }
+
+  function fetchTop100(){
+    if(useFirebase && firestoreDb){
+      return firestoreDb.collection('rankings')
+        .orderBy('score', 'desc')
+        .orderBy('createdAt', 'asc')
+        .limit(100)
+        .get()
+        .then(function(snap){
+          var out = [];
+          snap.forEach(function(doc){ out.push(doc.data()); });
+          return out;
+        });
+    }
+    return Promise.resolve(sortRankings(loadLocalRankings()).slice(0,100));
+  }
+
+  /* ---------- 간단 비속어 필터 ---------- */
+  var BAD_WORDS = ['시발','씨발','병신','개새끼','좆','ㅅㅂ','ㅄ','fuck','shit'];
+  function containsBadWord(text){
+    var lower = text.toLowerCase();
+    return BAD_WORDS.some(function(w){ return lower.indexOf(w.toLowerCase()) !== -1; });
+  }
+  function sanitizeNickname(raw){
+    var trimmed = raw.trim().slice(0, 10);
+    return trimmed;
+  }
+
+  /* ---------- 닉네임 등록 폼 ---------- */
+  var lastSubmittedEntry = null;
+  $('#nicknameForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var input = $('#nicknameInput');
+    var nickname = sanitizeNickname(input.value);
+    if(!nickname){ showToast('닉네임을 입력해 주세요'); return; }
+    if(containsBadWord(nickname)){ showToast('사용할 수 없는 닉네임입니다'); return; }
+
+    var score = Number(finalScoreEl.textContent);
+    var submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true; submitBtn.textContent = '등록중...';
+
+    submitScore(nickname, score).then(function(entry){
+      lastSubmittedEntry = entry;
+      showToast('랭킹에 등록되었습니다 🎉');
+      input.disabled = true; submitBtn.textContent = '등록완료';
+      renderRankPanel();
+      $('#rankPanelInline').style.display = 'block';
+    }).catch(function(err){
+      console.error(err);
+      showToast('등록에 실패했습니다. 다시 시도해 주세요');
+      submitBtn.disabled = false; submitBtn.textContent = '등록';
+    });
+  });
+
+  $('#btnShowRank').addEventListener('click', function(){
+    var panel = $('#rankPanelInline');
+    var willShow = panel.style.display !== 'block';
+    panel.style.display = willShow ? 'block' : 'none';
+    if(willShow) renderRankPanel();
+  });
+
+  function renderRankPanel(){
+    var panel = $('#rankPanelInline');
+    panel.innerHTML = '<div class="rank-row"><span class="nm">랭킹을 불러오는 중...</span></div>';
+    fetchTop100().then(function(list){
+      if(!list.length){
+        panel.innerHTML = '<div class="rank-row"><span class="nm">아직 등록된 기록이 없습니다</span></div>';
+        return;
+      }
+      panel.innerHTML = list.map(function(item, i){
+        var rankNo = i+1;
+        var isMe = lastSubmittedEntry &&
+          item.nickname === lastSubmittedEntry.nickname &&
+          item.score === lastSubmittedEntry.score &&
+          Math.abs((toMillis(item.createdAt)) - lastSubmittedEntry.createdAt) < 5000;
+        var topClass = rankNo===1?'top1':rankNo===2?'top2':rankNo===3?'top3':'';
+        return '<div class="rank-row '+(isMe?'me':'')+' '+topClass+'">' +
+          '<span class="rk">'+rankNo+'</span>' +
+          '<span class="nm">'+escapeHtml(item.nickname)+'</span>' +
+          '<span class="sc">'+item.score+'</span></div>';
+      }).join('');
+    });
+  }
+
+  function toMillis(v){
+    if(!v) return 0;
+    if(typeof v === 'number') return v;
+    if(v.toMillis) return v.toMillis(); // Firestore Timestamp
+    return 0;
+  }
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+})();
+
+})();
+</script>
+</body>
+</html>
