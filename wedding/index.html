@@ -42,8 +42,11 @@
   <img class="cloud cloud--b" src="assets/cloud.png" alt="" onerror="this.style.display='none'">
   <img class="cloud cloud--c" src="assets/cloud.png" alt="" onerror="this.style.display='none'">
 
-  <!-- 오른쪽 상단 장식 (박스) -->
-  <img class="deco-box" src="assets/box.png" alt="" onerror="this.style.display='none'">
+  <!-- 오른쪽 상단 장식 (박스 2개, 나란히) -->
+  <div class="deco-box-group">
+    <img class="deco-box" src="assets/box.png" alt="" onerror="this.style.display='none'">
+    <img class="deco-box" src="assets/box.png" alt="" onerror="this.style.display='none'">
+  </div>
 
   <!-- 상단 타이틀 배너 (assets/title.png 로 교체 가능) -->
   <div class="intro-title" id="introTitle">
@@ -64,7 +67,7 @@
     <!-- 강아지 보라 (이스터에그) -->
     <button id="bora" class="char char--bora" type="button" aria-label="강아지 보라, 터치해보세요">
       <span class="bora-visual" id="boraVisual">
-        <img src="assets/bora.png" alt=""
+        <img id="boraSprite" src="assets/bora1.png" alt=""
              onerror="this.remove(); document.getElementById('boraVisual').classList.add('img-fallback'); document.getElementById('boraVisual').dataset.label='BORA';">
       </span>
     </button>

@@ -41,14 +41,14 @@ const WeddingInvitation = (() => {
   }
 
   // ---------- 갤러리 (5열 촘촘한 그리드, 한두 장만 살짝 크게) ----------
-  const GALLERY_COUNT = 20;
-  const FEATURED_EVERY = 9; // 20장 기준 약 2장 정도만 크게 보이도록
+  const GALLERY_COUNT = 24;
+  const FEATURED_EVERY = 9; // 약 2~3장 정도만 크게 보이도록
   let galleryPhotos = [];
   let lightboxIndex = 0;
 
   function setupGallery(){
     const grid = document.getElementById('galleryGrid');
-    galleryPhotos = Array.from({ length: GALLERY_COUNT }, (_, i) => `assets/gallery/${String(i + 1).padStart(2, '0')}.jpg`);
+    galleryPhotos = Array.from({ length: GALLERY_COUNT }, (_, i) => `assets/gallery/photo (${i + 1}).jpg`);
 
     grid.innerHTML = galleryPhotos.map((src, i) => {
       const featured = (i + 1) % FEATURED_EVERY === 0;
