@@ -112,22 +112,19 @@
 <!-- 3. 신랑 신부 소개 -->
 <!-- ============================================= -->
 <section class="section reveal" id="couple">
-  <h2 class="section-title serif-font"><span class="pixel-icon">♥</span> 신랑 &amp; 신부</h2>
+  <div class="couple-photo-main">
+    <img src="assets/photomain.png" alt="신랑 신부"
+         onerror="this.closest('.couple-photo-main').classList.add('img-fallback');this.remove()">
+  </div>
 
-  <div class="couple-grid">
-    <div class="couple-card">
-      <div class="couple-photo-frame">
-        <img src="assets/groomprofile.png" alt="신랑" onerror="this.closest('.couple-photo-frame').classList.add('img-fallback');this.remove()">
-      </div>
+  <div class="couple-info">
+    <div class="couple-info__side">
       <p class="couple-role">Groom</p>
       <p class="couple-name serif-font">김지훈</p>
       <p class="couple-desc">이재원 · 박미경의 아들</p>
     </div>
-
-    <div class="couple-card">
-      <div class="couple-photo-frame">
-        <img src="assets/brideprofile.png" alt="신부" onerror="this.closest('.couple-photo-frame').classList.add('img-fallback');this.remove()">
-      </div>
+    <span class="couple-info__divider">&amp;</span>
+    <div class="couple-info__side">
       <p class="couple-role">Bride</p>
       <p class="couple-name serif-font">이서연</p>
       <p class="couple-desc">이현우 · 최정은의 딸</p>
@@ -181,7 +178,7 @@
   <button class="lightbox-close" id="lightboxClose" aria-label="닫기">✕</button>
   <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="이전 사진">‹</button>
   <div class="lightbox-stage">
-    <img id="lightboxImg" src="" alt="" decoding="async">
+    <img id="lightboxImg" src="" alt="" decoding="async" draggable="false" oncontextmenu="return false;">
   </div>
   <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="다음 사진">›</button>
 </div>

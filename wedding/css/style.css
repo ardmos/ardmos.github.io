@@ -105,7 +105,7 @@ a{color:inherit;text-decoration:none;}
 
 /* 타이틀 배너 (assets/title.png 로 교체 가능, 없으면 픽셀 대화창 스타일 텍스트로 대체) */
 .intro-title{
-  position:absolute; z-index:3; top:5%; left:50%; transform:translateX(-50%);
+  position:absolute; z-index:3; top:8%; left:50%; transform:translateX(-50%);
   display:flex; justify-content:center; width:92%; max-width:92%;
 }
 .intro-title-img{ width:100%; max-width:100%; height:auto; max-height:22vh; image-rendering:pixelated; }
@@ -120,7 +120,7 @@ a{color:inherit;text-decoration:none;}
 
 /* 박스 장식: 인물보다 뒤 레이어, 신부 머리 높이 근처까지 내려오도록 */
 .deco-box-group{
-  position:absolute; z-index:1; right:6%; bottom:36%;
+  position:absolute; z-index:1; right:6%; bottom:40%;
   display:flex; align-items:flex-end;
 }
 .deco-box{
@@ -167,7 +167,7 @@ a{color:inherit;text-decoration:none;}
   position:absolute; bottom:0; left:8%;
   height:14vh; max-height:70px; width:auto;
   background:none; border:none; padding:0; cursor:pointer; z-index:4;
-  animation:boraWalk 9s ease-in-out infinite;
+  animation:boraWalk 16s ease-in-out infinite;
 }
 .char--bora.jump{ animation-play-state:paused; }
 .bora-visual{ display:block; height:100%; }
@@ -178,12 +178,13 @@ a{color:inherit;text-decoration:none;}
 }
 .bora-visual.img-fallback::after{ content:attr(data-label); font-family:var(--font-pixel); font-size:8px; padding-bottom:4px; }
 .bora-visual.bounce{ animation:boraJump 0.55s ease; }
+/* 화면 완전히 밖으로 나갔다가 다시 들어오도록 - 방향 전환(뒤돌기)이 화면 밖에서 일어나 보이지 않음 */
 @keyframes boraWalk{
-  0%{ left:6%; transform:scaleX(1); }
-  45%{ left:72%; transform:scaleX(1); }
-  50%{ left:72%; transform:scaleX(-1); }
-  95%{ left:6%; transform:scaleX(-1); }
-  100%{ left:6%; transform:scaleX(1); }
+  0%{ left:-20%; transform:scaleX(1); }
+  47%{ left:105%; transform:scaleX(1); }
+  50%{ left:105%; transform:scaleX(-1); }
+  97%{ left:-20%; transform:scaleX(-1); }
+  100%{ left:-20%; transform:scaleX(1); }
 }
 @keyframes boraJump{
   0%{ transform:translateY(0); }
@@ -328,35 +329,45 @@ a{color:inherit;text-decoration:none;}
 }
 
 /* =====================================================
-   5. 신랑신부 소개
+   5. 신랑신부 소개 - 커다란 아치형 창문 메인사진 + 하단 캡션
 ===================================================== */
-.couple-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-.couple-card{
-  background:var(--c-white); border-radius:var(--radius-card);
-  box-shadow:var(--shadow-soft); padding:20px 12px 20px;
-}
-/* 돔형 창문 프레임 - 위쪽은 아치형, 아래쪽은 살짝만 둥글게 */
-.couple-photo-frame{
+.couple-photo-main{
   position:relative;
-  width:112px; height:150px; margin:0 auto 14px;
-  border-radius:56px 56px 8px 8px;
-  overflow:hidden; border:1px solid var(--c-peach); background:var(--c-beige);
-  box-shadow:var(--shadow-soft);
+  width:94%; max-width:380px; aspect-ratio:3/4;
+  margin:0 auto 28px;
+  border-radius:50% 50% 10px 10px / 38% 38% 3% 3%;
+  overflow:hidden;
+  border:1px solid var(--c-peach);
+  box-shadow:0 16px 34px rgba(62,47,42,0.18);
+  background:var(--c-beige);
 }
-.couple-photo-frame::after{
-  content:''; position:absolute; inset:6px;
-  border:1px solid rgba(255,255,255,0.65);
-  border-radius:50px 50px 4px 4px;
+.couple-photo-main::after{
+  content:''; position:absolute; inset:9px;
+  border:1px solid rgba(255,255,255,0.6);
+  border-radius:50% 50% 6px 6px / 36% 36% 2% 2%;
   pointer-events:none;
 }
-.couple-photo-frame img{ width:100%; height:100%; object-fit:cover; }
-.couple-photo-frame.img-fallback{ display:flex; align-items:center; justify-content:center; }
-.couple-role{
-  font-family:var(--font-serif-en); font-style:italic; font-size:11px;
-  letter-spacing:2px; text-transform:uppercase; color:var(--c-rose-dark); margin:2px 0;
+.couple-photo-main img{ width:100%; height:100%; object-fit:cover; display:block; }
+.couple-photo-main.img-fallback{ display:flex; align-items:center; justify-content:center; }
+.couple-photo-main.img-fallback::before{
+  content:'PHOTO'; font-family:var(--font-serif-en); font-style:italic;
+  color:var(--c-ink-soft); font-size:15px; letter-spacing:3px;
 }
-.couple-name{ font-size:16px; font-weight:700; margin:2px 0 4px; }
-.couple-desc{ font-size:11px; color:var(--c-ink-soft); margin:0 0 10px; }
+
+.couple-info{
+  display:flex; align-items:center; justify-content:center; gap:26px;
+}
+.couple-info__side{ text-align:center; }
+.couple-info__divider{
+  font-family:var(--font-serif-en); font-style:italic; font-size:22px;
+  color:var(--c-peach); line-height:1;
+}
+.couple-role{
+  font-family:var(--font-serif-en); font-style:italic; font-size:11.5px;
+  letter-spacing:2.5px; text-transform:uppercase; color:var(--c-rose-dark); margin:0 0 6px;
+}
+.couple-name{ font-size:20px; font-weight:700; letter-spacing:0.5px; margin:0 0 6px; }
+.couple-desc{ font-size:12px; color:var(--c-ink-soft); margin:0; }
 
 /* =====================================================
    6. 예식 안내 (날짜/시간/장소) / D-day
@@ -397,6 +408,7 @@ a{color:inherit;text-decoration:none;}
 .gallery-item img{
   width:100%; height:100%; object-fit:cover; display:block;
   opacity:0; transition:opacity 0.35s ease;
+  -webkit-touch-callout:none; -webkit-user-select:none; user-select:none;
 }
 .gallery-item img.loaded{ opacity:1; }
 /* 소수의 사진만 2x2 칸을 차지해 살짝 커 보이게 */
@@ -409,15 +421,18 @@ a{color:inherit;text-decoration:none;}
 }
 .lightbox.open{ opacity:1; visibility:visible; }
 .lightbox-stage{ width:92%; max-width:480px; touch-action:pan-y; }
-.lightbox-stage img{ width:100%; border:3px solid var(--c-white); }
+.lightbox-stage img{
+  width:100%; border:3px solid var(--c-white);
+  -webkit-touch-callout:none; -webkit-user-select:none; user-select:none;
+}
 .lightbox-close{
   position:absolute; top:calc(16px + env(safe-area-inset-top)); right:16px;
   background:none; border:none; color:#fff; font-size:22px; cursor:pointer;
 }
 .lightbox-nav{
   position:absolute; top:50%; transform:translateY(-50%); z-index:2;
-  background:rgba(255,255,255,0.12); border:none; color:#fff; font-size:26px; cursor:pointer;
-  width:42px; height:42px; border-radius:50%;
+  background:none; border:none; color:#fff; font-size:30px; cursor:pointer;
+  width:44px; height:44px;
   display:flex; align-items:center; justify-content:center;
 }
 .lightbox-prev{ left:16px; } .lightbox-next{ right:16px; }
@@ -612,26 +627,28 @@ a{color:inherit;text-decoration:none;}
 .ranking-board{ text-align:left; }
 .ranking-header{
   display:flex; font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
-  color:var(--c-ink-soft); padding-bottom:8px;
+  color:var(--c-ink-soft); padding:0 2px 8px;
   border-bottom:1px solid var(--c-beige); margin-bottom:4px;
 }
-.col-rank{ width:18%; } .col-name{ flex:1; } .col-score{ width:26%; text-align:right; }
+.col-rank{ width:18%; flex-shrink:0; } .col-name{ flex:1; min-width:0; } .col-score{ width:26%; flex-shrink:0; text-align:right; }
 .ranking-list{ max-height:320px; overflow-y:auto; }
 .ranking-list li{
   display:flex; align-items:center; font-size:13px; padding:10px 2px;
   border-bottom:1px solid #F5EEE3;
 }
 .ranking-list li .col-rank{ font-family:var(--font-serif-en); font-style:italic; font-size:14px; color:var(--c-rose-dark); }
+.ranking-list li .col-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .ranking-list li .col-score{ font-family:var(--font-body); font-weight:600; font-size:13px; color:var(--c-ink); }
 .ranking-list li.top1 .col-rank{ color:var(--c-gold); }
 .ranking-loading{ text-align:center; color:var(--c-ink-soft); font-size:12px; padding:20px 0; }
 .my-ranking-row{
-  margin-top:10px; padding-top:10px; border-top:1px dashed var(--c-beige);
+  margin-top:10px; padding:10px 2px 0; border-top:1px dashed var(--c-beige);
   display:none; font-size:13px; font-weight:700; color:var(--c-rose-dark);
 }
-.my-ranking-row:not([hidden]){ display:flex; }
-.my-ranking-row .col-rank{ width:18%; font-family:var(--font-serif-en); font-style:italic; font-size:14px; }
-.my-ranking-row .col-name{ flex:1; } .my-ranking-row .col-score{ width:26%; text-align:right; font-family:var(--font-body); font-weight:600; }
+.my-ranking-row:not([hidden]){ display:flex; align-items:center; }
+.my-ranking-row .col-rank{ width:18%; flex-shrink:0; font-family:var(--font-serif-en); font-style:italic; font-size:14px; }
+.my-ranking-row .col-name{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.my-ranking-row .col-score{ width:26%; flex-shrink:0; text-align:right; font-family:var(--font-body); font-weight:600; }
 
 /* =====================================================
    12. 모달 (플레이어 정보)
@@ -669,7 +686,8 @@ a{color:inherit;text-decoration:none;}
   .footer{ padding-bottom:max(60px, env(safe-area-inset-bottom)); }
 }
 @media (max-width:340px){
-  .couple-photo-frame{ width:92px; height:124px; border-radius:46px 46px 6px 6px; }
+  .couple-photo-main{ max-width:300px; }
+  .couple-info{ gap:16px; }
   .section-title{ font-size:19px; }
 }
 @media (min-width:640px){
