@@ -54,7 +54,8 @@ const WeddingInvitation = (() => {
       const featured = (i + 1) % FEATURED_EVERY === 0;
       return `
       <div class="gallery-item${featured ? ' featured' : ''}" data-index="${i}">
-        <img src="${src}" alt="갤러리 사진 ${i + 1}" loading="lazy"
+        <img src="${src}" alt="갤러리 사진 ${i + 1}" loading="lazy" decoding="async"
+             onload="this.classList.add('loaded')"
              onerror="this.parentElement.style.background='var(--c-beige)'; this.remove();">
       </div>
     `;

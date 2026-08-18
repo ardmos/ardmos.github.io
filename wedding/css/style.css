@@ -105,21 +105,22 @@ a{color:inherit;text-decoration:none;}
 
 /* 타이틀 배너 (assets/title.png 로 교체 가능, 없으면 픽셀 대화창 스타일 텍스트로 대체) */
 .intro-title{
-  position:absolute; z-index:3; top:9%; left:50%; transform:translateX(-50%);
-  display:flex; justify-content:center; max-width:66%;
+  position:absolute; z-index:3; top:5%; left:50%; transform:translateX(-50%);
+  display:flex; justify-content:center; width:92%; max-width:92%;
 }
-.intro-title-img{ max-width:100%; max-height:13vh; width:auto; height:auto; image-rendering:pixelated; }
+.intro-title-img{ width:100%; max-width:100%; height:auto; max-height:22vh; image-rendering:pixelated; }
 .intro-title-fallback{
-  display:none; align-items:center; gap:8px; white-space:nowrap;
+  display:none; align-items:center; gap:10px; white-space:nowrap;
   background:rgba(255,255,255,0.94); border:3px solid var(--c-ink);
   box-shadow:4px 4px 0 rgba(62,47,42,0.3);
-  padding:10px 18px; font-size:15px; color:var(--c-ink); margin:0;
+  padding:16px 28px; font-size:22px; color:var(--c-ink); margin:0;
 }
 .intro-title.img-fallback .intro-title-fallback{ display:flex; }
 .title-heart{ color:var(--c-rose); }
 
+/* 박스 장식: 인물보다 뒤 레이어, 신부 머리 높이 근처까지 내려오도록 */
 .deco-box-group{
-  position:absolute; z-index:1; right:6%; top:13%;
+  position:absolute; z-index:1; right:6%; bottom:36%;
   display:flex; align-items:flex-end;
 }
 .deco-box{
@@ -141,10 +142,10 @@ a{color:inherit;text-decoration:none;}
   padding-bottom:0;
 }
 
-.char{ position:relative; z-index:3; height:29.5vh; max-height:243px; width:auto; cursor:pointer; }
+.char{ position:relative; z-index:3; height:28vh; max-height:231px; width:auto; cursor:pointer; }
 .char img{height:100%; width:auto; image-rendering:pixelated;}
 .char.img-fallback{
-  height:29.5vh; max-height:243px; width:23.4vw; max-width:104px;
+  height:28vh; max-height:231px; width:22.2vw; max-width:99px;
   background:var(--c-beige); border:3px solid var(--c-ink);
   display:flex; align-items:flex-end; justify-content:center;
 }
@@ -153,9 +154,13 @@ a{color:inherit;text-decoration:none;}
   color:var(--c-ink-soft); padding-bottom:8px;
 }
 
-.char--groom{ animation:charIn 0.7s ease both; animation-delay:0.15s; }
-.char--bride{ animation:charIn 0.7s ease both; animation-delay:0.3s; }
-@keyframes charIn{ from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);} }
+/* 신랑/신부를 살짝 오른쪽으로 이동 (등장 애니메이션 키프레임에 오프셋을 함께 넣음) */
+.char--groom{ animation:charInShift 0.7s ease both; animation-delay:0.15s; }
+.char--bride{ animation:charInShift 0.7s ease both; animation-delay:0.3s; }
+@keyframes charInShift{
+  from{ opacity:0; transform:translate(10px, 30px); }
+  to{ opacity:1; transform:translate(10px, 0); }
+}
 
 
 .char--bora{
@@ -274,6 +279,7 @@ a{color:inherit;text-decoration:none;}
 }
 
 .section-title{ font-size:22px; margin:0 0 18px; color:var(--c-ink); font-weight:700; }
+.greeting-title{ margin-bottom:38px; }
 .pixel-icon{ font-size:15px; color:var(--c-rose); vertical-align:-1px; margin-right:4px; }
 .pixel-icon.small{ font-size:11px; margin-right:6px; }
 
@@ -327,11 +333,21 @@ a{color:inherit;text-decoration:none;}
 .couple-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 .couple-card{
   background:var(--c-white); border-radius:var(--radius-card);
-  box-shadow:var(--shadow-soft); padding:16px 10px 18px;
+  box-shadow:var(--shadow-soft); padding:20px 12px 20px;
 }
+/* 돔형 창문 프레임 - 위쪽은 아치형, 아래쪽은 살짝만 둥글게 */
 .couple-photo-frame{
-  width:84px; height:84px; margin:0 auto 10px; border-radius:50%;
-  overflow:hidden; border:3px solid var(--c-peach); background:var(--c-beige);
+  position:relative;
+  width:112px; height:150px; margin:0 auto 14px;
+  border-radius:56px 56px 8px 8px;
+  overflow:hidden; border:1px solid var(--c-peach); background:var(--c-beige);
+  box-shadow:var(--shadow-soft);
+}
+.couple-photo-frame::after{
+  content:''; position:absolute; inset:6px;
+  border:1px solid rgba(255,255,255,0.65);
+  border-radius:50px 50px 4px 4px;
+  pointer-events:none;
 }
 .couple-photo-frame img{ width:100%; height:100%; object-fit:cover; }
 .couple-photo-frame.img-fallback{ display:flex; align-items:center; justify-content:center; }
@@ -378,7 +394,11 @@ a{color:inherit;text-decoration:none;}
   position:relative; overflow:hidden; border-radius:4px;
   background:var(--c-beige); cursor:pointer;
 }
-.gallery-item img{ width:100%; height:100%; object-fit:cover; display:block; }
+.gallery-item img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  opacity:0; transition:opacity 0.35s ease;
+}
+.gallery-item img.loaded{ opacity:1; }
 /* 소수의 사진만 2x2 칸을 차지해 살짝 커 보이게 */
 .gallery-item.featured{ grid-column:span 2; grid-row:span 2; border-radius:6px; }
 
@@ -395,10 +415,12 @@ a{color:inherit;text-decoration:none;}
   background:none; border:none; color:#fff; font-size:22px; cursor:pointer;
 }
 .lightbox-nav{
-  position:absolute; top:50%; transform:translateY(-50%);
-  background:none; border:none; color:#fff; font-size:34px; cursor:pointer; padding:10px;
+  position:absolute; top:50%; transform:translateY(-50%); z-index:2;
+  background:rgba(255,255,255,0.12); border:none; color:#fff; font-size:26px; cursor:pointer;
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
 }
-.lightbox-prev{ left:2px; } .lightbox-next{ right:2px; }
+.lightbox-prev{ left:16px; } .lightbox-next{ right:16px; }
 
 /* =====================================================
    8. 지도 / 아코디언
@@ -532,7 +554,7 @@ a{color:inherit;text-decoration:none;}
 .hit-spark{
   position:absolute; width:5px; height:5px; margin:-2.5px 0 0 -2.5px;
   background:var(--c-gold); border-radius:1px; z-index:6;
-  animation:sparkFly 0.5s ease-out forwards;
+  animation:sparkFly 0.62s ease-out forwards;
 }
 .hit-spark.perfect{ background:var(--c-rose); width:6px; height:6px; margin:-3px 0 0 -3px; }
 @keyframes sparkFly{
@@ -647,7 +669,7 @@ a{color:inherit;text-decoration:none;}
   .footer{ padding-bottom:max(60px, env(safe-area-inset-bottom)); }
 }
 @media (max-width:340px){
-  .couple-photo-frame{ width:68px; height:68px; }
+  .couple-photo-frame{ width:92px; height:124px; border-radius:46px 46px 6px 6px; }
   .section-title{ font-size:19px; }
 }
 @media (min-width:640px){

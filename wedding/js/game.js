@@ -39,6 +39,7 @@ const WeddingGame = (() => {
   const ABS_MAX_TARGET_SPEED = 430; // 아무리 라운드가 올라가도 이 이상은 넘지 않음(플레이 가능선 유지)
   const STICK_DELAY = 550;        // 명중 후 화살이 과녁에 꽂힌 채 보여지는 시간(ms)
   const RESPAWN_DELAY = 420;      // 완전히 놓쳤을 때 다음 과녁이 나오기까지(ms)
+  const ARROW_STOP_Y_OFFSET = 22; // 화살이 과녁 중심보다 살짝 아래(중간 높이쯤)에서 멈추도록
 
   let canvas, ctx, W, H, dpr;
   let images = {};
@@ -159,19 +160,21 @@ const WeddingGame = (() => {
 
     if (!ring){
       // 완전히 빗나감 - 과녁은 그대로 계속 이동, 화살만 사라짐 (다시 조준 가능)
-      loseLife(screenX, screenY, 0);
+      loseLife();
       arrow = null;
       return;
     }
 
-    // 명중 - 화살을 그 자리에 고정하고 잠깐 멈춰서 어디에 꽂혔는지 보여줌
+    // 명중 - 화살을 과녁의 중간 높이쯤(중심보다 살짝 아래)에 고정하고 잠깐 멈춰서 보여줌
     arrow.stuck = true;
-    arrow.y = targetY();
+    arrow.y = targetY() + ARROW_STOP_Y_OFFSET;
     resolving = true;
 
     score += ring.score;
     const perfect = ring.label === 'PERFECT';
-    showPopup(screenX, screenY, perfect ? 'PERFECT!' : `+${ring.score}`, ring.label.toLowerCase());
+    // 점수/PERFECT 텍스트는 화면 정중앙에 크게 표시 (과녁 근처는 잘 안 보여서)
+    showPopup(W / 2, H / 2, perfect ? 'PERFECT!' : `+${ring.score}`, ring.label.toLowerCase());
+    // 파티클은 실제로 맞은 위치(과녁)에서 넓게 튀도록
     showHitParticles(screenX, screenY, perfect);
     round++; // 맞힐 때마다 라운드 즉시 상승 (상한 없이 계속 어려워짐)
     updateHud();
@@ -185,13 +188,12 @@ const WeddingGame = (() => {
     }, STICK_DELAY);
   }
 
-  function loseLife(screenX, screenY, scoreGain){
+  function loseLife(){
     lives--;
     updateHud();
-    if (scoreGain === 0){
-      showPopup(screenX, screenY, 'MISS', 'miss');
-      triggerMissEffect();
-    }
+    // MISS 텍스트도 화면 정중앙에 크게 표시
+    showPopup(W / 2, H / 2, 'MISS', 'miss');
+    triggerMissEffect();
     if (lives <= 0){
       endGame();
     }
@@ -199,8 +201,7 @@ const WeddingGame = (() => {
 
   function missPassed(){
     // 과녁이 오른쪽으로 완전히 돌아올 때까지 못 맞힌 경우 (라운드는 유지, 목숨만 감소)
-    const px = target ? Math.min(Math.max(target.x, 20), W - 20) : W / 2;
-    loseLife(px, targetY(), 0);
+    loseLife();
     if (state === 'playing') scheduleRespawn();
   }
 
@@ -218,18 +219,18 @@ const WeddingGame = (() => {
 
   function showHitParticles(x, y, perfect){
     const layer = document.getElementById('gamePopupLayer');
-    const count = perfect ? 12 : 7;
+    const count = perfect ? 14 : 9;
     for (let i = 0; i < count; i++){
       const p = document.createElement('span');
       p.className = 'hit-spark' + (perfect ? ' perfect' : '');
       const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
-      const dist = 16 + Math.random() * (perfect ? 30 : 20);
+      const dist = perfect ? (40 + Math.random() * 65) : (32 + Math.random() * 45);
       p.style.left = x + 'px';
       p.style.top = y + 'px';
       p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
       p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
       layer.appendChild(p);
-      setTimeout(() => p.remove(), 520);
+      setTimeout(() => p.remove(), 620);
     }
   }
 
@@ -295,7 +296,7 @@ const WeddingGame = (() => {
     if (arrow && !arrow.stuck){
       arrow.elapsedMs += dt * 1000;
       arrow.y -= currentArrowSpeed(arrow) * dt;
-      if (target && arrow.y <= targetY()){
+      if (target && arrow.y <= targetY() + ARROW_STOP_Y_OFFSET){
         const offset = Math.abs(arrow.x - target.x);
         resolveArrival(offset, target.x, targetY());
       } else if (arrow.y < -20){
