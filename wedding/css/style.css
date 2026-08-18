@@ -1,0 +1,645 @@
+/* =====================================================
+   0. 디자인 토큰
+===================================================== */
+:root{
+  --c-cream:#FFF8EF;
+  --c-beige:#F1E3CE;
+  --c-pink:#F6C9D3;
+  --c-peach:#FFD9B3;
+  --c-gold:#E7B84C;
+  --c-green:#7FB88A;
+  --c-green-dark:#5B9468;
+  --c-sky-top:#AEE0F4;
+  --c-sky-bottom:#EAF6FB;
+  --c-ink:#3E2F2A;
+  --c-ink-soft:#7A685F;
+  --c-white:#FFFFFF;
+  --c-rose:#D8637F;
+  --c-rose-dark:#B94D66;
+
+  --font-pixel:'Galmuri11','Galmuri',monospace;
+  --font-serif:'Gowun Batang', serif;
+  --font-serif-en: Georgia, 'Times New Roman', serif;
+  --font-body:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif;
+
+  --radius-card: 18px;
+  --shadow-soft: 0 10px 30px rgba(62,47,42,0.10);
+
+  color-scheme: light;
+}
+
+*{box-sizing:border-box;}
+html{ -webkit-text-size-adjust:100%; }
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--c-ink);
+  background:var(--c-cream);
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+img{max-width:100%;display:block;}
+button{font-family:inherit;}
+ul{list-style:none;margin:0;padding:0;}
+a{color:inherit;text-decoration:none;}
+
+.pixel-font{font-family:var(--font-pixel);letter-spacing:0.5px;}
+.serif-font{font-family:var(--font-serif);}
+.serif-font-en{font-family:var(--font-serif-en);font-style:italic;font-weight:400;font-size:0.6em;display:block;color:var(--c-ink-soft);margin-top:4px;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+}
+
+/* =====================================================
+   1. 로딩 화면
+===================================================== */
+.loading-screen{
+  position:fixed; inset:0; z-index:9999;
+  background:#241d1a;
+  display:flex; align-items:center; justify-content:center;
+  transition:opacity 0.5s ease, visibility 0.5s ease;
+}
+.loading-screen.hide{opacity:0; visibility:hidden; pointer-events:none;}
+.loading-inner{text-align:center; color:var(--c-cream);}
+.loading-heart{
+  font-size:32px; color:var(--c-rose);
+  animation:pulse 0.9s ease-in-out infinite;
+  margin-bottom:14px;
+}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.25);}}
+.loading-text{font-size:11px; letter-spacing:2px;}
+.dots::after{content:''; animation:dots 1.2s steps(4,end) infinite;}
+@keyframes dots{0%{content:'';}25%{content:'.';}50%{content:'..';}75%{content:'...';}100%{content:'';}}
+.loading-bar{
+  width:160px; height:8px; margin:16px auto 0;
+  background:#3a2f2a; border:2px solid var(--c-cream); image-rendering:pixelated;
+}
+.loading-bar-fill{
+  width:0%; height:100%; background:var(--c-rose);
+  transition:width 1.1s linear;
+}
+
+/* =====================================================
+   2. 인트로 씬
+===================================================== */
+.intro-scene{
+  position:relative;
+  width:100%;
+  height:100svh;
+  min-height:560px;
+  overflow:hidden;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  background:linear-gradient(180deg, var(--c-sky-top) 0%, var(--c-sky-bottom) 78%);
+}
+.parallax-sky{position:absolute; inset:0; z-index:0;}
+
+.cloud{
+  position:absolute; width:192px; height:auto; opacity:0.92;
+  image-rendering:pixelated; z-index:1;
+}
+.cloud--a{ top:6%; left:-30%; animation:driftCloud 26s linear infinite; }
+.cloud--b{ width:150px; top:14%; left:-55%; animation:driftCloud 34s linear infinite; animation-delay:-8s; }
+.cloud--c{ width:174px; top:3%; left:-75%; animation:driftCloud 30s linear infinite; animation-delay:-18s; }
+@keyframes driftCloud{ to{ transform:translateX(160vw); } }
+
+/* 타이틀 배너 (assets/title.png 로 교체 가능, 없으면 픽셀 대화창 스타일 텍스트로 대체) */
+.intro-title{
+  position:absolute; z-index:3; top:9%; left:50%; transform:translateX(-50%);
+  display:flex; justify-content:center; max-width:66%;
+}
+.intro-title-img{ max-width:100%; max-height:13vh; width:auto; height:auto; image-rendering:pixelated; }
+.intro-title-fallback{
+  display:none; align-items:center; gap:8px; white-space:nowrap;
+  background:rgba(255,255,255,0.94); border:3px solid var(--c-ink);
+  box-shadow:4px 4px 0 rgba(62,47,42,0.3);
+  padding:10px 18px; font-size:15px; color:var(--c-ink); margin:0;
+}
+.intro-title.img-fallback .intro-title-fallback{ display:flex; }
+.title-heart{ color:var(--c-rose); }
+
+.deco-box{
+  position:absolute; z-index:1; right:6%; top:9%;
+  height:13vh; max-height:75px; width:auto; image-rendering:pixelated;
+}
+.deco-toguan{
+  position:absolute; z-index:2; left:3%; bottom:0;
+  height:18.7vh; max-height:92px; width:auto; image-rendering:pixelated;
+}
+
+.intro-bg-img{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;
+}
+.intro-bg-img.img-fallback{ display:none; }
+
+.intro-stage{
+  position:relative; z-index:2; flex:1;
+  display:flex; align-items:flex-end; justify-content:center; gap:6vw;
+  padding-bottom:0;
+}
+
+.char{ position:relative; height:29.5vh; max-height:243px; width:auto; cursor:pointer; }
+.char img{height:100%; width:auto; image-rendering:pixelated;}
+.char.img-fallback{
+  height:29.5vh; max-height:243px; width:23.4vw; max-width:104px;
+  background:var(--c-beige); border:3px solid var(--c-ink);
+  display:flex; align-items:flex-end; justify-content:center;
+}
+.char.img-fallback::after{
+  content:attr(data-label); font-family:var(--font-pixel); font-size:9px;
+  color:var(--c-ink-soft); padding-bottom:8px;
+}
+
+.char--groom{ animation:charIn 0.7s ease both; animation-delay:0.15s; }
+.char--bride{ animation:charIn 0.7s ease both; animation-delay:0.3s; }
+@keyframes charIn{ from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);} }
+
+
+.char--bora{
+  position:absolute; bottom:0; left:8%;
+  height:14vh; max-height:70px; width:auto;
+  background:none; border:none; padding:0; cursor:pointer; z-index:4;
+  animation:boraWalk 9s ease-in-out infinite;
+}
+.char--bora.jump{ animation-play-state:paused; }
+.bora-visual{ display:block; height:100%; }
+.bora-visual img{ height:100%; width:auto; image-rendering:pixelated; }
+.bora-visual.img-fallback{
+  width:60px; height:14vh; max-height:70px; background:var(--c-peach);
+  border:3px solid var(--c-ink); display:flex; align-items:flex-end; justify-content:center;
+}
+.bora-visual.img-fallback::after{ content:attr(data-label); font-family:var(--font-pixel); font-size:8px; padding-bottom:4px; }
+.bora-visual.bounce{ animation:boraJump 0.55s ease; }
+@keyframes boraWalk{
+  0%{ left:6%; transform:scaleX(1); }
+  45%{ left:72%; transform:scaleX(1); }
+  50%{ left:72%; transform:scaleX(-1); }
+  95%{ left:6%; transform:scaleX(-1); }
+  100%{ left:6%; transform:scaleX(1); }
+}
+@keyframes boraJump{
+  0%{ transform:translateY(0); }
+  40%{ transform:translateY(-22px); }
+  70%{ transform:translateY(-4px); }
+  100%{ transform:translateY(0); }
+}
+
+/* 하트/하트2/스타 파티클 (보라, 신랑, 신부 터치 시) - 이미지 우선, 없으면 이모지로 대체 */
+.intro-particles{ position:absolute; z-index:5; pointer-events:none; inset:0; }
+.mini-particle{
+  position:absolute; width:18px; height:18px; margin:-9px 0 0 -9px;
+  image-rendering:pixelated;
+  animation:miniHeartUp 0.9s ease forwards;
+}
+.mini-particle--fallback{
+  width:auto; height:auto; margin:0; font-size:14px; color:var(--c-rose); font-family:var(--font-pixel);
+}
+/* 신랑/신부 터치 시 나오는 하트는 3배 크게 */
+.mini-particle--big{ width:54px; height:54px; margin:-27px 0 0 -27px; }
+.mini-particle--big.mini-particle--fallback{ font-size:34px; margin:0; }
+@keyframes miniHeartUp{
+  0%{ opacity:1; transform:translate(0,0) scale(0.6); }
+  100%{ opacity:0; transform:translate(var(--dx,0),var(--dy,-50px)) scale(1.2); }
+}
+.bora-found-msg{
+  position:absolute; z-index:6; left:50%; transform:translate(-50%,0);
+  background:var(--c-white); border:3px solid var(--c-ink);
+  padding:6px 10px; font-size:10px; color:var(--c-rose-dark);
+  opacity:0; transition:opacity 0.25s ease, transform 0.25s ease;
+  white-space:nowrap;
+}
+.bora-found-msg.show{ opacity:1; transform:translate(-50%,-10px); }
+
+.ground-strip{
+  position:relative; z-index:1; height:8%; min-height:22px; overflow:hidden;
+}
+.ground-img{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  image-rendering:pixelated;
+}
+
+.dialog-box{
+  position:relative; z-index:3; margin:0 14px 10px;
+  background:rgba(255,255,255,0.95);
+  border:3px solid var(--c-ink);
+  box-shadow:4px 4px 0 rgba(62,47,42,0.35);
+  padding:12px 14px;
+  animation:dialogIn 0.5s ease both; animation-delay:0.55s;
+}
+@keyframes dialogIn{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+.dialog-box__inner{display:flex; align-items:center; gap:6px; min-height:18px;}
+.dialog-text{font-size:11px; line-height:1.6; margin:0; color:var(--c-ink);}
+.dialog-cursor{ font-size:10px; color:var(--c-rose); animation:blink 0.8s steps(1) infinite; }
+@keyframes blink{50%{opacity:0;}}
+
+.scroll-hint{
+  position:relative; z-index:3; align-self:center; margin:8px auto 14px;
+  background:transparent; border:none; color:var(--c-ink-soft);
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  cursor:pointer; animation:bounceHint 1.6s ease-in-out infinite;
+}
+.scroll-hint span:first-child{font-size:9px; letter-spacing:2px;}
+.scroll-arrow{font-size:13px;}
+@keyframes bounceHint{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+
+/* =====================================================
+   3. 공통 섹션 / 리빌 애니메이션
+===================================================== */
+.section{
+  max-width:520px; margin:0 auto; padding:56px 22px;
+  text-align:center;
+}
+.reveal{ opacity:0; transform:translateY(24px); transition:opacity 0.7s ease, transform 0.7s ease; }
+.reveal.in-view{ opacity:1; transform:translateY(0); }
+
+.section-eyebrow{ display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; }
+.pixel-star{ color:var(--c-gold); font-size:12px; }
+.eyebrow-text{ font-size:10px; letter-spacing:3px; color:var(--c-rose-dark); }
+
+/* 청첩장 본문(게임 파트 제외)에서 쓰는 우아한 eyebrow */
+.elegant-eyebrow{
+  font-family:var(--font-serif-en); font-style:italic; font-weight:400;
+  font-size:13px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--c-rose-dark); margin:0 0 12px;
+}
+
+.section-title{ font-size:22px; margin:0 0 18px; color:var(--c-ink); font-weight:700; }
+.pixel-icon{ font-size:15px; color:var(--c-rose); vertical-align:-1px; margin-right:4px; }
+.pixel-icon.small{ font-size:11px; margin-right:6px; }
+
+.greeting-text{ font-size:15px; line-height:2; color:var(--c-ink-soft); }
+
+/* =====================================================
+   4. 픽셀 버튼 / 패널 (인트로 · 미니게임 전용 공용 컴포넌트)
+===================================================== */
+.pixel-btn{
+  display:inline-block; font-family:var(--font-pixel); font-size:11px;
+  color:var(--c-white); background:var(--c-rose);
+  border:2px solid var(--c-ink);
+  padding:10px 18px;
+  box-shadow:3px 3px 0 var(--c-ink);
+  cursor:pointer; user-select:none;
+  transition:transform 0.08s ease, box-shadow 0.08s ease;
+}
+.pixel-btn:active{ transform:translate(3px,3px); box-shadow:0 0 0 var(--c-ink); }
+.pixel-btn.small{ font-size:9px; padding:7px 12px; box-shadow:2px 2px 0 var(--c-ink); }
+.pixel-btn.tiny{ font-size:8px; padding:5px 9px; box-shadow:2px 2px 0 var(--c-ink); }
+.pixel-btn.large{ font-size:13px; padding:14px 30px; }
+.pixel-btn.ghost{ background:var(--c-white); color:var(--c-rose-dark); }
+.pixel-btn.glow{ animation:btnGlow 1.6s ease-in-out infinite; }
+@keyframes btnGlow{0%,100%{box-shadow:3px 3px 0 var(--c-ink);}50%{box-shadow:3px 3px 0 var(--c-ink), 0 0 14px rgba(216,99,127,0.6);}}
+
+.pixel-panel{
+  background:var(--c-white); border:3px solid var(--c-ink);
+  box-shadow:5px 5px 0 rgba(62,47,42,0.18);
+  padding:18px;
+}
+
+/* 청첩장 본문(게임 파트 제외)에서 쓰는 우아한 버튼 / 패널 */
+.elegant-btn{
+  display:inline-block; font-family:var(--font-body); font-size:12.5px; font-weight:600;
+  color:var(--c-rose-dark); background:var(--c-white);
+  border:1px solid var(--c-peach); border-radius:24px;
+  padding:9px 20px; cursor:pointer; user-select:none;
+  transition:background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.elegant-btn:active{ background:var(--c-rose); color:#fff; border-color:var(--c-rose); }
+.elegant-btn.tiny{ font-size:11px; padding:6px 14px; }
+
+.elegant-panel{
+  background:var(--c-white); border-radius:18px; border:1px solid var(--c-beige);
+  box-shadow:var(--shadow-soft); padding:20px 18px;
+}
+
+/* =====================================================
+   5. 신랑신부 소개
+===================================================== */
+.couple-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.couple-card{
+  background:var(--c-white); border-radius:var(--radius-card);
+  box-shadow:var(--shadow-soft); padding:16px 10px 18px;
+}
+.couple-photo-frame{
+  width:84px; height:84px; margin:0 auto 10px; border-radius:50%;
+  overflow:hidden; border:3px solid var(--c-peach); background:var(--c-beige);
+}
+.couple-photo-frame img{ width:100%; height:100%; object-fit:cover; }
+.couple-photo-frame.img-fallback{ display:flex; align-items:center; justify-content:center; }
+.couple-role{
+  font-family:var(--font-serif-en); font-style:italic; font-size:11px;
+  letter-spacing:2px; text-transform:uppercase; color:var(--c-rose-dark); margin:2px 0;
+}
+.couple-name{ font-size:16px; font-weight:700; margin:2px 0 4px; }
+.couple-desc{ font-size:11px; color:var(--c-ink-soft); margin:0 0 10px; }
+
+/* =====================================================
+   6. 예식 안내 (날짜/시간/장소) / D-day
+===================================================== */
+.hud-box{
+  background:var(--c-white); border:1px solid var(--c-beige); border-radius:16px;
+  box-shadow:var(--shadow-soft); color:var(--c-ink);
+  padding:20px 20px 16px; margin-bottom:14px;
+}
+.hud-row{ display:flex; align-items:center; justify-content:space-between; padding:8px 2px; }
+.hud-label{
+  font-family:var(--font-serif-en); font-style:italic; font-size:11px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--c-rose-dark);
+}
+.hud-value{ font-family:var(--font-serif); font-size:15px; }
+.hud-value.small{ font-size:13px; text-align:right; max-width:60%; line-height:1.5; }
+.hud-divider{ height:1px; background:var(--c-beige); margin:2px 0; }
+
+.dday-box{
+  display:inline-block; background:transparent; color:var(--c-rose-dark);
+  font-family:var(--font-serif-en); font-style:italic; font-size:14px; letter-spacing:1px;
+  padding:7px 22px; margin-bottom:14px;
+  border-top:1px solid var(--c-peach); border-bottom:1px solid var(--c-peach);
+}
+.info-sub{ font-size:13px; color:var(--c-ink-soft); line-height:1.8; }
+
+/* =====================================================
+   7. 갤러리 / 라이트박스 (5열 촘촘한 그리드, 한두 장만 살짝 크게)
+===================================================== */
+.gallery-grid{
+  display:grid; grid-template-columns:repeat(5, 1fr);
+  grid-auto-rows:56px; gap:4px;
+}
+.gallery-item{
+  position:relative; overflow:hidden; border-radius:4px;
+  background:var(--c-beige); cursor:pointer;
+}
+.gallery-item img{ width:100%; height:100%; object-fit:cover; display:block; }
+/* 소수의 사진만 2x2 칸을 차지해 살짝 커 보이게 */
+.gallery-item.featured{ grid-column:span 2; grid-row:span 2; border-radius:6px; }
+
+.lightbox{
+  position:fixed; inset:0; z-index:1000; background:rgba(20,15,13,0.94);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; transition:opacity 0.25s ease, visibility 0.25s ease;
+}
+.lightbox.open{ opacity:1; visibility:visible; }
+.lightbox-stage{ width:92%; max-width:480px; touch-action:pan-y; }
+.lightbox-stage img{ width:100%; border:3px solid var(--c-white); }
+.lightbox-close{
+  position:absolute; top:calc(16px + env(safe-area-inset-top)); right:16px;
+  background:none; border:none; color:#fff; font-size:22px; cursor:pointer;
+}
+.lightbox-nav{
+  position:absolute; top:50%; transform:translateY(-50%);
+  background:none; border:none; color:#fff; font-size:34px; cursor:pointer; padding:10px;
+}
+.lightbox-prev{ left:2px; } .lightbox-next{ right:2px; }
+
+/* =====================================================
+   8. 지도 / 아코디언
+===================================================== */
+.naver-map-embed{
+  width:100%; aspect-ratio:16/10; background:var(--c-beige);
+  border:2px solid var(--c-beige); overflow:hidden;
+  margin-bottom:12px;
+}
+.naver-map-embed.map-fallback{
+  display:flex; align-items:center; justify-content:center;
+  border:2px dashed var(--c-ink-soft); color:var(--c-ink-soft);
+}
+.address-text{ font-size:13px; line-height:1.8; color:var(--c-ink-soft); margin-bottom:12px; }
+.map-btn-row{ display:flex; gap:10px; justify-content:center; margin-bottom:20px; }
+
+.accordion-item{
+  width:100%; text-align:left; background:var(--c-white); border:none;
+  border-bottom:1px solid var(--c-beige); padding:14px 6px;
+  font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:space-between;
+  cursor:pointer; color:var(--c-ink);
+}
+.accordion-caret{ color:var(--c-rose); font-weight:400; }
+.accordion-panel{
+  max-height:0; overflow:hidden; text-align:left;
+  transition:max-height 0.35s ease, padding 0.35s ease;
+  font-size:13px; color:var(--c-ink-soft); padding:0 6px;
+}
+.accordion-panel.open{ max-height:520px; padding:12px 6px; }
+.accordion-panel p{ margin:0 0 10px; line-height:1.6; }
+.accordion-panel p:last-child{ margin-bottom:0; }
+.accordion-panel strong{ color:var(--c-ink); }
+.account-row{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:10px 0; border-bottom:1px solid #F5EEE3; font-size:12.5px; line-height:1.6;
+}
+.account-row:last-child{ border-bottom:none; }
+
+/* =====================================================
+   9. 안내사항
+===================================================== */
+.notice-list{ text-align:left; font-size:13px; color:var(--c-ink-soft); line-height:2; }
+.notice-list li::before{ content:'• '; color:var(--c-rose); }
+
+/* =====================================================
+   10. 미니게임
+===================================================== */
+.game-desc{ font-size:13px; color:var(--c-ink-soft); line-height:1.8; margin-bottom:20px; }
+
+/* 게임 콘솔 프레임 - 인트로/플레이/게임오버 화면을 하나의 틀로 묶어줌 */
+.game-console{
+  position:relative;
+  max-width:400px; margin:0 auto;
+  background:linear-gradient(180deg,#3c312b,#241d1a);
+  border:4px solid var(--c-ink);
+  box-shadow:6px 6px 0 rgba(62,47,42,0.22);
+  padding:14px 12px 18px;
+}
+.game-console::before, .game-console::after{
+  content:''; position:absolute; top:-4px; width:10px; height:10px; background:var(--c-gold);
+  box-shadow:0 0 0 2px var(--c-ink);
+}
+.game-console::before{ left:-4px; }
+.game-console::after{ right:-4px; }
+.game-console__topbar{ display:flex; align-items:center; gap:8px; margin-bottom:12px; padding:0 2px; }
+.console-dot{ width:8px; height:8px; border-radius:50%; background:var(--c-rose); box-shadow:0 0 6px var(--c-rose); flex-shrink:0; }
+.console-label{ font-size:9px; color:var(--c-cream); letter-spacing:2px; }
+
+/* [hidden] 속성이 display 우선순위에 밀리지 않도록 :not([hidden])로 명시 (모달과 동일 패턴) */
+.game-panel{
+  display:none; flex-direction:column; align-items:center; gap:16px;
+  background:var(--c-cream); border:3px solid var(--c-ink); padding:20px 14px;
+}
+.game-panel:not([hidden]){ display:flex; }
+.rule-title{ font-size:11px; color:var(--c-rose-dark); margin:0 0 10px; }
+.game-rules p{ font-size:12.5px; margin:6px 0; color:var(--c-ink-soft); }
+
+.game-screen{
+  position:relative; width:100%; margin:0 auto;
+  background:linear-gradient(180deg,var(--c-sky-top),var(--c-sky-bottom));
+  border:3px solid var(--c-ink);
+  overflow:hidden; touch-action:none;
+}
+.game-hud{
+  position:absolute; top:0; left:0; right:0; z-index:5;
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:9px 11px;
+  background:linear-gradient(180deg, rgba(20,15,13,0.55), rgba(20,15,13,0.2));
+  border-bottom:1px solid rgba(255,255,255,0.14);
+  color:#fff;
+}
+.game-hud__lives{ display:flex; align-items:center; gap:4px; }
+.heart-icon{
+  font-size:15px; color:#ff5d73; text-shadow:0 1px 2px rgba(0,0,0,0.5);
+  transition:opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease;
+}
+.heart-icon.lost{ opacity:0.32; filter:grayscale(1) brightness(0.75); transform:scale(0.8); }
+.game-hud__round, .game-hud__score{
+  font-size:10px; letter-spacing:0.5px;
+  background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.28);
+  padding:4px 9px; border-radius:20px;
+}
+.game-hud__round::before{ content:'★ '; color:var(--c-gold); }
+.game-hud__score::before{ content:'♦ '; color:var(--c-gold); }
+#gameCanvas{ display:block; width:100%; height:520px; max-height:70vh; touch-action:none; }
+
+/* 실패(놓침) 연출: 화면 흔들림 + 붉은 플래시 + 하트 펄스 */
+@keyframes screenShake{
+  0%,100%{ transform:translateX(0); }
+  20%{ transform:translateX(-7px); }
+  40%{ transform:translateX(6px); }
+  60%{ transform:translateX(-5px); }
+  80%{ transform:translateX(3px); }
+}
+.game-screen.shake{ animation:screenShake 0.36s ease; }
+
+.miss-flash{
+  position:absolute; inset:0; z-index:7; pointer-events:none;
+  background:rgba(196,61,61,0.4); opacity:0;
+}
+.miss-flash.show{ animation:missFlashAnim 0.42s ease-out; }
+@keyframes missFlashAnim{ 0%{opacity:0;} 18%{opacity:1;} 100%{opacity:0;} }
+
+@keyframes heartPulse{
+  0%,100%{ transform:scale(1); }
+  30%{ transform:scale(1.35); filter:drop-shadow(0 0 6px rgba(196,61,61,0.7)); }
+}
+.game-hud__lives.pulse{ animation:heartPulse 0.42s ease; }
+
+/* 명중 파티클 */
+.hit-spark{
+  position:absolute; width:5px; height:5px; margin:-2.5px 0 0 -2.5px;
+  background:var(--c-gold); border-radius:1px; z-index:6;
+  animation:sparkFly 0.5s ease-out forwards;
+}
+.hit-spark.perfect{ background:var(--c-rose); width:6px; height:6px; margin:-3px 0 0 -3px; }
+@keyframes sparkFly{
+  0%{ opacity:1; transform:translate(0,0) scale(1); }
+  100%{ opacity:0; transform:translate(var(--dx),var(--dy)) scale(0.4); }
+}
+
+/* 점수/미스 팝업 - 등급이 높을수록(퍼펙트에 가까울수록) 더 크고 진하게 */
+.game-popup-layer{ position:absolute; inset:0; z-index:6; pointer-events:none; }
+.score-popup{
+  position:absolute; font-family:var(--font-pixel); white-space:nowrap;
+  text-shadow:2px 2px 0 rgba(0,0,0,0.45);
+  transform:translate(-50%,0);
+  animation:popupUp 0.85s ease forwards;
+}
+.score-popup.tier-perfect{ font-size:25px; color:var(--c-rose); animation:popupUpBig 0.9s ease forwards; }
+.score-popup.tier-great{ font-size:19px; color:#F0C24B; }
+.score-popup.tier-nice{ font-size:16px; color:var(--c-gold); }
+.score-popup.tier-good{ font-size:13px; color:var(--c-gold); opacity:0.92; }
+.score-popup.tier-ok{ font-size:11px; color:#c9a355; opacity:0.85; }
+.score-popup.tier-miss{ font-size:19px; color:#e5484d; animation:missPopup 0.7s ease forwards; }
+
+@keyframes popupUp{
+  0%{ opacity:1; transform:translate(-50%,0) scale(1); }
+  100%{ opacity:0; transform:translate(-50%,-42px) scale(1); }
+}
+@keyframes popupUpBig{
+  0%{ opacity:1; transform:translate(-50%,0) scale(0.6); }
+  25%{ opacity:1; transform:translate(-50%,-8px) scale(1.3); }
+  100%{ opacity:0; transform:translate(-50%,-54px) scale(1.1); }
+}
+@keyframes missPopup{
+  0%{ opacity:1; transform:translate(-50%,0) scale(1); }
+  15%{ transform:translate(-50%,0) scale(1.2); }
+  100%{ opacity:0; transform:translate(-50%,-30px) scale(1); }
+}
+
+.game-over-screen{
+  display:none; flex-direction:column; align-items:center; gap:14px;
+  background:var(--c-cream); border:3px solid var(--c-ink); padding:22px 14px;
+}
+.game-over-screen:not([hidden]){ display:flex; }
+.gameover-title{ font-size:20px; color:var(--c-rose-dark); }
+.gameover-sub{ font-size:12.5px; color:var(--c-ink-soft); text-align:center; }
+.gameover-scores{ display:flex; gap:22px; }
+.gameover-scores > div{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+.gameover-scores .label{ font-size:9px; color:var(--c-ink-soft); }
+.gameover-scores .value{ font-size:18px; color:var(--c-rose-dark); }
+.gameover-btn-row{ display:flex; gap:10px; }
+
+/* =====================================================
+   11. 랭킹
+===================================================== */
+.ranking-note{ font-size:11px; color:var(--c-ink-soft); line-height:1.7; margin:-6px 0 16px; }
+.ranking-board{ text-align:left; }
+.ranking-header{
+  display:flex; font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--c-ink-soft); padding-bottom:8px;
+  border-bottom:1px solid var(--c-beige); margin-bottom:4px;
+}
+.col-rank{ width:18%; } .col-name{ flex:1; } .col-score{ width:26%; text-align:right; }
+.ranking-list{ max-height:320px; overflow-y:auto; }
+.ranking-list li{
+  display:flex; align-items:center; font-size:13px; padding:10px 2px;
+  border-bottom:1px solid #F5EEE3;
+}
+.ranking-list li .col-rank{ font-family:var(--font-serif-en); font-style:italic; font-size:14px; color:var(--c-rose-dark); }
+.ranking-list li .col-score{ font-family:var(--font-body); font-weight:600; font-size:13px; color:var(--c-ink); }
+.ranking-list li.top1 .col-rank{ color:var(--c-gold); }
+.ranking-loading{ text-align:center; color:var(--c-ink-soft); font-size:12px; padding:20px 0; }
+.my-ranking-row{
+  margin-top:10px; padding-top:10px; border-top:1px dashed var(--c-beige);
+  display:none; font-size:13px; font-weight:700; color:var(--c-rose-dark);
+}
+.my-ranking-row:not([hidden]){ display:flex; }
+.my-ranking-row .col-rank{ width:18%; font-family:var(--font-serif-en); font-style:italic; font-size:14px; }
+.my-ranking-row .col-name{ flex:1; } .my-ranking-row .col-score{ width:26%; text-align:right; font-family:var(--font-body); font-weight:600; }
+
+/* =====================================================
+   12. 모달 (플레이어 정보)
+===================================================== */
+.modal-overlay{
+  position:fixed; inset:0; z-index:2000; background:rgba(20,15,13,0.55);
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+/* [hidden] 속성은 명시적으로 강제 - display:flex가 브라우저 기본 hidden 처리를 덮어쓰지 않도록 함 */
+.modal-overlay:not([hidden]){ display:flex; }
+.modal-box{ width:100%; max-width:340px; text-align:center; background:var(--c-cream); }
+.modal-title{ font-size:14px; color:var(--c-rose-dark); margin:0 0 10px; }
+.modal-desc{ font-size:12.5px; color:var(--c-ink-soft); line-height:1.7; margin-bottom:16px; }
+.modal-label{ display:block; text-align:left; font-size:9px; color:var(--c-ink-soft); margin:10px 0 6px; }
+.modal-input{
+  width:100%; padding:11px 12px; font-size:14px; border:2px solid var(--c-ink);
+  background:#fff; color:var(--c-ink); outline:none;
+}
+.modal-input:focus{ border-color:var(--c-rose); }
+.modal-hint{ font-size:10.5px; color:var(--c-ink-soft); margin:8px 0 4px; text-align:left; }
+.modal-error{ font-size:11px; color:#C43D3D; text-align:left; margin:4px 0 0; }
+.modal-box .pixel-btn{ margin-top:16px; width:100%; }
+
+/* =====================================================
+   13. 푸터
+===================================================== */
+.footer{ text-align:center; padding:50px 20px 60px; color:var(--c-ink-soft); font-size:12px; }
+.footer-heart{ color:var(--c-rose); font-size:16px; margin-bottom:8px; }
+
+/* =====================================================
+   14. 반응형 / Safe area
+===================================================== */
+@supports (padding: max(0px)){
+  .intro-scene{ padding-top:env(safe-area-inset-top); }
+  .footer{ padding-bottom:max(60px, env(safe-area-inset-bottom)); }
+}
+@media (max-width:340px){
+  .couple-photo-frame{ width:68px; height:68px; }
+  .section-title{ font-size:19px; }
+}
+@media (min-width:640px){
+  .section{ max-width:560px; }
+}
