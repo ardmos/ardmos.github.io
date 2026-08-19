@@ -75,6 +75,11 @@ firebase init hosting   # public 디렉터리를 이 폴더로 지정
 firebase deploy
 ```
 
+배포 후에는 **`index.html` 상단의 `og:image` / `og:url` / `twitter:image` 를 실제 도메인 주소로 꼭 교체**해주세요.
+(`https://YOUR-DOMAIN-HERE.com/...` 부분) 카카오톡 등 일부 플랫폼은 상대경로를 인식하지 못해서
+절대경로(`https://`로 시작하는 전체 주소)로 넣어야 링크 공유 시 `photomain.png`가 미리보기 사진으로 정상적으로 보입니다.
+바뀐 걸 바로 반영하려면 카카오톡 디버거(https://developers.kakao.com/tool/debugger/sharing) 같은 도구로 캐시를 갱신해야 할 수도 있어요.
+
 ## 6. 파일 구조
 ```
 index.html            전체 마크업

@@ -187,9 +187,10 @@ a{color:inherit;text-decoration:none;}
 /* 화면 완전히 밖으로 나갔다가 다시 들어오도록 - 방향 전환(뒤돌기)이 화면 밖에서 넉넉하게 일어나 보이지 않음 */
 @keyframes boraWalk{
   0%{ left:-35%; transform:scaleX(1); }
-  44%{ left:130%; transform:scaleX(1); }
+  /* 화면 밖 정지 구간에서 반전은 보간 없이 순간적으로(스냅) 전환 - 도는 모습이 전혀 보이지 않음 */
+  44%{ left:130%; transform:scaleX(1); animation-timing-function: steps(1, jump-end); }
   50%{ left:130%; transform:scaleX(-1); }
-  94%{ left:-35%; transform:scaleX(-1); }
+  94%{ left:-35%; transform:scaleX(-1); animation-timing-function: steps(1, jump-end); }
   100%{ left:-35%; transform:scaleX(1); }
 }
 @keyframes boraJump{

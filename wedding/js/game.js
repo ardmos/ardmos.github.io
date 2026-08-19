@@ -374,8 +374,9 @@ const WeddingGame = (() => {
   function drawBow(){
     const x = bowX(), y = bowY();
     if (images.bow && images.bow.ok){
-      const w = 40, h = 60;
-      ctx.drawImage(images.bow.el, x - w / 2, y - h + 14, w, h);
+      // 실제 에셋 비율(396×139, 가로로 긴 형태)에 맞춰 표시 - 이미 화살이 나가는 방향에 맞게 그려진 이미지라 회전 없음
+      const w = 64, h = 22;
+      ctx.drawImage(images.bow.el, x - w / 2, y - h / 2, w, h);
       return;
     }
     // 활 방향: 시위는 위쪽(발사 방향)에 수평으로, 활대는 아래로 휘어지도록 회전
@@ -398,8 +399,10 @@ const WeddingGame = (() => {
 
   function drawArrow(x, y){
     if (images.arrow && images.arrow.ok){
-      const w = 10, h = 34;
-      ctx.drawImage(images.arrow.el, x - w / 2, y - h, w, h);
+      // 실제 에셋 비율(31×258, 화살촉 기준 아래로 긴 형태)에 맞춰 표시
+      // 화살촉(이미지 상단)을 y 위치에 맞추고, 화살대는 그 아래로 길게 이어지도록 그림
+      const w = 10, h = 83;
+      ctx.drawImage(images.arrow.el, x - w / 2, y, w, h);
       return;
     }
     ctx.strokeStyle = '#3E2F2A';
