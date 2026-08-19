@@ -40,7 +40,7 @@ body{
 }
 img{max-width:100%;display:block;}
 button{font-family:inherit;}
-ul{list-style:none;margin:0;padding:0;}
+ul, ol{list-style:none;margin:0;padding:0;}
 a{color:inherit;text-decoration:none;}
 
 .pixel-font{font-family:var(--font-pixel);letter-spacing:0.5px;}
@@ -104,9 +104,15 @@ a{color:inherit;text-decoration:none;}
 @keyframes driftCloud{ to{ transform:translateX(160vw); } }
 
 /* 타이틀 배너 (assets/title.png 로 교체 가능, 없으면 픽셀 대화창 스타일 텍스트로 대체) */
+/* 게임 타이틀 화면처럼 아주 살짝, 천천히 위아래로 흔들림 */
 .intro-title{
-  position:absolute; z-index:3; top:8%; left:50%; transform:translateX(-50%);
+  position:absolute; z-index:3; top:13%; left:50%;
   display:flex; justify-content:center; width:92%; max-width:92%;
+  animation:titleBob 3.6s ease-in-out infinite;
+}
+@keyframes titleBob{
+  0%,100%{ transform:translateX(-50%) translateY(0); }
+  50%{ transform:translateX(-50%) translateY(-7px); }
 }
 .intro-title-img{ width:100%; max-width:100%; height:auto; max-height:22vh; image-rendering:pixelated; }
 .intro-title-fallback{
@@ -178,13 +184,13 @@ a{color:inherit;text-decoration:none;}
 }
 .bora-visual.img-fallback::after{ content:attr(data-label); font-family:var(--font-pixel); font-size:8px; padding-bottom:4px; }
 .bora-visual.bounce{ animation:boraJump 0.55s ease; }
-/* 화면 완전히 밖으로 나갔다가 다시 들어오도록 - 방향 전환(뒤돌기)이 화면 밖에서 일어나 보이지 않음 */
+/* 화면 완전히 밖으로 나갔다가 다시 들어오도록 - 방향 전환(뒤돌기)이 화면 밖에서 넉넉하게 일어나 보이지 않음 */
 @keyframes boraWalk{
-  0%{ left:-20%; transform:scaleX(1); }
-  47%{ left:105%; transform:scaleX(1); }
-  50%{ left:105%; transform:scaleX(-1); }
-  97%{ left:-20%; transform:scaleX(-1); }
-  100%{ left:-20%; transform:scaleX(1); }
+  0%{ left:-35%; transform:scaleX(1); }
+  44%{ left:130%; transform:scaleX(1); }
+  50%{ left:130%; transform:scaleX(-1); }
+  94%{ left:-35%; transform:scaleX(-1); }
+  100%{ left:-35%; transform:scaleX(1); }
 }
 @keyframes boraJump{
   0%{ transform:translateY(0); }
@@ -625,13 +631,20 @@ a{color:inherit;text-decoration:none;}
 ===================================================== */
 .ranking-note{ font-size:11px; color:var(--c-ink-soft); line-height:1.7; margin:-6px 0 16px; }
 .ranking-board{ text-align:left; }
+/* 헤더와 리스트를 하나의 스크롤 영역으로 묶어서, 스크롤바가 생기더라도
+   헤더/리스트가 같은 폭을 공유해 열이 어긋나지 않도록 함 */
+.ranking-scroll{
+  max-height:340px; overflow-y:auto; overflow-x:hidden;
+  scrollbar-gutter:stable;
+}
 .ranking-header{
+  position:sticky; top:0; z-index:1; background:var(--c-white);
   display:flex; font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
   color:var(--c-ink-soft); padding:0 2px 8px;
   border-bottom:1px solid var(--c-beige); margin-bottom:4px;
 }
 .col-rank{ width:18%; flex-shrink:0; } .col-name{ flex:1; min-width:0; } .col-score{ width:26%; flex-shrink:0; text-align:right; }
-.ranking-list{ max-height:320px; overflow-y:auto; }
+.ranking-list{ list-style:none; margin:0; padding:0; }
 .ranking-list li{
   display:flex; align-items:center; font-size:13px; padding:10px 2px;
   border-bottom:1px solid #F5EEE3;
