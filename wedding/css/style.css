@@ -174,22 +174,7 @@ a{color:inherit;text-decoration:none;}
 
 .char--bora{
   position:absolute; bottom:0; left:0; /* left는 고정 앵커일 뿐, 애니메이션은 오직 transform */
-  height:14vh; max-height:70px;
-  /* 수정된 보라(#bora) 스타일 */
-#bora {
-  flex-shrink: 0;
-  width: 100px;              /* 원하는 화면상 가로 크기 (60px에서 커진 크기) */
-  min-width: 100px;
-  aspect-ratio: 175 / 155;  /* 실제 175x155px 이미지 비율로 수정 */
-}
-
-/* 내부 이미지(#boraSprite) 스타일 */
-#boraSprite, .bora-visual img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
+  height:18.2vh; max-height:91px; /* 기존 14vh/70px에서 30% 확대 */
   width:auto; max-width:none;
   flex-shrink:0; box-sizing:content-box;
   background:none; border:none; padding:0; cursor:pointer; z-index:4;
@@ -219,8 +204,8 @@ a{color:inherit;text-decoration:none;}
 .bora-visual{ display:block; height:100%; width:auto; flex-shrink:0; }
 .bora-visual img{
   height:100%; width:auto; display:block;
-  min-width:60px; /* 원본 스프라이트 가로 크기 - 실제 에셋 크기에 맞게 조정 */
-  aspect-ratio:60/70; /* 원본 이미지 가로/세로 비율 - 실제 에셋 비율에 맞게 조정 */
+  min-width:78px; /* 원본 스프라이트 가로 크기 - 실제 에셋 크기에 맞게 조정 */
+  aspect-ratio:175/155; /* 실제 보라 이미지(175x155px) 비율 - 바닥에서 뜨던 문제의 원인이었음 */
   object-fit:contain;
   flex-shrink:0;
   image-rendering:pixelated;
@@ -230,7 +215,7 @@ a{color:inherit;text-decoration:none;}
   will-change:transform;
 }
 .bora-visual.img-fallback{
-  width:60px; height:14vh; max-height:70px; background:var(--c-peach);
+  width:78px; height:18.2vh; max-height:91px; background:var(--c-peach);
   border:3px solid var(--c-ink); display:flex; align-items:flex-end; justify-content:center;
 }
 .bora-visual.img-fallback::after{ content:attr(data-label); font-family:var(--font-pixel); font-size:8px; padding-bottom:4px; }
