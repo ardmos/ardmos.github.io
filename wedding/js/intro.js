@@ -12,16 +12,30 @@ const WeddingIntro = (() => {
   const COMBO_EVERY = 5;      // 보라를 이만큼 연속으로 누르면 스타 등장
   const BORA_FRAME_MS = 450;  // 보라 걷기 스프라이트 전환 간격
 
+  const LOADING_CELLS = 10;
+  const LOADING_MS = 1200;
+
   function runLoading(){
     return new Promise((resolve) => {
-      const fill = document.getElementById('loadingBarFill');
+      const bar = document.getElementById('loadingBar');
       const screen = document.getElementById('loading-screen');
-      requestAnimationFrame(() => { fill.style.width = '100%'; });
+      const stepMs = LOADING_MS / LOADING_CELLS;
+
+      bar.innerHTML = Array.from({ length: LOADING_CELLS }, (_, i) =>
+        `<span class="loading-cell" data-i="${i}"></span>`
+      ).join('');
+
+      for (let i = 0; i < LOADING_CELLS; i++){
+        setTimeout(() => {
+          const cell = bar.querySelector(`[data-i="${i}"]`);
+          if (cell) cell.classList.add('filled');
+        }, Math.round(i * stepMs));
+      }
 
       setTimeout(() => {
         screen.classList.add('hide');
         setTimeout(resolve, 500);
-      }, 1200);
+      }, LOADING_MS);
     });
   }
 
@@ -98,6 +112,8 @@ const WeddingIntro = (() => {
 
     bora.addEventListener('click', () => {
       if (animating) return;
+      WeddingSound.unlock();
+      WeddingSound.tap();
       animating = true;
       tapCount++;
 
@@ -159,6 +175,8 @@ const WeddingIntro = (() => {
       const el = document.querySelector(`.char--${who}`);
       if (!el) return;
       el.addEventListener('click', () => {
+        WeddingSound.unlock();
+        WeddingSound.tap();
         const { x: localX, y: localY } = localCenter(el, el.parentElement);
         const type = Math.random() < 0.5 ? 'heart' : 'heart2';
         spawnParticle(

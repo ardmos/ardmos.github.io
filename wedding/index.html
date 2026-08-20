@@ -32,9 +32,12 @@
 <!-- ============================================= -->
 <div id="loading-screen" class="loading-screen">
   <div class="loading-inner">
-    <div class="loading-heart">❤</div>
+    <div class="loading-heart" id="loadingHeart">
+      <img src="assets/heart.png" alt=""
+           onerror="this.remove(); document.getElementById('loadingHeart').classList.add('emoji-fallback');">
+    </div>
     <p class="loading-text pixel-font">LOADING<span class="dots"></span></p>
-    <div class="loading-bar"><div class="loading-bar-fill" id="loadingBarFill"></div></div>
+    <div class="loading-bar" id="loadingBar"></div>
   </div>
 </div>
 
@@ -407,6 +410,7 @@
 <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=YOUR_NAVER_MAP_CLIENT_ID"></script>
 
 <script src="js/firebase-config.js"></script>
+<script src="js/sound.js"></script>
 <script src="js/ranking.js"></script>
 <script src="js/intro.js"></script>
 <script src="js/invitation.js"></script>

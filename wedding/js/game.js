@@ -39,7 +39,7 @@ const WeddingGame = (() => {
   const ABS_MAX_TARGET_SPEED = 430; // 아무리 라운드가 올라가도 이 이상은 넘지 않음(플레이 가능선 유지)
   const STICK_DELAY = 550;        // 명중 후 화살이 과녁에 꽂힌 채 보여지는 시간(ms)
   const RESPAWN_DELAY = 420;      // 완전히 놓쳤을 때 다음 과녁이 나오기까지(ms)
-  const ARROW_STOP_Y_OFFSET = 22; // 화살이 과녁 중심보다 살짝 아래(중간 높이쯤)에서 멈추도록
+  const ARROW_STOP_Y_OFFSET = -8; // 화살촉이 과녁 실제 타격 위치보다 살짝 위에서 멈추도록
 
   let canvas, ctx, W, H, dpr;
   let images = {};
@@ -107,6 +107,8 @@ const WeddingGame = (() => {
     canvas.addEventListener('pointerdown', (e) => {
       e.preventDefault();
       if (state !== 'playing' || arrow || !target || resolving) return;
+      WeddingSound.unlock();
+      WeddingSound.draw();
       charging = true;
       chargeStartTs = performance.now();
       try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* noop */ }
@@ -117,6 +119,7 @@ const WeddingGame = (() => {
       if (!charging) return;
       charging = false;
       const heldMs = performance.now() - chargeStartTs;
+      WeddingSound.fire();
       fireArrow(heldMs);
     }, { passive: false });
 
@@ -172,6 +175,7 @@ const WeddingGame = (() => {
 
     score += ring.score;
     const perfect = ring.label === 'PERFECT';
+    WeddingSound.hit(perfect);
     // 점수/PERFECT 텍스트는 화면 정중앙에 크게 표시 (과녁 근처는 잘 안 보여서)
     showPopup(W / 2, H / 2, perfect ? 'PERFECT!' : `+${ring.score}`, ring.label.toLowerCase());
     // 파티클은 실제로 맞은 위치(과녁)에서 넓게 튀도록
@@ -191,6 +195,7 @@ const WeddingGame = (() => {
   function loseLife(){
     lives--;
     updateHud();
+    WeddingSound.miss();
     // MISS 텍스트도 화면 정중앙에 크게 표시
     showPopup(W / 2, H / 2, 'MISS', 'miss');
     triggerMissEffect();
@@ -374,8 +379,9 @@ const WeddingGame = (() => {
   function drawBow(){
     const x = bowX(), y = bowY();
     if (images.bow && images.bow.ok){
-      // 실제 에셋 비율(396×139, 가로로 긴 형태)에 맞춰 표시 - 이미 화살이 나가는 방향에 맞게 그려진 이미지라 회전 없음
-      const w = 64, h = 22;
+      // 화살(31×258)과 같은 축척으로 맞춘 크기 - 실제 에셋 비율(396×139, 가로로 긴 형태) 유지
+      // 이미 화살이 나가는 방향에 맞게 그려진 이미지라 회전 없음
+      const w = 127, h = 45;
       ctx.drawImage(images.bow.el, x - w / 2, y - h / 2, w, h);
       return;
     }
@@ -446,6 +452,7 @@ const WeddingGame = (() => {
     clearTimeout(respawnTimer);
     clearTimeout(stickTimer);
     cancelAnimationFrame(rafId);
+    WeddingSound.gameOver();
 
     document.getElementById('gameScreen').hidden = true;
     document.getElementById('gameOverScreen').hidden = false;
@@ -461,6 +468,7 @@ const WeddingGame = (() => {
 
   function setupButtons(){
     document.getElementById('gameStartBtn').addEventListener('click', () => {
+      WeddingSound.unlock();
       WeddingRanking.ensurePlayerInfo(() => startGame());
     });
     document.getElementById('playAgainBtn').addEventListener('click', () => startGame());
