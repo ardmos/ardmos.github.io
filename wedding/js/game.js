@@ -174,17 +174,21 @@ const WeddingGame = (() => {
     arrow.y = targetY() + ARROW_STOP_Y_OFFSET;
     resolving = true;
 
-    score += ring.score;
+    // 같은 링 안에서도 정중앙에 가까울수록 0~19점 정수 보너스 (링 간 최소 간격 20점을 절대 넘지 않아
+    // 링 순위 자체는 항상 그대로 유지되면서, 동점자를 정밀하게 갈라줌)
+    const precision = 1 - (offset / ring.radius);
+    const bonus = Math.min(19, Math.floor(precision * 20));
+    const points = ring.score + bonus;
+
+    score += points;
     const isBullseye = ring.label === 'BULLSEYE';
     const isPerfect = ring.label === 'PERFECT';
     const celebrate = isBullseye || isPerfect;
     if (isBullseye) WeddingSound.bullseye();
     else WeddingSound.hit(isPerfect);
 
-    let popupText;
-    if (isBullseye) popupText = 'BULLSEYE!';
-    else if (isPerfect) popupText = 'PERFECT!';
-    else popupText = `+${ring.score}`;
+    // 등급 이름과 실제 획득 점수를 함께 표시 (예: "PERFECT +119")
+    const popupText = `${ring.label} +${points}`;
 
     // 점수/BULLSEYE/PERFECT 텍스트는 화면 정중앙에 크게 표시 (과녁 근처는 잘 안 보여서)
     showPopup(W / 2, H / 2, popupText, ring.label.toLowerCase());
