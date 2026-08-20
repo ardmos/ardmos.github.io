@@ -173,25 +173,32 @@ a{color:inherit;text-decoration:none;}
 
 
 .char--bora{
-  position:absolute; bottom:0; left:-35%;
-  height:14vh; max-height:70px; width:auto; max-width:none;
+  position:absolute; bottom:0; left:0; /* left는 고정 앵커일 뿐, 애니메이션은 오직 transform */
+  height:14vh; max-height:70px;
+  min-width:60px; /* 기존 보라 스프라이트 가로 크기(원본 60x70 기준) - 실제 에셋 크기에 맞게 조정 */
+  aspect-ratio:60/70; /* 원본 이미지 가로/세로 비율 - 실제 에셋 비율에 맞게 조정 */
+  width:auto; max-width:none;
   flex-shrink:0; box-sizing:content-box;
   background:none; border:none; padding:0; cursor:pointer; z-index:4;
-  /* 이 엘리먼트는 오직 left(위치) 애니메이션만 담당하며, transform은 절대 갖지 않습니다.
-     transform(반전)은 자식인 #boraSprite(img)에서만 다뤄서 위치 이동 레이어와
-     반전 레이어를 완전히 분리합니다 - 그래야 화면 경계에서 레이아웃(left)과
-     컴포지팅(transform)이 같은 프레임에서 충돌해 찌그러지는 현상이 생기지 않습니다. */
+  transform:translate3d(-35vw, 0, 0); /* 초기 위치(JS가 시작 시 다시 세팅) */
+  will-change:transform;
+  /* left는 이동에 전혀 관여하지 않습니다 - 이동은 오직 transform: translate3d(Xvw,0,0)
+     로만 처리합니다. translate3d는 합성 레이어에서 동작해 부모의 레이아웃 경계와
+     무관하므로, 화면 좌/우 어느 경계를 지나가도 박스가 찌그러질 수 없습니다.
+     반전(scaleX)은 자식인 #boraSprite(img)에서만 다뤄서 이동 레이어와
+     반전 레이어를 완전히 분리합니다. */
 }
 /* 왼쪽->오른쪽(기본 이미지)과 오른쪽->왼쪽(좌우 반전 이미지) 두 개의 독립된 애니메이션이
-   JS에 의해 번갈아 실행됩니다. 둘 다 화면 밖(-35% / 130%)에서 시작해서 화면 밖에서 끝나고,
-   이 keyframes는 오직 left만 다루고 transform은 절대 건드리지 않습니다. */
+   JS에 의해 번갈아 실행됩니다. 둘 다 화면 밖(translate3d -35vw / 130vw)에서 시작해서
+   화면 밖에서 끝나고, 이 keyframes는 오직 transform: translate3d()만 다룹니다.
+   left는 전혀 사용하지 않습니다. */
 @keyframes boraGoRight{
-  from{ left: -35%; }
-  to{ left: 130%; }
+  from{ transform:translate3d(-35vw, 0, 0); }
+  to{ transform:translate3d(130vw, 0, 0); }
 }
 @keyframes boraGoLeft{
-  from{ left: 130%; }
-  to{ left: -35%; }
+  from{ transform:translate3d(130vw, 0, 0); }
+  to{ transform:translate3d(-35vw, 0, 0); }
 }
 /* #boraVisual: 점프(bounce, translateY)만 담당하는 레이어. 반전(scaleX)은 여기 두지 않습니다
    - 만약 여기 scaleX를 두면 boraJump 키프레임이 transform 전체를 대체하는 동안
@@ -199,6 +206,10 @@ a{color:inherit;text-decoration:none;}
 .bora-visual{ display:block; height:100%; width:auto; flex-shrink:0; }
 .bora-visual img{
   height:100%; width:auto; display:block;
+  min-width:60px; /* 원본 스프라이트 가로 크기 - 실제 에셋 크기에 맞게 조정 */
+  aspect-ratio:60/70; /* 원본 이미지 가로/세로 비율 - 실제 에셋 비율에 맞게 조정 */
+  object-fit:contain;
+  flex-shrink:0;
   image-rendering:pixelated;
   /* 반전(scaleX)은 오직 이 img 엘리먼트에서만 정적으로(애니메이션 없이) 적용됩니다. */
   transform-origin:center center;

@@ -102,27 +102,33 @@ const WeddingIntro = (() => {
     };
   }
 
-  /** 보라를 화면 밖(왼쪽 -35% ~ 오른쪽 130%)까지 JS로 직접 이동시키고,
-   *  화면 밖에 있는 짧은 순간 transition 없이 즉시 방향을 반전시킵니다.
-   *  (CSS 키프레임 타이밍에 의존하지 않아서 반전 과정이 절대 보이지 않습니다) */
   /**
    * 왼쪽->오른쪽(기본 이미지)과 오른쪽->왼쪽(좌우 반전 이미지),
    * 서로 다른 두 개의 CSS 애니메이션을 번갈아 실행합니다.
-   * 각 애니메이션은 오직 left(위치)만 움직이고, transform(방향)은
-   * 해당 구간이 시작되기 전에 한 번 고정값으로 세팅될 뿐 애니메이션 도중에는 절대
-   * 바뀌지 않습니다 - 그래서 "도는 모습"이 원천적으로 존재할 수 없습니다.
-   * 두 애니메이션 모두 화면 밖(-35% ~ 130%)에서 시작해서 화면 밖에서 끝납니다.
+   * 이동은 오직 #bora의 transform: translate3d(Xvw,0,0)만 사용하고 left는
+   * 전혀 사용하지 않습니다 - translate3d는 부모의 레이아웃 경계와 무관하게
+   * 합성 레이어에서만 움직이므로 화면 경계(우측 포함)에서 찌그러지는 현상이
+   * 원천적으로 발생하지 않습니다.
+   * 반전(scaleX)은 #bora가 아닌 자식 img(#boraSprite)에서, 해당 구간이
+   * 시작되기 전에 한 번 고정값으로만 세팅되며 이동 애니메이션 도중에는
+   * 절대 바뀌지 않습니다 - 그래서 "도는 모습"이 원천적으로 존재할 수 없습니다.
+   * 두 애니메이션 모두 화면 밖(translate3d -35vw ~ 130vw)에서 시작해서
+   * 화면 밖에서 끝납니다.
    */
   function setupBoraWalk(){
     const bora = document.getElementById('bora');
     // 반전(scaleX)은 오직 이 leaf 엘리먼트(img)에만 적용합니다.
-    // #bora는 오직 left(위치)만 담당하고, #boraVisual은 오직 bounce(translateY)만 담당하므로
-    // 이 세 레이어(위치 / 점프 / 반전)가 서로의 transform을 절대 덮어쓰지 않습니다.
+    // #bora는 오직 이동(transform: translate3d)만 담당하고, #boraVisual은 오직
+    // bounce(translateY)만 담당하므로 이 세 레이어(이동 / 점프 / 반전)가
+    // 서로의 transform을 절대 덮어쓰지 않습니다.
+    // left는 전혀 사용하지 않습니다 - translate3d는 부모의 레이아웃 박스(경계)와
+    // 무관하게 합성 레이어에서만 이동하므로 우측 경계에서 찌그러지는 현상이
+    // 구조적으로 발생할 수 없습니다.
     const sprite = document.getElementById('boraSprite');
     const MOVE_MS = 7400;
 
     function startRight(){
-      bora.style.left = '-35%';
+      bora.style.transform = 'translate3d(-35vw, 0, 0)';
       sprite.style.transform = 'scaleX(1)';   // 기본(오른쪽을 보는) 이미지
       bora.style.animation = 'none';
       void bora.offsetWidth; // 강제 리플로우로 애니메이션 재시작 보장
@@ -130,7 +136,7 @@ const WeddingIntro = (() => {
     }
 
     function startLeft(){
-      bora.style.left = '130%';
+      bora.style.transform = 'translate3d(130vw, 0, 0)';
       sprite.style.transform = 'scaleX(-1)';  // 좌우 반전된 이미지
       bora.style.animation = 'none';
       void bora.offsetWidth;
