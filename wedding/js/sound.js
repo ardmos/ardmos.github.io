@@ -55,11 +55,11 @@ const WeddingSound = (() => {
     beep({ freq: 540, duration: 0.08, type: 'square', volume: 0.15, slideTo: 640 });
   },
 
-  /** 🐶 보라 터치 (새로 추가) */
+  /** 🐶 보라 터치 - 통통 튀는 듯한 3연음 + triangle 파형으로 신랑/신부 tap()과는 확실히 다른 귀여운 톤 */
   tapBora(){
-    // 톤을 살짝 높이고 연속된 2개 음으로 귀엽게 표현
-    beep({ freq: 700, duration: 0.06, type: 'square', volume: 0.16, slideTo: 880 });
-    beep({ freq: 1050, duration: 0.09, type: 'square', volume: 0.16, delay: 0.05 });
+    beep({ freq: 620, duration: 0.05, type: 'triangle', volume: 0.18, slideTo: 820 });
+    beep({ freq: 900, duration: 0.05, type: 'triangle', volume: 0.18, slideTo: 1100, delay: 0.06 });
+    beep({ freq: 1250, duration: 0.1, type: 'triangle', volume: 0.16, slideTo: 950, delay: 0.12 });
   },
 
     /** 활을 누르고 당기기 시작 */
