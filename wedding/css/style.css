@@ -178,8 +178,8 @@ a{color:inherit;text-decoration:none;}
   /* 수정된 보라(#bora) 스타일 */
 #bora {
   flex-shrink: 0;
-  width: 85px;              /* 원하는 화면상 가로 크기 (60px에서 커진 크기) */
-  min-width: 85px;
+  width: 100px;              /* 원하는 화면상 가로 크기 (60px에서 커진 크기) */
+  min-width: 100px;
   aspect-ratio: 175 / 155;  /* 실제 175x155px 이미지 비율로 수정 */
 }
 
