@@ -50,10 +50,17 @@ const WeddingSound = (() => {
   return {
     unlock,
 
-    /** 신랑/신부/보라 터치 */
-    tap(){
-      beep({ freq: 540, duration: 0.08, type: 'square', volume: 0.15, slideTo: 640 });
-    },
+   /** 신랑/신부 터치 */
+   tap(){
+    beep({ freq: 540, duration: 0.08, type: 'square', volume: 0.15, slideTo: 640 });
+  },
+
+  /** 🐶 보라 터치 (새로 추가) */
+  tapBora(){
+    // 톤을 살짝 높이고 연속된 2개 음으로 귀엽게 표현
+    beep({ freq: 700, duration: 0.06, type: 'square', volume: 0.16, slideTo: 880 });
+    beep({ freq: 1050, duration: 0.09, type: 'square', volume: 0.16, delay: 0.05 });
+  },
 
     /** 활을 누르고 당기기 시작 */
     draw(){
