@@ -120,7 +120,7 @@ const WeddingIntro = (() => {
       facing = dir;
       bora.style.transition = 'none';
       bora.style.transform = `scaleX(${dir})`;
-      void bora.offsetWidth; // 강제 리플로우 - 다음 transition이 정상 적용되도록
+      void bora.offsetWidth;
     }
 
     function goTo(targetLeft){
@@ -128,20 +128,26 @@ const WeddingIntro = (() => {
       bora.style.left = targetLeft;
     }
 
+    // 화면 밖에 나가 있는 구간(대기+반전)은 위치 계산과 별개로 visibility까지 강제로 숨김
+    // -> 위치가 어떻든 이 구간에서는 절대 화면에 그려지지 않음(이중 안전장치)
     function goRight(){
       if (paused) return;
+      bora.style.visibility = 'visible';
       goTo(EXIT_RIGHT);
       timer = setTimeout(() => {
-        snapFacing(-1); // 화면 밖(오른쪽)에서 순간 반전
+        bora.style.visibility = 'hidden';
+        snapFacing(-1); // 화면 밖(오른쪽)에서 순간 반전 - 숨겨진 상태라 절대 보이지 않음
         timer = setTimeout(goLeft, PAUSE_MS);
       }, MOVE_MS);
     }
 
     function goLeft(){
       if (paused) return;
+      bora.style.visibility = 'visible';
       goTo(EXIT_LEFT);
       timer = setTimeout(() => {
-        snapFacing(1); // 화면 밖(왼쪽)에서 순간 반전
+        bora.style.visibility = 'hidden';
+        snapFacing(1); // 화면 밖(왼쪽)에서 순간 반전 - 숨겨진 상태라 절대 보이지 않음
         timer = setTimeout(goRight, PAUSE_MS);
       }, MOVE_MS);
     }
@@ -150,6 +156,7 @@ const WeddingIntro = (() => {
     bora.style.transition = 'none';
     bora.style.left = EXIT_LEFT;
     bora.style.transform = 'scaleX(1)';
+    bora.style.visibility = 'visible';
     void bora.offsetWidth;
     timer = setTimeout(goRight, 60);
 
@@ -159,6 +166,7 @@ const WeddingIntro = (() => {
         if (paused) return;
         paused = true;
         clearTimeout(timer);
+        bora.style.visibility = 'visible';
         const rect = bora.getBoundingClientRect();
         const parentRect = bora.parentElement.getBoundingClientRect();
         const pct = parentRect.width ? ((rect.left - parentRect.left) / parentRect.width) * 100 : 0;
