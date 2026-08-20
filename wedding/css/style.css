@@ -173,12 +173,12 @@ a{color:inherit;text-decoration:none;}
 
 
 .char--bora{
-  position:absolute; bottom:0; left:8%;
+  position:absolute; bottom:0; left:-35%;
   height:14vh; max-height:70px; width:auto;
   background:none; border:none; padding:0; cursor:pointer; z-index:4;
-  animation:boraWalk 16s ease-in-out infinite;
+  /* 위치 이동은 JS가 직접 제어 (transition만 CSS에서 담당) - 방향 전환은 transition 없이 순간 전환됨 */
+  transition: left 7.4s linear;
 }
-.char--bora.jump{ animation-play-state:paused; }
 .bora-visual{ display:block; height:100%; }
 .bora-visual img{ height:100%; width:auto; image-rendering:pixelated; }
 .bora-visual.img-fallback{
@@ -187,15 +187,6 @@ a{color:inherit;text-decoration:none;}
 }
 .bora-visual.img-fallback::after{ content:attr(data-label); font-family:var(--font-pixel); font-size:8px; padding-bottom:4px; }
 .bora-visual.bounce{ animation:boraJump 0.55s ease; }
-/* 화면 완전히 밖으로 나갔다가 다시 들어오도록 - 방향 전환(뒤돌기)이 화면 밖에서 넉넉하게 일어나 보이지 않음 */
-@keyframes boraWalk{
-  0%{ left:-35%; transform:scaleX(1); }
-  /* 화면 밖 정지 구간에서 반전은 보간 없이 순간적으로(스냅) 전환 - 도는 모습이 전혀 보이지 않음 */
-  44%{ left:130%; transform:scaleX(1); animation-timing-function: steps(1, jump-end); }
-  50%{ left:130%; transform:scaleX(-1); }
-  94%{ left:-35%; transform:scaleX(-1); animation-timing-function: steps(1, jump-end); }
-  100%{ left:-35%; transform:scaleX(1); }
-}
 @keyframes boraJump{
   0%{ transform:translateY(0); }
   40%{ transform:translateY(-22px); }
@@ -582,6 +573,7 @@ a{color:inherit;text-decoration:none;}
   animation:sparkFly 0.62s ease-out forwards;
 }
 .hit-spark.perfect{ background:var(--c-rose); width:6px; height:6px; margin:-3px 0 0 -3px; }
+.hit-spark.bullseye{ background:#FFD700; width:7px; height:7px; margin:-3.5px 0 0 -3.5px; box-shadow:0 0 5px rgba(255,215,0,0.8); }
 @keyframes sparkFly{
   0%{ opacity:1; transform:translate(0,0) scale(1); }
   100%{ opacity:0; transform:translate(var(--dx),var(--dy)) scale(0.4); }
@@ -594,6 +586,11 @@ a{color:inherit;text-decoration:none;}
   text-shadow:2px 2px 0 rgba(0,0,0,0.45);
   transform:translate(-50%,0);
   animation:popupUp 0.85s ease forwards;
+}
+.score-popup.tier-bullseye{
+  font-size:31px; color:#FFD700; letter-spacing:1px;
+  text-shadow:2px 2px 0 rgba(0,0,0,0.5), 0 0 14px rgba(255,215,0,0.65);
+  animation:popupUpBig 1s ease forwards;
 }
 .score-popup.tier-perfect{ font-size:25px; color:var(--c-rose); animation:popupUpBig 0.9s ease forwards; }
 .score-popup.tier-great{ font-size:19px; color:#F0C24B; }

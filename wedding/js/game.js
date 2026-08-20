@@ -15,6 +15,7 @@ const WeddingGame = (() => {
   };
 
   const RINGS = [
+    { radius: 3,  score: 200, label: 'BULLSEYE' },
     { radius: 10, score: 100, label: 'PERFECT' },
     { radius: 18, score: 80,  label: 'GREAT' },
     { radius: 26, score: 60,  label: 'NICE' },
@@ -174,12 +175,21 @@ const WeddingGame = (() => {
     resolving = true;
 
     score += ring.score;
-    const perfect = ring.label === 'PERFECT';
-    WeddingSound.hit(perfect);
-    // 점수/PERFECT 텍스트는 화면 정중앙에 크게 표시 (과녁 근처는 잘 안 보여서)
-    showPopup(W / 2, H / 2, perfect ? 'PERFECT!' : `+${ring.score}`, ring.label.toLowerCase());
+    const isBullseye = ring.label === 'BULLSEYE';
+    const isPerfect = ring.label === 'PERFECT';
+    const celebrate = isBullseye || isPerfect;
+    if (isBullseye) WeddingSound.bullseye();
+    else WeddingSound.hit(isPerfect);
+
+    let popupText;
+    if (isBullseye) popupText = 'BULLSEYE!';
+    else if (isPerfect) popupText = 'PERFECT!';
+    else popupText = `+${ring.score}`;
+
+    // 점수/BULLSEYE/PERFECT 텍스트는 화면 정중앙에 크게 표시 (과녁 근처는 잘 안 보여서)
+    showPopup(W / 2, H / 2, popupText, ring.label.toLowerCase());
     // 파티클은 실제로 맞은 위치(과녁)에서 넓게 튀도록
-    showHitParticles(screenX, screenY, perfect);
+    showHitParticles(screenX, screenY, celebrate, isBullseye);
     round++; // 맞힐 때마다 라운드 즉시 상승 (상한 없이 계속 어려워짐)
     updateHud();
 
@@ -222,14 +232,14 @@ const WeddingGame = (() => {
     setTimeout(() => el.remove(), 900);
   }
 
-  function showHitParticles(x, y, perfect){
+  function showHitParticles(x, y, celebrate, bullseye){
     const layer = document.getElementById('gamePopupLayer');
-    const count = perfect ? 14 : 9;
+    const count = bullseye ? 18 : (celebrate ? 14 : 9);
     for (let i = 0; i < count; i++){
       const p = document.createElement('span');
-      p.className = 'hit-spark' + (perfect ? ' perfect' : '');
+      p.className = 'hit-spark' + (celebrate ? ' perfect' : '') + (bullseye ? ' bullseye' : '');
       const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
-      const dist = perfect ? (40 + Math.random() * 65) : (32 + Math.random() * 45);
+      const dist = bullseye ? (55 + Math.random() * 80) : (celebrate ? (40 + Math.random() * 65) : (32 + Math.random() * 45));
       p.style.left = x + 'px';
       p.style.top = y + 'px';
       p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
@@ -299,11 +309,24 @@ const WeddingGame = (() => {
     }
 
     if (arrow && !arrow.stuck){
+      const prevArrowY = arrow.y;
       arrow.elapsedMs += dt * 1000;
-      arrow.y -= currentArrowSpeed(arrow) * dt;
-      if (target && arrow.y <= targetY() + ARROW_STOP_Y_OFFSET){
-        const offset = Math.abs(arrow.x - target.x);
-        resolveArrival(offset, target.x, targetY());
+      const speed = currentArrowSpeed(arrow);
+      arrow.y -= speed * dt;
+
+      const threshold = targetY() + ARROW_STOP_Y_OFFSET;
+      if (target && arrow.y <= threshold){
+        // 프레임의 '끝' 시점 과녁 위치가 아니라, 화살이 기준선을 실제로 넘은
+        // '그 정확한 순간'의 과녁 위치를 보간해서 사용 (라운드가 빨라질수록
+        // 프레임당 과녁 이동량이 커져서 생기던 판정 오차를 줄여줌)
+        const totalMove = prevArrowY - arrow.y;
+        const f = totalMove > 0 ? Math.min(Math.max((prevArrowY - threshold) / totalMove, 0), 1) : 1;
+        const targetDir = target.phase === 'out' ? -1 : 1;
+        const targetDeltaThisFrame = targetDir * target.speed * dt;
+        const targetXAtCross = target.x - targetDeltaThisFrame * (1 - f);
+
+        const offset = Math.abs(arrow.x - targetXAtCross);
+        resolveArrival(offset, targetXAtCross, targetY());
       } else if (arrow.y < -20){
         arrow = null;
       }
@@ -360,18 +383,20 @@ const WeddingGame = (() => {
       ctx.drawImage(images.target.el, x - size / 2, y - size / 2, size, size);
       return;
     }
+    // 기존 배치 그대로 복원 (PERFECT~OK 5개 링) - RINGS[0]은 불스아이라 여기선 제외
     const colors = ['#B94D66', '#fff', '#E7B84C', '#fff', '#7FB88A'];
-    for (let i = RINGS.length - 1; i >= 0; i--){
+    for (let i = RINGS.length - 1; i >= 1; i--){
       ctx.beginPath();
-      ctx.fillStyle = colors[i % colors.length];
+      ctx.fillStyle = colors[(i - 1) % colors.length];
       ctx.arc(x, y, RINGS[i].radius, 0, Math.PI * 2);
       ctx.fill();
       ctx.lineWidth = 1.5;
       ctx.strokeStyle = 'rgba(62,47,42,0.5)';
       ctx.stroke();
     }
+    // 정중앙 불스아이 - 검은색 점 (작게, 판정도 좁게)
     ctx.beginPath();
-    ctx.fillStyle = '#D8637F';
+    ctx.fillStyle = '#1a1a1a';
     ctx.arc(x, y, RINGS[0].radius, 0, Math.PI * 2);
     ctx.fill();
   }

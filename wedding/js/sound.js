@@ -77,6 +77,14 @@ const WeddingSound = (() => {
       }
     },
 
+    /** 완전 정중앙(불스아이) 명중 - 가장 화려한 4음 상승 팡파르 */
+    bullseye(){
+      beep({ freq: 660, duration: 0.08, volume: 0.19 });
+      beep({ freq: 880, duration: 0.09, volume: 0.19, delay: 0.07 });
+      beep({ freq: 1175, duration: 0.1, volume: 0.19, delay: 0.14 });
+      beep({ freq: 1568, duration: 0.22, volume: 0.19, delay: 0.21 });
+    },
+
     /** 빗나가거나 놓쳐서 목숨이 줄어들 때 */
     miss(){
       beep({ freq: 220, duration: 0.22, type: 'sawtooth', volume: 0.16, slideTo: 90 });
