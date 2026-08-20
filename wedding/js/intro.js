@@ -115,11 +115,15 @@ const WeddingIntro = (() => {
    */
   function setupBoraWalk(){
     const bora = document.getElementById('bora');
+    // 반전(scaleX)은 오직 이 leaf 엘리먼트(img)에만 적용합니다.
+    // #bora는 오직 left(위치)만 담당하고, #boraVisual은 오직 bounce(translateY)만 담당하므로
+    // 이 세 레이어(위치 / 점프 / 반전)가 서로의 transform을 절대 덮어쓰지 않습니다.
+    const sprite = document.getElementById('boraSprite');
     const MOVE_MS = 7400;
 
     function startRight(){
       bora.style.left = '-35%';
-      bora.style.transform = 'scaleX(1)';   // 기본(오른쪽을 보는) 이미지
+      sprite.style.transform = 'scaleX(1)';   // 기본(오른쪽을 보는) 이미지
       bora.style.animation = 'none';
       void bora.offsetWidth; // 강제 리플로우로 애니메이션 재시작 보장
       bora.style.animation = `boraGoRight ${MOVE_MS}ms linear forwards`;
@@ -127,7 +131,7 @@ const WeddingIntro = (() => {
 
     function startLeft(){
       bora.style.left = '130%';
-      bora.style.transform = 'scaleX(-1)';  // 좌우 반전된 이미지
+      sprite.style.transform = 'scaleX(-1)';  // 좌우 반전된 이미지
       bora.style.animation = 'none';
       void bora.offsetWidth;
       bora.style.animation = `boraGoLeft ${MOVE_MS}ms linear forwards`;
