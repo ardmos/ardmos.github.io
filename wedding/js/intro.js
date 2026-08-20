@@ -170,7 +170,7 @@ const WeddingIntro = (() => {
     bora.addEventListener('click', () => {
       if (animating) return;
       WeddingSound.unlock();
-      WeddingSound.tap();
+      WeddingSound.tapBora();
       animating = true;
       tapCount++;
 
