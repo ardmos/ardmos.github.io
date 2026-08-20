@@ -105,81 +105,47 @@ const WeddingIntro = (() => {
   /** 보라를 화면 밖(왼쪽 -35% ~ 오른쪽 130%)까지 JS로 직접 이동시키고,
    *  화면 밖에 있는 짧은 순간 transition 없이 즉시 방향을 반전시킵니다.
    *  (CSS 키프레임 타이밍에 의존하지 않아서 반전 과정이 절대 보이지 않습니다) */
+  /**
+   * 왼쪽->오른쪽(기본 이미지)과 오른쪽->왼쪽(좌우 반전 이미지),
+   * 서로 다른 두 개의 CSS 애니메이션을 번갈아 실행합니다.
+   * 각 애니메이션은 오직 left(위치)만 움직이고, transform(방향)은
+   * 해당 구간이 시작되기 전에 한 번 고정값으로 세팅될 뿐 애니메이션 도중에는 절대
+   * 바뀌지 않습니다 - 그래서 "도는 모습"이 원천적으로 존재할 수 없습니다.
+   * 두 애니메이션 모두 화면 밖(-35% ~ 130%)에서 시작해서 화면 밖에서 끝납니다.
+   */
   function setupBoraWalk(){
     const bora = document.getElementById('bora');
-    const EXIT_LEFT = '-35%';
-    const EXIT_RIGHT = '130%';
-    const MOVE_MS = 7400;   // 편도 이동 시간
-    const PAUSE_MS = 220;   // 화면 밖에서 대기(반전 여유) 시간
+    const MOVE_MS = 7400;
 
-    let facing = 1;      // 1 = 오른쪽을 보고 있음, -1 = 왼쪽을 보고 있음
-    let timer = null;
-    let paused = false;
+    function startRight(){
+      bora.style.left = '-35%';
+      bora.style.transform = 'scaleX(1)';   // 기본(오른쪽을 보는) 이미지
+      bora.style.animation = 'none';
+      void bora.offsetWidth; // 강제 리플로우로 애니메이션 재시작 보장
+      bora.style.animation = `boraGoRight ${MOVE_MS}ms linear forwards`;
+    }
 
-    function snapFacing(dir){
-      facing = dir;
-      bora.style.transition = 'none';
-      bora.style.transform = `scaleX(${dir})`;
+    function startLeft(){
+      bora.style.left = '130%';
+      bora.style.transform = 'scaleX(-1)';  // 좌우 반전된 이미지
+      bora.style.animation = 'none';
       void bora.offsetWidth;
+      bora.style.animation = `boraGoLeft ${MOVE_MS}ms linear forwards`;
     }
 
-    function goTo(targetLeft){
-      bora.style.transition = `left ${MOVE_MS}ms linear`;
-      bora.style.left = targetLeft;
-    }
+    bora.addEventListener('animationend', (e) => {
+      if (e.target !== bora) return;
+      if (e.animationName === 'boraGoRight') startLeft();
+      else if (e.animationName === 'boraGoLeft') startRight();
+    });
 
-    // 화면 밖에 나가 있는 구간(대기+반전)은 위치 계산과 별개로 visibility까지 강제로 숨김
-    // -> 위치가 어떻든 이 구간에서는 절대 화면에 그려지지 않음(이중 안전장치)
-    function goRight(){
-      if (paused) return;
-      bora.style.visibility = 'visible';
-      goTo(EXIT_RIGHT);
-      timer = setTimeout(() => {
-        bora.style.visibility = 'hidden';
-        snapFacing(-1); // 화면 밖(오른쪽)에서 순간 반전 - 숨겨진 상태라 절대 보이지 않음
-        timer = setTimeout(goLeft, PAUSE_MS);
-      }, MOVE_MS);
-    }
-
-    function goLeft(){
-      if (paused) return;
-      bora.style.visibility = 'visible';
-      goTo(EXIT_LEFT);
-      timer = setTimeout(() => {
-        bora.style.visibility = 'hidden';
-        snapFacing(1); // 화면 밖(왼쪽)에서 순간 반전 - 숨겨진 상태라 절대 보이지 않음
-        timer = setTimeout(goRight, PAUSE_MS);
-      }, MOVE_MS);
-    }
-
-    // 초기 상태 설정 후 오른쪽으로 이동 시작
-    bora.style.transition = 'none';
-    bora.style.left = EXIT_LEFT;
-    bora.style.transform = 'scaleX(1)';
-    bora.style.visibility = 'visible';
-    void bora.offsetWidth;
-    timer = setTimeout(goRight, 60);
+    startRight();
 
     return {
-      /** 탭-점프 동안 현재 위치에서 그대로 멈춤 */
-      pause(){
-        if (paused) return;
-        paused = true;
-        clearTimeout(timer);
-        bora.style.visibility = 'visible';
-        const rect = bora.getBoundingClientRect();
-        const parentRect = bora.parentElement.getBoundingClientRect();
-        const pct = parentRect.width ? ((rect.left - parentRect.left) / parentRect.width) * 100 : 0;
-        bora.style.transition = 'none';
-        bora.style.left = pct + '%';
-        void bora.offsetWidth;
-      },
-      /** 멈췄던 지점부터 원래 향하던 방향으로 이동 재개 */
-      resume(){
-        if (!paused) return;
-        paused = false;
-        if (facing === 1) goRight(); else goLeft();
-      }
+      /** 탭-점프 동안 애니메이션을 그 자리에서 일시정지 */
+      pause(){ bora.style.animationPlayState = 'paused'; },
+      /** 멈췄던 지점부터 이어서 재생 */
+      resume(){ bora.style.animationPlayState = 'running'; }
     };
   }
 

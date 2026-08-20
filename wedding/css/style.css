@@ -176,8 +176,17 @@ a{color:inherit;text-decoration:none;}
   position:absolute; bottom:0; left:-35%;
   height:14vh; max-height:70px; width:auto;
   background:none; border:none; padding:0; cursor:pointer; z-index:4;
-  /* 위치 이동은 JS가 직접 제어 (transition만 CSS에서 담당) - 방향 전환은 transition 없이 순간 전환됨 */
-  transition: left 7.4s linear;
+}
+/* 왼쪽->오른쪽(기본 이미지)과 오른쪽->왼쪽(좌우 반전 이미지) 두 개의 독립된 애니메이션이
+   JS에 의해 번갈아 실행됩니다. 둘 다 화면 밖(-35% / 130%)에서 시작해서 화면 밖에서 끝나고,
+   각 구간 안에서는 방향(transform)이 절대 바뀌지 않으므로 반전 과정이 보일 수가 없습니다. */
+@keyframes boraGoRight{
+  from{ left: -35%; }
+  to{ left: 130%; }
+}
+@keyframes boraGoLeft{
+  from{ left: 130%; }
+  to{ left: -35%; }
 }
 .bora-visual{ display:block; height:100%; }
 .bora-visual img{ height:100%; width:auto; image-rendering:pixelated; }
