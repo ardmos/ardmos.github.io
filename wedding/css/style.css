@@ -447,7 +447,7 @@ a{color:inherit;text-decoration:none;}
 }
 .gallery-item img{
   width:100%; height:100%; object-fit:cover; display:block;
-  opacity:0; transition:opacity 0.35s ease;
+  opacity:0; transition:opacity 0.2s ease;
   -webkit-touch-callout:none; -webkit-user-select:none; user-select:none;
 }
 .gallery-item img.loaded{ opacity:1; }
@@ -489,6 +489,8 @@ a{color:inherit;text-decoration:none;}
   display:flex; align-items:center; justify-content:center;
   border:2px dashed var(--c-ink-soft); color:var(--c-ink-soft);
 }
+.address-row{ display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:20px; }
+.address-row .address-text{ margin-bottom:0; text-align:left; flex:1; }
 .address-text{ font-size:13px; line-height:1.8; color:var(--c-ink-soft); margin-bottom:12px; }
 .map-btn-row{ display:flex; gap:10px; justify-content:center; margin-bottom:20px; }
 

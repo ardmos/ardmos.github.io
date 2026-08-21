@@ -54,7 +54,7 @@ const WeddingInvitation = (() => {
       const featured = (i + 1) % FEATURED_EVERY === 0;
       return `
       <div class="gallery-item${featured ? ' featured' : ''}" data-index="${i}">
-        <img src="${src}" alt="갤러리 사진 ${i + 1}" loading="lazy" decoding="async"
+        <img data-src="${src}" alt="갤러리 사진 ${i + 1}" decoding="async"
              draggable="false" oncontextmenu="return false;"
              onload="this.classList.add('loaded')"
              onerror="this.parentElement.style.background='var(--c-beige)'; this.remove();">
@@ -68,7 +68,25 @@ const WeddingInvitation = (() => {
       openLightbox(Number(item.dataset.index));
     });
 
+    setupGalleryLazyLoad(grid);
     setupLightbox();
+  }
+
+  /** 네이티브 loading="lazy"는 화면에 거의 닿아야 로딩을 시작해 스크롤 중 늦게 뜨는 느낌을 줌 -
+   *  화면에 들어오기 훨씬 전(rootMargin 600px)부터 미리 로딩을 시작해 체감 속도를 개선 */
+  function setupGalleryLazyLoad(grid){
+    const imgs = grid.querySelectorAll('img[data-src]');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          const img = entry.target;
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+          io.unobserve(img);
+        }
+      });
+    }, { rootMargin: '600px 0px', threshold: 0.01 });
+    imgs.forEach(img => io.observe(img));
   }
 
   function setupLightbox(){
