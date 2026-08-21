@@ -64,7 +64,8 @@ const WeddingGame = (() => {
   let images = {};
   let state = 'idle'; // idle | playing | gameover
   let score = 0, lives = 3, round = 1;
-  let bgRound = 1; // 배경 시간대는 라운드가 오르는 즉시가 아니라 "다음 과녁이 나올 때" 바뀌도록 별도 추적
+  let bgRound = 1;   // 현재 표시할 배경 시간대 (1~3 순환)
+  let bgCounter = 0; // 새 과녁이 등장할 때마다(맞히든 놓치든) 1씩 증가 - round와 무관하게 배경만 계속 순환시킴
   let target = null, arrow = null;
   let charging = false, chargeStartTs = 0;
   let lastTs = 0;
@@ -166,8 +167,12 @@ const WeddingGame = (() => {
     return Math.min(BASE_TARGET_SPEED + (r - 1) * TARGET_SPEED_STEP, ABS_MAX_TARGET_SPEED);
   }
 
-  function spawnTarget(){
-    bgRound = round; // 배경 전환은 명중 즉시가 아니라 다음 과녁이 실제로 등장하는 이 시점에 반영
+  /** advanceBg=true일 때만 배경을 다음 시간대로 넘김 - "과녁을 끝까지 못 맞혀서 놓친 경우"에만 true로 호출됨 */
+  function spawnTarget(advanceBg){
+    if (advanceBg){
+      bgCounter++;
+      bgRound = bgCounter;
+    }
     target = {
       x: W + OUTER_RADIUS,
       phase: 'out', // 'out' = 왼쪽으로 이동 중, 'back' = 오른쪽으로 복귀 중
@@ -179,7 +184,8 @@ const WeddingGame = (() => {
     target = null;
     clearTimeout(respawnTimer);
     respawnTimer = setTimeout(() => {
-      if (state === 'playing') spawnTarget();
+      // 과녁이 끝까지 지나가도록 못 맞힌 경우 - 이때만 배경이 다음 시간대로 넘어감
+      if (state === 'playing') spawnTarget(true);
     }, RESPAWN_DELAY);
   }
 
@@ -224,7 +230,8 @@ const WeddingGame = (() => {
       arrow = null;
       target = null;
       resolving = false;
-      if (state === 'playing') spawnTarget();
+      // 명중해서 나오는 다음 과녁은 배경을 바꾸지 않음 (배경 전환은 오직 "다 놓친 경우"에만)
+      if (state === 'playing') spawnTarget(false);
     }, STICK_DELAY);
   }
 
@@ -494,7 +501,7 @@ const WeddingGame = (() => {
 
   // ---------- 게임 흐름 ----------
   function startGame(){
-    score = 0; lives = 3; round = 1; bgRound = 1;
+    score = 0; lives = 3; round = 1; bgRound = 1; bgCounter = 0;
     target = null; arrow = null; charging = false; resolving = false; lastTs = 0;
     clearTimeout(respawnTimer); clearTimeout(stickTimer);
     state = 'playing';
@@ -507,7 +514,7 @@ const WeddingGame = (() => {
 
     resizeCanvas();
     updateHud();
-    spawnTarget();
+    spawnTarget(false);
     rafId = requestAnimationFrame(loop);
   }
 
