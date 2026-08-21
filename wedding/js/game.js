@@ -64,6 +64,7 @@ const WeddingGame = (() => {
   let images = {};
   let state = 'idle'; // idle | playing | gameover
   let score = 0, lives = 3, round = 1;
+  let bgRound = 1; // 배경 시간대는 라운드가 오르는 즉시가 아니라 "다음 과녁이 나올 때" 바뀌도록 별도 추적
   let target = null, arrow = null;
   let charging = false, chargeStartTs = 0;
   let lastTs = 0;
@@ -108,7 +109,7 @@ const WeddingGame = (() => {
 
   /** 라운드가 올라갈수록 1 -> 2 -> 3 -> 1 -> 2 -> 3 ... 순서로 순환되는 배경 시간대 */
   function currentBackIndex(){
-    return ((round - 1) % BACKGROUND_COUNT) + 1;
+    return ((bgRound - 1) % BACKGROUND_COUNT) + 1;
   }
 
   // ---------- 이징 함수 ----------
@@ -166,6 +167,7 @@ const WeddingGame = (() => {
   }
 
   function spawnTarget(){
+    bgRound = round; // 배경 전환은 명중 즉시가 아니라 다음 과녁이 실제로 등장하는 이 시점에 반영
     target = {
       x: W + OUTER_RADIUS,
       phase: 'out', // 'out' = 왼쪽으로 이동 중, 'back' = 오른쪽으로 복귀 중
@@ -210,11 +212,8 @@ const WeddingGame = (() => {
     if (isBullseye) WeddingSound.bullseye();
     else WeddingSound.hit(isPerfect);
 
-    // 등급 이름과 실제 획득 점수를 함께 표시 (예: "PERFECT +119")
-    const popupText = `${ring.label} +${points}`;
-
-    // 점수/BULLSEYE/PERFECT 텍스트는 화면 정중앙에 크게 표시 (과녁 근처는 잘 안 보여서)
-    showPopup(W / 2, H / 2, popupText, ring.label.toLowerCase());
+    // 등급 이름은 윗줄, 실제 획득 점수는 아랫줄에 중앙 정렬로 병기 (예: "PERFECT" / "+119")
+    showPopup(W / 2, H / 2, ring.label, ring.label.toLowerCase(), `+${points}`);
     // 파티클은 실제로 맞은 위치(과녁)에서 넓게 튀도록
     showHitParticles(screenX, screenY, celebrate, isBullseye);
     round++; // 맞힐 때마다 라운드 즉시 상승 (상한 없이 계속 어려워짐)
@@ -248,11 +247,21 @@ const WeddingGame = (() => {
   }
 
   // ---------- 팝업 / 이펙트 ----------
-  function showPopup(x, y, text, tier){
+  function showPopup(x, y, text, tier, subText){
     const layer = document.getElementById('gamePopupLayer');
     const el = document.createElement('div');
     el.className = 'score-popup tier-' + tier;
-    el.textContent = text;
+    if (subText){
+      const labelEl = document.createElement('span');
+      labelEl.className = 'popup-label';
+      labelEl.textContent = text;
+      const scoreEl = document.createElement('span');
+      scoreEl.className = 'popup-score';
+      scoreEl.textContent = subText;
+      el.append(labelEl, scoreEl);
+    } else {
+      el.textContent = text;
+    }
     el.style.left = x + 'px';
     el.style.top = y + 'px';
     layer.appendChild(el);
@@ -485,7 +494,7 @@ const WeddingGame = (() => {
 
   // ---------- 게임 흐름 ----------
   function startGame(){
-    score = 0; lives = 3; round = 1;
+    score = 0; lives = 3; round = 1; bgRound = 1;
     target = null; arrow = null; charging = false; resolving = false; lastTs = 0;
     clearTimeout(respawnTimer); clearTimeout(stickTimer);
     state = 'playing';
