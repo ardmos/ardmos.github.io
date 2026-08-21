@@ -1,4 +1,16 @@
 /* =====================================================
+   0-1. 웹폰트 - 온글잎 바닷바람 (눈누, 상업용 무료, https://noonnu.cc/font_page/1683)
+   Regular 한 가지 굵기만 제공되는 손글씨체입니다. 이 폰트가 로드되면 강조 단어는
+   font-weight가 아니라 글자색/크기로 표현합니다 (아래 .greeting-line 관련 규칙 참고).
+===================================================== */
+@font-face {
+  font-family: 'OngleIpSeaBreeze';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2510-1@1.0/Ownglyph_the_sea_breeze-Rg.woff2') format('woff2');
+  font-weight: normal;
+  font-display: swap;
+}
+
+/* =====================================================
    0. 디자인 토큰
 ===================================================== */
 :root{
@@ -21,7 +33,7 @@
   --font-serif:'Gowun Batang', serif;
   --font-serif-en: Georgia, 'Times New Roman', serif;
   --font-body:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif;
-  --font-calli:'Hahmlet', var(--font-serif);
+  --font-calli:'OngleIpSeaBreeze','Hahmlet', var(--font-serif);
 
   --radius-card: 18px;
   --shadow-soft: 0 10px 30px rgba(62,47,42,0.10);
@@ -341,7 +353,8 @@ a{color:inherit;text-decoration:none;}
 .greeting-line{
   font-family:var(--font-calli);
   font-weight:300;
-  font-size:clamp(15.5px, 4.6vw, 19px);
+  font-synthesis:none;
+  font-size:clamp(16.5px, 4.9vw, 21px);
   line-height:2.15;
   letter-spacing:0.3px;
   word-break:keep-all;
@@ -367,24 +380,29 @@ a{color:inherit;text-decoration:none;}
 }
 .greeting-line--hero.in-view{ color:var(--c-ink); }
 
-/* '한 사람, 한 사람' / '하나' - 문장에서 이 단어들만 굵게 강조하고(나머지는 규칙에 따라 얇게),
+/* '한 사람, 한 사람' / '하나' - 문장에서 이 단어들만 강조하고(나머지는 규칙에 따라 얇게),
    뒤쪽에는 큰 금색 워터마크가 정확히 그 글자 뒤에 오도록 span 자신을 기준점으로 절대 위치시킨다
-   (뷰포트 폭이 바뀌어도 항상 정렬 유지) */
+   (뷰포트 폭이 바뀌어도 항상 정렬 유지). 손글씨체는 Regular 굵기 하나뿐이라 font-weight로 강조하면
+   브라우저가 획을 억지로 두껍게 합성해 글씨체가 뭉개지므로, 대신 크기를 살짝 키워 강조한다.
+   색은 지정하지 않고 부모(.greeting-line)의 페이드 색을 그대로 물려받아야 문장 전체와 같은
+   타이밍에 함께 서서히 나타난다 */
 .ghost-target{
   position:relative;
   display:inline-block;
   z-index:1;
-  font-weight:700;
+  font-size:1.1em;
 }
 .ghost-target::before{
   content:attr(data-ghost);
   position:absolute;
   left:50%;
   top:50%;
-  transform:translate(-50%, -50%) scale(0.7);
+  /* Y축 -66%: 앵커(문장 텍스트 위치)가 워터마크 정중앙(-50%)이 아니라 아래쪽 1/3 지점과
+     겹치도록 워터마크를 기존보다 더 위로 올린다 */
+  transform:translate(-50%, -66%) scale(0.7);
   z-index:-1;
   font-family:var(--font-calli);
-  font-weight:600;
+  font-style:italic;
   font-size:clamp(46px, 15vw, 74px);
   line-height:1;
   letter-spacing:3px;
@@ -400,7 +418,7 @@ a{color:inherit;text-decoration:none;}
 
 .greeting-line.in-view .ghost-target::before{
   opacity:0.15;
-  transform:translate(-50%, -50%) scale(1);
+  transform:translate(-50%, -66%) scale(1);
 }
 
 /* 워터마크(즉시, 딜레이 없음) → 히어로 문장(느리게) → 이어지는 문장들이 순서대로 서서히 나타남 */
@@ -416,7 +434,7 @@ a{color:inherit;text-decoration:none;}
 
 @media (max-width:360px){
   .ghost-target::before{ font-size:clamp(40px, 16vw, 62px); }
-  .greeting-line--hero{ font-size:clamp(13.5px, 4.5vw, 16px); }
+  .greeting-line--hero{ font-size:clamp(14.5px, 4.7vw, 17.5px); }
 }
 
 /* =====================================================
