@@ -167,12 +167,10 @@ const WeddingGame = (() => {
     return Math.min(BASE_TARGET_SPEED + (r - 1) * TARGET_SPEED_STEP, ABS_MAX_TARGET_SPEED);
   }
 
-  /** advanceBg=true일 때만 배경을 다음 시간대로 넘김 - "과녁을 끝까지 못 맞혀서 놓친 경우"에만 true로 호출됨 */
-  function spawnTarget(advanceBg){
-    if (advanceBg){
-      bgCounter++;
-      bgRound = bgCounter;
-    }
+  /** 새 과녁이 등장할 때마다(명중해서 나오든, 끝까지 못 맞혀서 나오든) 배경을 다음 시간대로 넘김 */
+  function spawnTarget(){
+    bgCounter++;
+    bgRound = bgCounter;
     target = {
       x: W + OUTER_RADIUS,
       phase: 'out', // 'out' = 왼쪽으로 이동 중, 'back' = 오른쪽으로 복귀 중
@@ -184,8 +182,7 @@ const WeddingGame = (() => {
     target = null;
     clearTimeout(respawnTimer);
     respawnTimer = setTimeout(() => {
-      // 과녁이 끝까지 지나가도록 못 맞힌 경우 - 이때만 배경이 다음 시간대로 넘어감
-      if (state === 'playing') spawnTarget(true);
+      if (state === 'playing') spawnTarget();
     }, RESPAWN_DELAY);
   }
 
@@ -230,8 +227,7 @@ const WeddingGame = (() => {
       arrow = null;
       target = null;
       resolving = false;
-      // 명중해서 나오는 다음 과녁은 배경을 바꾸지 않음 (배경 전환은 오직 "다 놓친 경우"에만)
-      if (state === 'playing') spawnTarget(false);
+      if (state === 'playing') spawnTarget();
     }, STICK_DELAY);
   }
 
@@ -514,7 +510,7 @@ const WeddingGame = (() => {
 
     resizeCanvas();
     updateHud();
-    spawnTarget(false);
+    spawnTarget();
     rafId = requestAnimationFrame(loop);
   }
 
