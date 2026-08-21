@@ -474,9 +474,9 @@ const WeddingGame = (() => {
 
   function drawArrow(x, y){
     if (images.arrow && images.arrow.ok){
-      // 실제 에셋 비율(31×258, 화살촉 기준 아래로 긴 형태)에 맞춰 표시
+      // 실제 에셋 비율(47×258, 화살촉 기준 아래로 긴 형태)에 맞춰 표시
       // 화살촉(이미지 상단)을 y 위치에 맞추고, 화살대는 그 아래로 길게 이어지도록 그림
-      const w = 10, h = 83;
+      const w = 15, h = 83;
       ctx.drawImage(images.arrow.el, x - w / 2, y, w, h);
       return;
     }
