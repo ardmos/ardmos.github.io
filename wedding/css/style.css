@@ -25,6 +25,7 @@
   --c-sky-bottom:#EAF6FB;
   --c-ink:#3E2F2A;
   --c-ink-soft:#7A685F;
+  --c-ink-faint:#A5978C;
   --c-white:#FFFFFF;
   --c-rose:#D8637F;
   --c-rose-dark:#B94D66;
@@ -365,12 +366,12 @@ a{color:inherit;text-decoration:none;}
   transition:color 1.15s cubic-bezier(0.22,0.61,0.36,1), transform 1.15s cubic-bezier(0.22,0.61,0.36,1);
 }
 .greeting-line.in-view{
-  color:var(--c-ink-soft);
+  color:var(--c-ink-faint);
   transform:translateY(0);
 }
 
 /* 첫 문장 - 워터마크와 겹치는 히어로 라인. 11월 1일이 한눈에 들어오도록 줄바꿈 없이 한 줄로 흐르게 하고,
-   폰트/크기/행간은 나머지 문장과 동일하게 유지한다 */
+   폰트/크기/색은 나머지 문장과 동일하게 유지한다 (강조는 아래 .ghost-target에서만) */
 .greeting-line--hero{
   position:relative;
   z-index:0;
@@ -378,19 +379,22 @@ a{color:inherit;text-decoration:none;}
   margin-bottom:10px;
   white-space:normal;
 }
-.greeting-line--hero.in-view{ color:var(--c-ink); }
 
-/* '한 사람, 한 사람' / '하나' - 문장에서 이 단어들만 강조하고(나머지는 규칙에 따라 얇게),
+/* '한 사람, 한 사람' / '하나' - 이 단어들만 더 크고 짙은 색으로 대비를 주어 강조한다.
    뒤쪽에는 큰 금색 워터마크가 정확히 그 글자 뒤에 오도록 span 자신을 기준점으로 절대 위치시킨다
    (뷰포트 폭이 바뀌어도 항상 정렬 유지). 손글씨체는 Regular 굵기 하나뿐이라 font-weight로 강조하면
-   브라우저가 획을 억지로 두껍게 합성해 글씨체가 뭉개지므로, 대신 크기를 살짝 키워 강조한다.
-   색은 지정하지 않고 부모(.greeting-line)의 페이드 색을 그대로 물려받아야 문장 전체와 같은
-   타이밍에 함께 서서히 나타난다 */
+   브라우저가 획을 억지로 두껍게 합성해 글씨체가 뭉개지므로, 굵기 대신 크기+색 대비로 강조한다.
+   부모와 별도의 color 전환을 걸되 동일한 딜레이(아래 nth-child)로 맞춰 같은 타이밍에 함께 짙어진다 */
 .ghost-target{
   position:relative;
   display:inline-block;
   z-index:1;
-  font-size:1.1em;
+  font-size:1.3em;
+  color:transparent;
+  transition:color 1.15s cubic-bezier(0.22,0.61,0.36,1);
+}
+.greeting-line.in-view .ghost-target{
+  color:var(--c-ink);
 }
 .ghost-target::before{
   content:attr(data-ghost);
@@ -421,8 +425,10 @@ a{color:inherit;text-decoration:none;}
   transform:translate(-50%, -66%) scale(1);
 }
 
-/* 워터마크(즉시, 딜레이 없음) → 히어로 문장(느리게) → 이어지는 문장들이 순서대로 서서히 나타남 */
-.greeting-lines .greeting-line:nth-child(1){ transition-delay:0.4s; }
+/* 워터마크(즉시, 딜레이 없음) → 히어로 문장(느리게) → 이어지는 문장들이 순서대로 서서히 나타남.
+   히어로 라인의 ghost-target(강조 단어)도 문장 본문과 정확히 같은 타이밍에 짙어지도록 같은 딜레이를 준다 */
+.greeting-lines .greeting-line:nth-child(1),
+.greeting-lines .greeting-line:nth-child(1) .ghost-target{ transition-delay:0.4s; }
 .greeting-lines .greeting-line:nth-child(2){ transition-delay:0.95s; }
 .greeting-lines .greeting-line:nth-child(3){ transition-delay:1.15s; }
 .greeting-lines .greeting-line:nth-child(4){ transition-delay:1.35s; }
