@@ -372,7 +372,7 @@ a{color:inherit;text-decoration:none;}
 }
 .title-row{ display:block; text-align:center; }
 .title-row:first-child{ transform:translateX(-6%); }
-.title-row--right{ transform:translateX(11%); }
+.title-row--right{ transform:translateX(5%); }
 
 /* '한사람, 한사람' / '하나' - 이 단어들만 더 크고 짙은 색으로 대비를 주어 강조한다.
    뒤쪽에는 큰 금색 워터마크가 정확히 그 글자 뒤에 오도록 span 자신을 기준점으로 절대 위치시킨다
