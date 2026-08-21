@@ -11,7 +11,25 @@ const WeddingGame = (() => {
   const IMAGE_PATHS = {
     target: 'assets/target.png',
     bow: 'assets/bow.png',
-    arrow: 'assets/arrow.png'
+    arrow: 'assets/arrow.png',
+    back1: 'assets/back1.jpg',
+    back2: 'assets/back2.jpg',
+    back3: 'assets/back3.jpg'
+  };
+
+  // 라운드가 올라갈수록 1 -> 2 -> 3 -> 1 -> 2 -> 3... 순서로 순환되는 시간대 배경
+  const BACKGROUND_COUNT = 3;
+  // 배경 이미지가 아직 없거나 로드 실패했을 때 대신 쓰는 하늘 그라데이션(시간대별)
+  const FALLBACK_SKY = {
+    1: ['#AEE0F4', '#EAF6FB'], // 낮
+    2: ['#F4B36E', '#FCE0B8'], // 노을
+    3: ['#8C79AE', '#D8C6E8']  // 해지기 직전
+  };
+  // 배경 시간대에 맞춰 구름 색도 함께 바뀜
+  const CLOUD_COLORS = {
+    1: 'rgba(255,255,255,0.85)', // 낮 - 흰 구름
+    2: 'rgba(255,213,158,0.85)', // 노을 - 노란빛 도는 구름
+    3: 'rgba(210,181,224,0.82)'  // 해지기 직전 - 보랏빛 도는 구름
   };
 
   const RINGS = [
@@ -87,6 +105,11 @@ const WeddingGame = (() => {
   function bowX(){ return W / 2; }
   function bowY(){ return H - 46; }
   function targetY(){ return Math.max(70, H * 0.17); }
+
+  /** 라운드가 올라갈수록 1 -> 2 -> 3 -> 1 -> 2 -> 3 ... 순서로 순환되는 배경 시간대 */
+  function currentBackIndex(){
+    return ((round - 1) % BACKGROUND_COUNT) + 1;
+  }
 
   // ---------- 이징 함수 ----------
   function easeOutQuad(t){ return 1 - (1 - t) * (1 - t); }
@@ -339,15 +362,9 @@ const WeddingGame = (() => {
 
   // ---------- 렌더 ----------
   function draw(){
-    // 배경
-    const g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, '#AEE0F4');
-    g.addColorStop(1, '#EAF6FB');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-
-    drawClouds();
-    drawGround();
+    const bgIndex = currentBackIndex();
+    drawBackground(bgIndex);
+    drawClouds(bgIndex);
     if (target) drawTarget(target.x, targetY());
     drawBow();
 
@@ -359,8 +376,29 @@ const WeddingGame = (() => {
     if (arrow) drawArrow(arrow.x, arrow.y);
   }
 
-  function drawClouds(){
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  /** 시간대별 배경 이미지를 화면 전체를 꽉 채우도록(cover) 그림. 이미지가 없으면 같은 시간대의 그라데이션으로 대체 */
+  function drawBackground(index){
+    const img = images['back' + index];
+    if (img && img.ok){
+      const el = img.el;
+      const scale = Math.max(W / el.width, H / el.height);
+      const dw = el.width * scale;
+      const dh = el.height * scale;
+      const dx = (W - dw) / 2;
+      const dy = (H - dh) / 2;
+      ctx.drawImage(el, dx, dy, dw, dh);
+      return;
+    }
+    const colors = FALLBACK_SKY[index] || FALLBACK_SKY[1];
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, colors[0]);
+    g.addColorStop(1, colors[1]);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  function drawClouds(bgIndex){
+    ctx.fillStyle = CLOUD_COLORS[bgIndex] || CLOUD_COLORS[1];
     const t = performance.now() / 1000;
     [[0.15, 40, 30], [0.55, 30, 60], [0.8, 46, 20]].forEach(([xr, size, offset]) => {
       const x = ((t * 12 + offset * 8) % (W + size * 2)) - size;
@@ -369,16 +407,6 @@ const WeddingGame = (() => {
       ctx.ellipse(x, y, size * 0.5, size * 0.28, 0, 0, Math.PI * 2);
       ctx.fill();
     });
-  }
-
-  function drawGround(){
-    const groundH = 26;
-    ctx.fillStyle = '#7FB88A';
-    ctx.fillRect(0, H - groundH, W, groundH);
-    ctx.fillStyle = '#5B9468';
-    for (let x = 0; x < W; x += 16){
-      ctx.fillRect(x, H - groundH, 14, 4);
-    }
   }
 
   function drawTarget(x, y){

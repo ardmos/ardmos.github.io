@@ -574,7 +574,7 @@ a{color:inherit;text-decoration:none;}
 }
 .game-hud__round::before{ content:'★ '; color:var(--c-gold); }
 .game-hud__score::before{ content:'♦ '; color:var(--c-gold); }
-#gameCanvas{ display:block; width:100%; height:520px; max-height:70vh; touch-action:none; }
+#gameCanvas{ display:block; width:100%; aspect-ratio:1/2; max-height:70vh; touch-action:none; }
 
 /* 실패(놓침) 연출: 화면 흔들림 + 붉은 플래시 + 하트 펄스 */
 @keyframes screenShake{
@@ -715,7 +715,7 @@ a{color:inherit;text-decoration:none;}
   background:#fff; color:var(--c-ink); outline:none;
 }
 .modal-input:focus{ border-color:var(--c-rose); }
-.modal-hint{ font-size:9.5px; color:var(--c-ink-soft); margin:8px 0 4px; text-align:left; }
+.modal-hint{ font-size:10.5px; color:var(--c-ink-soft); margin:8px 0 4px; text-align:left; }
 .modal-error{ font-size:11px; color:#C43D3D; text-align:left; margin:4px 0 0; }
 .modal-box .pixel-btn{ margin-top:16px; width:100%; }
 
