@@ -551,16 +551,21 @@ a{color:inherit;text-decoration:none;}
 }
 .hud-row{ display:flex; align-items:center; justify-content:space-between; padding:8px 2px; }
 .hud-label{
+  display:inline-flex; align-items:center; gap:5px;
   font-family:var(--font-serif-en); font-style:italic; font-size:11px;
   letter-spacing:1.5px; text-transform:uppercase; color:var(--c-rose-dark);
 }
-.hud-value{ font-family:var(--font-serif); font-size:15px; }
-.hud-value.small{ font-size:13px; text-align:right; line-height:1.5; }
-.hud-value-group{
-  display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap;
-  gap:6px 8px; max-width:60%;
+.hud-copy-inline{
+  background:none; border:none; padding:0; margin:0;
+  font-family:var(--font-serif-en); font-style:normal; text-transform:none;
+  font-size:9px; letter-spacing:0.3px; color:var(--c-rose-dark); opacity:0.7;
+  cursor:pointer;
 }
-.hud-copy-btn{ font-size:10px; padding:4px 9px; flex-shrink:0; }
+.hud-copy-inline:active{ opacity:1; }
+.hud-value{ font-family:var(--font-serif); font-size:15px; }
+.hud-value.small{ font-size:13px; text-align:right; max-width:60%; line-height:1.5; }
+.hud-value.copy-btn{ cursor:pointer; }
+.hud-value.copy-btn:active{ color:var(--c-rose-dark); }
 .hud-divider{ height:1px; background:var(--c-beige); margin:2px 0; }
 
 .dday-box{
