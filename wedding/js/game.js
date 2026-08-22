@@ -504,6 +504,8 @@ const WeddingGame = (() => {
 
     document.getElementById('gameIntroPanel').hidden = true;
     document.getElementById('gameOverScreen').hidden = true;
+    const closedNotice = document.getElementById('rankingClosedNotice');
+    if (closedNotice) closedNotice.hidden = true;
     clearEffectClasses(); // 화면을 다시 보이기 전에 이전 판의 흔들림/플래시/펄스 잔여 클래스 제거
     document.getElementById('gameScreen').hidden = false;
     document.getElementById('gamePopupLayer').innerHTML = '';
@@ -528,7 +530,16 @@ const WeddingGame = (() => {
     document.getElementById('finalScoreVal').textContent = score.toLocaleString();
     document.getElementById('bestScoreVal').textContent = Math.max(score, bestScoreCache).toLocaleString();
 
-    const updatedBest = await WeddingRanking.submitScore(score);
+    const closedNotice = document.getElementById('rankingClosedNotice');
+    const rankingClosed = WeddingRanking.isRankingClosed();
+    if (closedNotice) closedNotice.hidden = !rankingClosed;
+
+    let updatedBest = null;
+    if (rankingClosed){
+      updatedBest = await WeddingRanking.getExistingBestScore(WeddingRanking.getPlayerInfo());
+    } else {
+      updatedBest = await WeddingRanking.submitScore(score);
+    }
     if (updatedBest !== null){
       bestScoreCache = updatedBest;
       document.getElementById('bestScoreVal').textContent = bestScoreCache.toLocaleString();
@@ -543,7 +554,6 @@ const WeddingGame = (() => {
     document.getElementById('playAgainBtn').addEventListener('click', () => startGame());
     document.getElementById('viewRankingBtn').addEventListener('click', () => {
       document.getElementById('ranking').scrollIntoView({ behavior: 'smooth' });
-      WeddingRanking.loadAndRenderRanking();
     });
   }
 

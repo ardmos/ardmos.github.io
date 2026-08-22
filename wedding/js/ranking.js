@@ -7,6 +7,11 @@ const WeddingRanking = (() => {
   const LS_PLAYER_KEY = 'wedding_player_info';
   const LS_LOCAL_RANKING_KEY = 'wedding_local_rankings';
   const COLLECTION = 'rankings';
+  const RANKING_DEADLINE = new Date('2026-11-01T11:00:00+09:00');
+  const RANKING_LIMIT = 100;
+
+  let rankingUnsubscribe = null;
+  let rankingObserver = null;
 
   // ---------- 유틸 ----------
   function simpleHash(str){
@@ -32,6 +37,37 @@ const WeddingRanking = (() => {
     if (d.length < 4) return d;
     if (d.length < 8) return `${d.slice(0,3)}-${d.slice(3)}`;
     return `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7)}`;
+  }
+
+  function isRankingClosed(){
+    return Date.now() >= RANKING_DEADLINE.getTime();
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function rankingQuery(db){
+    return db.collection(COLLECTION)
+      .orderBy('bestScore', 'desc')
+      .orderBy('bestScoreAt', 'asc')
+      .limit(RANKING_LIMIT);
+  }
+
+  function entriesFromSnapshot(snap){
+    const entries = [];
+    snap.forEach(doc => {
+      const d = doc.data();
+      entries.push({
+        id: doc.id,
+        nickname: d.nickname,
+        bestScore: d.bestScore,
+        bestScoreAt: d.bestScoreAt
+      });
+    });
+    return entries;
   }
 
   // ---------- 플레이어 정보 ----------
@@ -108,14 +144,62 @@ const WeddingRanking = (() => {
       return raw ? JSON.parse(raw) : {};
     }catch(e){ return {}; }
   }
+
   function writeLocalRankings(map){
     localStorage.setItem(LS_LOCAL_RANKING_KEY, JSON.stringify(map));
+  }
+
+  function localEntries(limit = RANKING_LIMIT){
+    const map = readLocalRankings();
+    return Object.entries(map)
+      .map(([id, v]) => ({
+        id,
+        nickname: v.nickname,
+        bestScore: v.bestScore,
+        bestScoreAt: v.bestScoreAt || v.updatedAt
+      }))
+      .sort((a, b) => b.bestScore - a.bestScore || a.bestScoreAt - b.bestScoreAt)
+      .slice(0, limit);
+  }
+
+  function allLocalEntriesSorted(){
+    const map = readLocalRankings();
+    return Object.entries(map)
+      .map(([id, v]) => ({
+        id,
+        nickname: v.nickname,
+        bestScore: v.bestScore,
+        bestScoreAt: v.bestScoreAt || v.updatedAt
+      }))
+      .sort((a, b) => b.bestScore - a.bestScore || a.bestScoreAt - b.bestScoreAt);
+  }
+
+  async function getExistingBestScore(player){
+    if (!player) return null;
+    const { phoneHash } = player;
+
+    if (window.__FIREBASE_READY__){
+      try{
+        const doc = await window.__firestoreDB__.collection(COLLECTION).doc(phoneHash).get();
+        if (doc.exists) return doc.data().bestScore;
+      }catch(e){
+        console.warn('[wedding] 기존 점수 조회 실패', e);
+      }
+    }
+
+    const local = readLocalRankings()[phoneHash];
+    return local ? local.bestScore : null;
   }
 
   // ---------- 점수 제출 ----------
   async function submitScore(score){
     const player = getPlayerInfo();
     if (!player) return null;
+
+    if (isRankingClosed()){
+      return getExistingBestScore(player);
+    }
+
     const { nickname, phoneDigits, phoneHash } = player;
     const now = Date.now();
 
@@ -154,7 +238,6 @@ const WeddingRanking = (() => {
       }
     }
 
-    // 로컬 폴백
     const map = readLocalRankings();
     const existing = map[phoneHash];
     if (!existing){
@@ -174,50 +257,58 @@ const WeddingRanking = (() => {
     return map[phoneHash].bestScore;
   }
 
-  // ---------- 랭킹 조회/렌더 ----------
-  async function loadAndRenderRanking(){
-    const listEl = document.getElementById('rankingList');
-    const myRowEl = document.getElementById('myRankingRow');
-    listEl.innerHTML = '<li class="ranking-loading">랭킹 불러오는 중...</li>';
-    myRowEl.hidden = true;
-
-    let entries = [];
-
+  // ---------- 순위 계산 (100위 밖) ----------
+  async function computeRank(bestScore, bestScoreAt, phoneHash){
     if (window.__FIREBASE_READY__){
       try{
         const db = window.__firestoreDB__;
-        const snap = await db.collection(COLLECTION)
-          .orderBy('bestScore', 'desc')
-          .orderBy('bestScoreAt', 'asc')
-          .limit(100)
-          .get();
-        snap.forEach(doc => {
-          const d = doc.data();
-          entries.push({ id: doc.id, nickname: d.nickname, bestScore: d.bestScore });
-        });
+        const [higherSnap, tieSnap] = await Promise.all([
+          db.collection(COLLECTION).where('bestScore', '>', bestScore).get(),
+          db.collection(COLLECTION).where('bestScore', '==', bestScore).where('bestScoreAt', '<', bestScoreAt).get()
+        ]);
+        return higherSnap.size + tieSnap.size + 1;
       }catch(e){
-        console.warn('[wedding] Firestore 랭킹 조회 실패, 로컬 데이터로 대체합니다.', e);
-        entries = localEntries();
+        console.warn('[wedding] Firestore 순위 계산 실패, 로컬 방식으로 대체합니다.', e);
       }
-    } else {
-      entries = localEntries();
     }
 
-    renderRanking(entries);
+    const all = allLocalEntriesSorted();
+    const idx = all.findIndex(e => e.id === phoneHash);
+    return idx >= 0 ? idx + 1 : null;
   }
 
-  function localEntries(){
-    const map = readLocalRankings();
-    return Object.entries(map)
-      .map(([id, v]) => ({ id, nickname: v.nickname, bestScore: v.bestScore, bestScoreAt: v.updatedAt }))
-      .sort((a, b) => b.bestScore - a.bestScore || a.bestScoreAt - b.bestScoreAt)
-      .slice(0, 100);
+  async function getMyRecord(player){
+    if (!player) return null;
+
+    if (window.__FIREBASE_READY__){
+      try{
+        const doc = await window.__firestoreDB__.collection(COLLECTION).doc(player.phoneHash).get();
+        if (doc.exists){
+          const d = doc.data();
+          return {
+            nickname: d.nickname,
+            bestScore: d.bestScore,
+            bestScoreAt: d.bestScoreAt
+          };
+        }
+      }catch(e){
+        console.warn('[wedding] 내 기록 조회 실패', e);
+      }
+    }
+
+    const local = readLocalRankings()[player.phoneHash];
+    if (!local) return null;
+    return {
+      nickname: local.nickname,
+      bestScore: local.bestScore,
+      bestScoreAt: local.bestScoreAt || local.updatedAt
+    };
   }
 
-  function renderRanking(entries){
+  // ---------- 랭킹 렌더 ----------
+  function renderRankingList(entries){
     const listEl = document.getElementById('rankingList');
-    const myRowEl = document.getElementById('myRankingRow');
-    const player = getPlayerInfo();
+    if (!listEl) return;
 
     if (!entries.length){
       listEl.innerHTML = '<li class="ranking-loading">아직 등록된 기록이 없어요. 첫 기록의 주인공이 되어보세요!</li>';
@@ -231,22 +322,152 @@ const WeddingRanking = (() => {
         <span class="col-score">${e.bestScore.toLocaleString()}</span>
       </li>
     `).join('');
+  }
 
-    if (player){
-      const myIndex = entries.findIndex(e => e.id === player.phoneHash);
-      if (myIndex >= 0 && myIndex < 100){
-        myRowEl.hidden = true; // 이미 목록 안에 보이므로 별도 표시 생략
-      } else if (myIndex === -1){
-        // 100위 밖이거나 아직 기록 없음 -> 별도 조회 불필요 (로컬 캐시 없음 시 숨김)
-      }
+  async function renderMyRankingRow(player, entries){
+    const myRowEl = document.getElementById('myRankingRow');
+    if (!myRowEl) return;
+
+    if (!player){
+      myRowEl.hidden = true;
+      return;
+    }
+
+    const myIndex = entries.findIndex(e => e.id === player.phoneHash);
+    if (myIndex >= 0 && myIndex < RANKING_LIMIT){
+      myRowEl.hidden = true;
+      return;
+    }
+
+    const myRecord = await getMyRecord(player);
+    if (!myRecord){
+      myRowEl.hidden = true;
+      return;
+    }
+
+    const rank = await computeRank(myRecord.bestScore, myRecord.bestScoreAt, player.phoneHash);
+    if (!rank){
+      myRowEl.hidden = true;
+      return;
+    }
+
+    myRowEl.innerHTML = `
+      <span class="col-rank">${rank}</span>
+      <span class="col-name">${escapeHtml(myRecord.nickname)} (나)</span>
+      <span class="col-score">${myRecord.bestScore.toLocaleString()}</span>
+    `;
+    myRowEl.hidden = false;
+  }
+
+  async function applyEntries(entries){
+    renderRankingList(entries);
+    await renderMyRankingRow(getPlayerInfo(), entries);
+  }
+
+  function updateRankingNote(){
+    const noteEl = document.getElementById('rankingNote');
+    if (!noteEl) return;
+
+    const base = 'TOP3 세 분께는 소정의 축하 선물이 준비되어 있습니다! <br>결혼식 중 현장에서 선물 증정 이벤트가 있을 예정이니 꼭 참여해주세요 :)';
+    if (isRankingClosed()){
+      noteEl.innerHTML = `${base}<br><strong>게임 랭킹 등록이 마감되었습니다.</strong> 아래는 최종 순위이며, 게임은 계속 즐기실 수 있어요!`;
+    } else {
+      noteEl.innerHTML = `${base}<br>게임 랭킹 기록은 예식 당일 오전 11시에 마감됩니다. 그때까지 마음껏 즐겨주세요!`;
     }
   }
 
-  function escapeHtml(str){
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+  function showRankingLoading(){
+    const listEl = document.getElementById('rankingList');
+    const myRowEl = document.getElementById('myRankingRow');
+    if (listEl) listEl.innerHTML = '<li class="ranking-loading">랭킹 불러오는 중...</li>';
+    if (myRowEl) myRowEl.hidden = true;
   }
 
-  return { getPlayerInfo, ensurePlayerInfo, submitScore, loadAndRenderRanking, isValidKoreanPhone };
+  // ---------- 랭킹 조회 (일회성) ----------
+  async function loadAndRenderRanking(){
+    showRankingLoading();
+    updateRankingNote();
+
+    let entries = [];
+
+    if (window.__FIREBASE_READY__){
+      try{
+        const snap = await rankingQuery(window.__firestoreDB__).get();
+        entries = entriesFromSnapshot(snap);
+      }catch(e){
+        console.warn('[wedding] Firestore 랭킹 조회 실패, 로컬 데이터로 대체합니다.', e);
+        entries = localEntries();
+      }
+    } else {
+      entries = localEntries();
+    }
+
+    await applyEntries(entries);
+  }
+
+  // ---------- 실시간 구독 ----------
+  function stopRankingListener(){
+    if (rankingUnsubscribe){
+      rankingUnsubscribe();
+      rankingUnsubscribe = null;
+    }
+  }
+
+  function startRankingListener(){
+    stopRankingListener();
+    showRankingLoading();
+    updateRankingNote();
+
+    if (window.__FIREBASE_READY__){
+      try{
+        rankingUnsubscribe = rankingQuery(window.__firestoreDB__).onSnapshot(
+          (snap) => {
+            applyEntries(entriesFromSnapshot(snap));
+          },
+          (e) => {
+            console.warn('[wedding] Firestore 실시간 랭킹 실패, 로컬 데이터로 대체합니다.', e);
+            applyEntries(localEntries());
+          }
+        );
+        return;
+      }catch(e){
+        console.warn('[wedding] Firestore 리스너 시작 실패', e);
+      }
+    }
+
+    loadAndRenderRanking();
+  }
+
+  function setupRankingObserver(){
+    const section = document.getElementById('ranking');
+    if (!section || rankingObserver) return;
+
+    rankingObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          startRankingListener();
+        } else {
+          stopRankingListener();
+        }
+      });
+    }, { threshold: 0.1 });
+
+    rankingObserver.observe(section);
+  }
+
+  function init(){
+    updateRankingNote();
+    setupRankingObserver();
+  }
+
+  return {
+    getPlayerInfo,
+    ensurePlayerInfo,
+    submitScore,
+    getExistingBestScore,
+    loadAndRenderRanking,
+    isRankingClosed,
+    isValidKoreanPhone,
+    init
+  };
 })();

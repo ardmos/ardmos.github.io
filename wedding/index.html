@@ -11,10 +11,10 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="영수 ♥ 혜인 결혼합니다">
 <meta property="og:description" content="2026년 11월 1일 일요일 오전 11시 · 더메리든에서 함께해주세요">
-<meta property="og:image" content="https://YOUR-DOMAIN-HERE.com/assets/photomain.png">
-<meta property="og:url" content="https://YOUR-DOMAIN-HERE.com/">
+<meta property="og:image" content="http://puppystepsgames.com/wedding/assets/photomain.png">
+<meta property="og:url" content="http://puppystepsgames.com/wedding/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://YOUR-DOMAIN-HERE.com/assets/photomain.png">
+<meta name="twitter:image" content="http://puppystepsgames.com/wedding/assets/photomain.png">
 
 <!-- 한글 픽셀 폰트 (Galmuri) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quiple/galmuri@latest/dist/galmuri.css">
@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Hahmlet:wght@300;400;500;600;700&family=Pretendard+Variable:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css?v4">
+<link rel="stylesheet" href="css/style.css?v5">
 </head>
 <body>
 
@@ -354,6 +354,7 @@
         <div><span class="pixel-font label">FINAL SCORE</span><span class="pixel-font value" id="finalScoreVal">0</span></div>
         <div><span class="pixel-font label">BEST SCORE</span><span class="pixel-font value" id="bestScoreVal">0</span></div>
       </div>
+      <p id="rankingClosedNotice" class="gameover-ranking-notice" hidden>랭킹 등록이 마감되었습니다. 게임은 계속 즐기실 수 있어요!</p>
       <div class="gameover-btn-row">
         <button id="playAgainBtn" class="pixel-btn">PLAY AGAIN</button>
         <button id="viewRankingBtn" class="pixel-btn ghost">RANKING</button>
@@ -367,7 +368,7 @@
 <!-- ============================================= -->
 <section class="section reveal" id="ranking">
   <h2 class="section-title serif-font"><span class="pixel-icon">♛</span> RANKING</h2>
-  <p class="ranking-note">TOP3 세 분께는 소정의 축하 선물이 준비되어 있습니다! <br>결혼식 중 현장에서 선물 증정 이벤트가 있을 예정이니 꼭 참여해주세요 :)<br>게임 랭킹 기록은 예식 당일 오전 11시에 마감됩니다. 그때까지 마음껏 즐겨주세요!</p>
+  <p id="rankingNote" class="ranking-note">TOP3 세 분께는 소정의 축하 선물이 준비되어 있습니다! <br>결혼식 중 현장에서 선물 증정 이벤트가 있을 예정이니 꼭 참여해주세요 :)<br>게임 랭킹 기록은 예식 당일 오전 11시에 마감됩니다. 그때까지 마음껏 즐겨주세요!</p>
   <div class="ranking-board elegant-panel">
     <div class="ranking-scroll">
       <div class="ranking-header">
@@ -408,7 +409,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 
-<!-- 네이버 지도 API v3 - js/naver-map-config.js 에서 클라이언트 아이디를 교체하세요 -->
+<!-- 네이버 지도 API v3 - index.html 아래 스크립트 태그에서 Client ID(ncpKeyId)를 설정하세요 -->
 <script>
   // 인증(클라이언트 아이디) 실패 시 지도 영역을 안내용 placeholder로 대체
   window.navermap_authFailure = function(){
@@ -418,12 +419,12 @@
 </script>
 <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=YOUR_NAVER_MAP_CLIENT_ID"></script>
 
-<script src="js/firebase-config.js?v4"></script>
-<script src="js/sound.js?v4"></script>
-<script src="js/ranking.js?v4"></script>
-<script src="js/intro.js?v4"></script>
-<script src="js/invitation.js?v4"></script>
-<script src="js/game.js?v4"></script>
-<script src="js/app.js?v4"></script>
+<script src="js/firebase-config.js?v5"></script>
+<script src="js/sound.js?v5"></script>
+<script src="js/ranking.js?v5"></script>
+<script src="js/intro.js?v5"></script>
+<script src="js/invitation.js?v5"></script>
+<script src="js/game.js?v5"></script>
+<script src="js/app.js?v5"></script>
 </body>
 </html>

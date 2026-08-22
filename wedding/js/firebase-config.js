@@ -4,42 +4,42 @@
  * 본인의 Firebase 프로젝트 설정 값으로 아래 firebaseConfig 를 교체하세요.
  * Firebase 콘솔 > 프로젝트 설정 > 일반 > 내 앱 (SDK 설정 및 구성)에서 확인 가능합니다.
  *
- * Firestore 보안 규칙 예시 (Firestore > 규칙 탭에 붙여넣기):
+ * Firestore 보안 규칙 (Firestore > 규칙 탭에 붙여넣기):
  *
  * rules_version = '2';
  * service cloud.firestore {
  *   match /databases/{database}/documents {
  *     match /rankings/{docId} {
- *       // 누구나 랭킹을 읽을 수 있음 (단, 클라이언트 쿼리에서 phoneNumber 필드는 노출하지 않도록 처리)
  *       allow read: if true;
- *
- *       // 새 랭킹 문서는 생성 가능, 단 최소 필드 형식 검증
- *       allow create: if request.resource.data.keys().hasAll(['nickname','phoneHash','bestScore'])
+ *       allow create: if request.resource.data.keys().hasAll(['nickname','phoneNumber','bestScore'])
  *                     && request.resource.data.nickname is string
  *                     && request.resource.data.nickname.size() <= 10
- *                     && request.resource.data.bestScore is int;
- *
- *       // 기존 문서는 bestScore가 "더 높아지는 경우"에만 갱신 가능 (임의 하향 조작 방지)
+ *                     && request.resource.data.nickname.size() >= 1
+ *                     && request.resource.data.phoneNumber is string
+ *                     && request.resource.data.bestScore is int
+ *                     && request.resource.data.bestScore >= 0;
  *       allow update: if request.resource.data.bestScore is int
  *                     && request.resource.data.bestScore >= resource.data.bestScore
- *                     && request.resource.data.phoneHash == resource.data.phoneHash;
- *
+ *                     && request.resource.data.phoneNumber == resource.data.phoneNumber;
  *       allow delete: if false;
  *     }
  *   }
  * }
  *
- * 위 규칙은 예시이며, 실제 운영 전 Firebase 문서를 참고해 더 엄격하게 다듬는 것을 권장합니다.
- * (완전한 부정 방지를 위해서는 Cloud Functions를 통한 서버측 검증이 이상적입니다.)
+ * 복합 인덱스 (Firestore > 색인 탭, 또는 첫 쿼리 실패 시 콘솔 링크):
+ *   컬렉션: rankings
+ *   필드: bestScore 내림차순, bestScoreAt 오름차순
+ *
+ * 완전한 부정 방지(점수·마감 시각)를 위해서는 Cloud Functions 서버 검증을 권장합니다.
  */
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDgz7J1HjCr5ppu5S1aDMNl90At1AEqVrE",
+  authDomain: "my-wedding-invitation-efd31.firebaseapp.com",
+  projectId: "my-wedding-invitation-efd31",
+  storageBucket: "my-wedding-invitation-efd31.firebasestorage.app",
+  messagingSenderId: "55110431204",
+  appId: "1:55110431204:web:e036cd73ca856e25fd17f1"
 };
 
 // 설정 값이 채워져 있는지 확인 -> 미설정 시 로컬 스토리지 랭킹으로 자동 폴백

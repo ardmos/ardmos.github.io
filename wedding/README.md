@@ -1,4 +1,4 @@
-# 지훈 ♥ 서연 모바일 청첩장 (Wedding × Pixel Game)
+# 영수 ♥ 혜인 모바일 청첩장 (Wedding × Pixel Game)
 
 인트로 → 청첩장 → 미니게임(Cupid Arrow) → 실시간 랭킹으로 이어지는 모바일 청첩장입니다.
 
@@ -15,8 +15,8 @@ python3 -m http.server 8000
 파일을 새로 올려도 예전 버전이 계속 보인다면 대부분 이 캐시 때문이에요. 아래 순서로 확인해보세요.
 1. **모바일에서**: 브라우저 주소창에 `index.html?t=아무숫자` 처럼 아무 값이나 붙여서 강제로 새로고침해보거나,
    시크릿/프라이빗 모드로 새로 열어보세요. 그래도 안 바뀌면 브라우저 설정 > 인터넷 사용 기록/캐시 삭제 후 재시도.
-2. `index.html`이 불러오는 `css/style.css?v2`, `js/*.js?v2`처럼 파일 경로 끝에 **버전 표시(`?v2`)**를
-   붙여뒀습니다. **앞으로 파일 내용을 바꿀 때마다 이 `v3`를 `v3`, `v4`... 로 하나씩 올려주시면**,
+2. `index.html`이 불러오는 `css/style.css?v5`, `js/*.js?v5`처럼 파일 경로 끝에 **버전 표시(`?v5`)**를
+   붙여뒀습니다. **앞으로 파일 내용을 바꿀 때마다 이 숫자를 `v6`, `v7`... 로 하나씩 올려주시면**,
    브라우저가 "새 파일"로 인식해서 캐시를 무시하고 다시 받아옵니다 (`index.html` 안에서 8곳을 한 번에 바꾸면 됩니다).
 3. Firebase Hosting 등으로 배포했다면 배포 자체가 몇 분 정도 CDN에 반영되는 데 시간이 걸릴 수 있어요.
    배포 후 1~2분 기다렸다가 다시 확인해보세요.
@@ -28,7 +28,7 @@ python3 -m http.server 8000
 | 경로 | 용도 | 권장 픽셀 사이즈 | 비고 |
 |---|---|---|---|
 | `assets/background.png` | 인트로 배경 하늘 (전체를 덮는 배경) | 750×1000px 내외 (세로형) | 화면을 꽉 채우도록 object-fit:cover로 표시돼요 |
-| `assets/title.png` | 상단 타이틀 배너 (없으면 "지훈 ♥ 서연" 텍스트로 대체) | 가로가 긴 형태 (예: 420×140px, 배경 투명) | 화면 상단 중앙에 최대 너비 66%로 표시돼요 |
+| `assets/title.png` | 상단 타이틀 배너 (없으면 "영수 ♥ 혜인" 텍스트로 대체) | 가로가 긴 형태 (예: 420×140px, 배경 투명) | 화면 상단 중앙에 최대 너비 66%로 표시돼요 |
 | `assets/land.png` | 인트로 하단 땅/바닥 | 가로가 긴 형태 (예: 640×140px) | 화면 하단 띠 영역을 가로로 채워요. 없으면 초록 줄무늬로 대체됩니다 |
 | `assets/cloud.png` | 구름 (하나의 이미지를 3번 재사용, 좌우로 흘러감) | 190×70px 내외 (배경 투명) | |
 | `assets/box.png` | 오른쪽 상단 장식 (같은 이미지를 2개 나란히 붙여서 보여줘요) | 90×90px 내외 (배경 투명) | |
@@ -63,20 +63,28 @@ python3 -m http.server 8000
 1. https://console.firebase.google.com 에서 프로젝트 생성 → Firestore Database 사용 설정
 2. `js/firebase-config.js` 상단 `firebaseConfig` 값을 본인 프로젝트 값으로 교체
 3. 같은 파일 상단 주석에 있는 Firestore 보안 규칙 예시를 Firestore > 규칙 탭에 붙여넣기
-   - 한 명(휴대폰번호 해시)당 하나의 문서만 생성되고, `bestScore`는 더 높아지는 경우에만 갱신되도록 설계되어 있습니다.
-   - 더 강력한 부정 방지가 필요하면 Cloud Functions를 통한 서버측 점수 검증을 추가하는 것을 권장합니다.
-4. 설정을 채우면 자동으로 `window.__FIREBASE_READY__ = true`가 되어 실시간 랭킹으로 전환됩니다. 값을 채우지 않으면 계속 로컬 모드로 동작합니다(각자 브라우저 안에서만 랭킹이 쌓이며, 실제 서비스에는 적합하지 않습니다).
+   - 한 명(휴대폰번호 해시를 문서 ID로 사용)당 하나의 문서만 생성되고, `bestScore`는 더 높아지는 경우에만 갱신되도록 설계되어 있습니다.
+   - **복합 인덱스** 필요: `rankings` 컬렉션 — `bestScore`(내림차순), `bestScoreAt`(오름차순). 첫 쿼리 실패 시 콘솔 링크로 생성하세요.
+   - 더 강력한 부정 방지(점수 조작·마감 시각 우회)가 필요하면 Cloud Functions를 통한 서버측 검증을 추가하는 것을 권장합니다.
+4. 설정을 채우면 자동으로 `window.__FIREBASE_READY__ = true`가 되어 Firestore 랭킹으로 전환됩니다. 값을 채우지 않으면 계속 로컬 모드로 동작합니다(각자 브라우저 안에서만 랭킹이 쌓이며, 실제 서비스에는 적합하지 않습니다).
+5. 랭킹 섹션이 화면에 보일 때만 Firestore 실시간 구독(`onSnapshot`)이 동작합니다. **2026-11-01 11:00(KST)** 이후에는 점수 등록만 차단되고, 게임 플레이와 랭킹 조회는 계속 가능합니다.
 
 ## 4. 네이버 지도 연결
 오시는 길의 지도는 네이버 지도 API v3(공식 SDK 임베드 방식)를 사용합니다. 클라이언트 아이디를 넣기 전까지는 "MAP" placeholder가 대신 표시돼요.
-1. https://console.ncloud.com 에서 무료로 가입 → Maps > Application 등록 (Web 서비스 URL에 배포할 도메인 등록)
-2. 발급받은 Client ID를 `index.html` 맨 아래쪽의 아래 스크립트 태그에서 `YOUR_NAVER_MAP_CLIENT_ID` 부분에 넣기
+1. https://console.ncloud.com 에서 무료로 가입 → Maps > Application 등록
+2. Web 서비스 URL에 아래 주소를 등록 (HTTPS 리다이렉트가 있다면 `https://` 버전도 추가):
+   - `http://puppystepsgames.com`
+   - `http://puppystepsgames.com/wedding/`
+   - `http://localhost:8000` (로컬 테스트용)
+3. 발급받은 Client ID를 `index.html` 맨 아래쪽 스크립트 태그에서 `YOUR_NAVER_MAP_CLIENT_ID` 부분에 넣기
    ```html
    <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=YOUR_NAVER_MAP_CLIENT_ID"></script>
    ```
-3. 지도 중심 좌표/장소명은 `js/invitation.js`의 `VENUE` 값에서 수정할 수 있습니다 (현재 더메리든 좌표로 설정되어 있어요).
+4. 지도 중심 좌표/장소명은 `js/invitation.js`의 `VENUE` 값에서 수정할 수 있습니다 (현재 더메리든 좌표로 설정되어 있어요).
 
 ## 5. 배포
+현재 배포 URL: `http://puppystepsgames.com/wedding/index.html`
+
 정적 파일이라 Firebase Hosting / Netlify / Vercel / Cafe24 등 아무 정적 호스팅에 폴더 전체를 올리면 됩니다.
 Firebase Hosting을 함께 쓸 경우:
 ```
@@ -86,9 +94,8 @@ firebase init hosting   # public 디렉터리를 이 폴더로 지정
 firebase deploy
 ```
 
-배포 후에는 **`index.html` 상단의 `og:image` / `og:url` / `twitter:image` 를 실제 도메인 주소로 꼭 교체**해주세요.
-(`https://YOUR-DOMAIN-HERE.com/...` 부분) 카카오톡 등 일부 플랫폼은 상대경로를 인식하지 못해서
-절대경로(`https://`로 시작하는 전체 주소)로 넣어야 링크 공유 시 `photomain.png`가 미리보기 사진으로 정상적으로 보입니다.
+배포 후 **`index.html` 상단의 `og:image` / `og:url` / `twitter:image`** 가 실제 도메인(`puppystepsgames.com`)과 일치하는지 확인해주세요.
+카카오톡 등 일부 플랫폼은 상대경로를 인식하지 못해서 절대경로(`http://` 또는 `https://`로 시작하는 전체 주소)로 넣어야 링크 공유 시 `photomain.png`가 미리보기 사진으로 정상적으로 보입니다.
 바뀐 걸 바로 반영하려면 카카오톡 디버거(https://developers.kakao.com/tool/debugger/sharing) 같은 도구로 캐시를 갱신해야 할 수도 있어요.
 
 ## 6. 파일 구조
@@ -96,7 +103,7 @@ firebase deploy
 index.html            전체 마크업
 css/style.css          전체 스타일
 js/firebase-config.js  Firebase 초기화 + 보안 규칙 예시(주석)
-js/ranking.js          플레이어 정보 입력, 점수 등록/조회(Firestore ↔ 로컬 폴백), TOP100 렌더링
+js/ranking.js          플레이어 정보, 점수 등록/조회, 실시간 TOP100, 100위 밖 내 순위, 마감 처리
 js/intro.js            로딩 → 인트로 등장 → 타이핑 대화창 → 보라 이스터에그
 js/invitation.js        스크롤 reveal, 갤러리 라이트박스, 아코디언, 계좌 복사, D-day
 js/game.js             Cupid Arrow 캔버스 게임

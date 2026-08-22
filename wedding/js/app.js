@@ -6,5 +6,5 @@ document.addEventListener('DOMContentLoaded', () => {
   WeddingIntro.start();
   WeddingInvitation.start();
   WeddingGame.start();
-  WeddingRanking.loadAndRenderRanking();
+  WeddingRanking.init();
 });
