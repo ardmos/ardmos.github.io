@@ -16,7 +16,10 @@ const WeddingInvitation = (() => {
       const map = new naver.maps.Map('naverMap', {
         center, zoom: 16,
         zoomControl: true,
-        zoomControlOptions: { position: naver.maps.Position.TOP_RIGHT }
+        zoomControlOptions: {
+          style: naver.maps.ZoomControlStyle.SMALL,
+          position: naver.maps.Position.TOP_RIGHT
+        }
       });
       new naver.maps.Marker({ position: center, map, title: VENUE.name });
     } else {
