@@ -41,8 +41,8 @@ const WeddingInvitation = (() => {
   }
 
   // ---------- 갤러리 (5열 촘촘한 그리드, 한두 장만 살짝 크게) ----------
-  const GALLERY_COUNT = 24;
-  const FEATURED_EVERY = 9; // 약 2~3장 정도만 크게 보이도록
+  const GALLERY_COUNT = 29;
+  const FEATURED_EVERY = 9; // 약 2~3장 정도만 크게 보이도록 (새로 추가된 마지막 5장은 항상 작은 사이즈)
   let galleryPhotos = [];
   let lightboxIndex = 0;
 
@@ -51,7 +51,7 @@ const WeddingInvitation = (() => {
     galleryPhotos = Array.from({ length: GALLERY_COUNT }, (_, i) => `assets/gallery/photo (${i + 1}).jpg`);
 
     grid.innerHTML = galleryPhotos.map((src, i) => {
-      const featured = (i + 1) % FEATURED_EVERY === 0;
+      const featured = (i < 24) && ((i + 1) % FEATURED_EVERY === 0);
       return `
       <div class="gallery-item${featured ? ' featured' : ''}" data-index="${i}">
         <img data-src="${src}" alt="갤러리 사진 ${i + 1}" decoding="async"
