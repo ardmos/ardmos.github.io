@@ -8,7 +8,7 @@ const WeddingRanking = (() => {
   const LS_LOCAL_RANKING_KEY = 'wedding_local_rankings';
   const COLLECTION = 'rankings';
   const RANKING_DEADLINE = new Date('2026-11-01T11:00:00+09:00');
-  const RANKING_LIMIT = 100;
+  const RANKING_LIMIT = 15;
 
   let rankingUnsubscribe = null;
   let rankingObserver = null;
@@ -306,7 +306,7 @@ const WeddingRanking = (() => {
   }
 
   // ---------- 랭킹 렌더 ----------
-  function renderRankingList(entries){
+  function renderRankingList(entries, player){
     const listEl = document.getElementById('rankingList');
     if (!listEl) return;
 
@@ -315,13 +315,20 @@ const WeddingRanking = (() => {
       return;
     }
 
-    listEl.innerHTML = entries.map((e, i) => `
-      <li class="${i === 0 ? 'top1' : ''}">
+    const myHash = player ? player.phoneHash : null;
+
+    listEl.innerHTML = entries.map((e, i) => {
+      const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+      const meClass = (myHash && e.id === myHash) ? 'is-me' : '';
+      const classAttr = [rankClass, meClass].filter(Boolean).join(' ');
+      return `
+      <li class="${classAttr}">
         <span class="col-rank">${i + 1}</span>
         <span class="col-name">${escapeHtml(e.nickname)}</span>
         <span class="col-score">${e.bestScore.toLocaleString()}</span>
       </li>
-    `).join('');
+    `;
+    }).join('');
   }
 
   async function renderMyRankingRow(player, entries){
@@ -360,8 +367,9 @@ const WeddingRanking = (() => {
   }
 
   async function applyEntries(entries){
-    renderRankingList(entries);
-    await renderMyRankingRow(getPlayerInfo(), entries);
+    const player = getPlayerInfo();
+    renderRankingList(entries, player);
+    await renderMyRankingRow(player, entries);
   }
 
   function updateRankingNote(){

@@ -29,6 +29,8 @@
   --c-white:#FFFFFF;
   --c-rose:#D8637F;
   --c-rose-dark:#B94D66;
+  --c-silver:#A8ADB4;
+  --c-bronze:#C58A4B;
 
   --font-pixel:'Galmuri11','Galmuri',monospace;
   --font-serif:'Gowun Batang', serif;
@@ -846,11 +848,35 @@ a{color:inherit;text-decoration:none;}
 .ranking-list li .col-rank{ font-family:var(--font-serif-en); font-style:italic; font-size:14px; color:var(--c-rose-dark); }
 .ranking-list li .col-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .ranking-list li .col-score{ font-family:var(--font-body); font-weight:600; font-size:13px; color:var(--c-ink); }
-.ranking-list li.top1 .col-rank{ color:var(--c-gold); }
+
+/* 1등: 금색 + 굵게 + 한 단계 더 크게 */
+.ranking-list li.top1 .col-rank{ color:var(--c-gold); font-weight:800; font-size:18px; }
+.ranking-list li.top1 .col-name{ font-weight:800; font-size:14px; }
+.ranking-list li.top1 .col-score{ font-weight:800; font-size:14px; }
+
+/* 2등: 은색, 4등 이하보다 살짝 크게 */
+.ranking-list li.top2 .col-rank{ color:var(--c-silver); font-weight:700; font-size:16px; }
+.ranking-list li.top2 .col-name{ font-weight:700; }
+.ranking-list li.top2 .col-score{ font-weight:700; }
+
+/* 3등: 동색, 4등 이하보다 살짝 크게 */
+.ranking-list li.top3 .col-rank{ color:var(--c-bronze); font-weight:700; font-size:16px; }
+.ranking-list li.top3 .col-name{ font-weight:700; }
+.ranking-list li.top3 .col-score{ font-weight:700; }
+
+/* 본인 기록 - 리스트 안에 있을 때 옅은 색으로 강조 */
+.ranking-list li.is-me{
+  background:rgba(216,99,127,0.1);
+  border-radius:8px;
+  margin:0 -2px;
+  padding-left:8px; padding-right:8px;
+}
+
 .ranking-loading{ text-align:center; color:var(--c-ink-soft); font-size:12px; padding:20px 0; }
 .my-ranking-row{
-  margin-top:10px; padding:10px 2px 0; border-top:1px dashed var(--c-beige);
+  margin-top:10px; padding:10px 8px 8px; border-top:1px dashed var(--c-beige);
   display:none; font-size:13px; font-weight:700; color:var(--c-rose-dark);
+  background:rgba(216,99,127,0.1); border-radius:8px;
 }
 .my-ranking-row:not([hidden]){ display:flex; align-items:center; }
 .my-ranking-row .col-rank{ width:18%; flex-shrink:0; font-family:var(--font-serif-en); font-style:italic; font-size:14px; }
