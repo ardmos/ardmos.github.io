@@ -61,6 +61,7 @@ const WeddingGame = (() => {
   const ARROW_STOP_Y_OFFSET = -8; // 화살촉이 과녁 실제 타격 위치보다 살짝 위에서 멈추도록
 
   let canvas, ctx, W, H, dpr;
+  let powerGaugeEl, powerGaugeFillEl;
   let images = {};
   let state = 'idle'; // idle | playing | gameover
   let score = 0, lives = 3, round = 1;
@@ -104,6 +105,30 @@ const WeddingGame = (() => {
     ctx.imageSmoothingEnabled = false; // 픽셀아트 에셋이 흐려지지 않도록 (nearest-neighbor)
   }
 
+  /** 파워 게이지 DOM 참조를 캐싱 */
+  function setupPowerGauge(){
+    powerGaugeEl = document.getElementById('powerGauge');
+    powerGaugeFillEl = document.getElementById('powerGaugeFill');
+  }
+
+  /** t(0~1, 누른 시간/최대 충전 시간)에 맞춰 게이지 채움 비율과 MAX 연출을 갱신 */
+  function updatePowerGauge(t){
+    if (!powerGaugeFillEl) return;
+    powerGaugeFillEl.style.transform = `scaleX(${t})`;
+    powerGaugeEl.classList.toggle('maxed', t >= 1);
+  }
+
+  function showPowerGauge(){
+    if (!powerGaugeEl) return;
+    updatePowerGauge(0);
+    powerGaugeEl.classList.add('show');
+  }
+
+  function hidePowerGauge(){
+    if (!powerGaugeEl) return;
+    powerGaugeEl.classList.remove('show', 'maxed');
+  }
+
   function bowX(){ return W / 2; }
   function bowY(){ return H - 46; }
   function targetY(){ return Math.max(70, H * 0.17); }
@@ -137,6 +162,7 @@ const WeddingGame = (() => {
       WeddingSound.draw();
       charging = true;
       chargeStartTs = performance.now();
+      showPowerGauge();
       try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* noop */ }
     }, { passive: false });
 
@@ -147,9 +173,10 @@ const WeddingGame = (() => {
       const heldMs = performance.now() - chargeStartTs;
       WeddingSound.fire();
       fireArrow(heldMs);
+      hidePowerGauge();
     }, { passive: false });
 
-    canvas.addEventListener('pointercancel', () => { charging = false; });
+    canvas.addEventListener('pointercancel', () => { charging = false; hidePowerGauge(); });
     canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
   }
 
@@ -384,6 +411,7 @@ const WeddingGame = (() => {
       const heldMs = performance.now() - chargeStartTs;
       const pullT = Math.min(heldMs / PULL_VISUAL_MS, 1);
       drawArrow(bowX(), bowY() - 6 + pullT * PULL_MAX_PX);
+      updatePowerGauge(Math.min(heldMs / MAX_CHARGE_MS, 1));
     }
     if (arrow) drawArrow(arrow.x, arrow.y);
   }
@@ -501,6 +529,7 @@ const WeddingGame = (() => {
     target = null; arrow = null; charging = false; resolving = false; lastTs = 0;
     clearTimeout(respawnTimer); clearTimeout(stickTimer);
     state = 'playing';
+    hidePowerGauge();
 
     document.getElementById('gameIntroPanel').hidden = true;
     document.getElementById('gameOverScreen').hidden = true;
@@ -559,6 +588,7 @@ const WeddingGame = (() => {
 
   function start(){
     setupCanvas();
+    setupPowerGauge();
     setupInput();
     setupButtons();
     loadImages();

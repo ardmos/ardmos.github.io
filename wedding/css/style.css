@@ -728,6 +728,34 @@ a{color:inherit;text-decoration:none;}
 .game-hud__score::before{ content:'♦ '; color:var(--c-gold); }
 #gameCanvas{ display:block; width:100%; aspect-ratio:1/2; max-height:70vh; touch-action:none; }
 
+/* 파워(당김) 게이지 - 터치를 누르고 있는 동안 활 위쪽에 떠오르는 세기 표시 */
+.power-gauge{
+  position:absolute; left:50%; bottom:78px; z-index:5;
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  opacity:0; pointer-events:none;
+  transform:translate(-50%, 6px);
+  transition:opacity 0.15s ease, transform 0.15s ease;
+}
+.power-gauge.show{ opacity:1; transform:translate(-50%, 0); }
+.power-gauge__track{
+  position:relative; width:130px; height:9px;
+  box-sizing:border-box; border-radius:6px; overflow:hidden;
+  background:rgba(20,15,13,0.55); border:2px solid var(--c-cream);
+  transition:border-color 0.1s ease;
+}
+.power-gauge__fill{
+  position:absolute; left:0; top:0; bottom:0; width:100%;
+  border-radius:4px; transform:scaleX(0); transform-origin:left center;
+  background:linear-gradient(90deg, var(--c-green) 0%, var(--c-gold) 55%, var(--c-rose) 100%);
+  transition:transform 0.05s linear;
+}
+.power-gauge.maxed .power-gauge__track{ border-color:var(--c-gold); animation:powerTrackPulse 0.4s ease infinite; }
+.power-gauge.maxed .power-gauge__fill{ box-shadow:0 0 6px rgba(216,99,127,0.8); }
+@keyframes powerTrackPulse{
+  0%,100%{ box-shadow:0 0 0 rgba(231,184,76,0); }
+  50%{ box-shadow:0 0 10px rgba(231,184,76,0.85); }
+}
+
 /* 실패(놓침) 연출: 화면 흔들림 + 붉은 플래시 + 하트 펄스 */
 @keyframes screenShake{
   0%,100%{ transform:translateX(0); }
