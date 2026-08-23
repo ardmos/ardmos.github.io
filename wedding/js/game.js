@@ -102,7 +102,8 @@ const WeddingGame = (() => {
     canvas.height = Math.round(H * dpr);
     // width/height를 다시 지정하면 캔버스 상태가 초기화되므로 매번 다시 설정
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.imageSmoothingEnabled = false; // 픽셀아트 에셋이 흐려지지 않도록 (nearest-neighbor)
+    ctx.imageSmoothingEnabled = true;  // 이 게임은 도트가 아닌 캐주얼 일러스트 그림체라 부드럽게 보간
+    ctx.imageSmoothingQuality = 'high';
   }
 
   /** 파워 게이지 DOM 참조를 캐싱 */
