@@ -8,6 +8,104 @@ const WeddingSound = (() => {
   let ctx = null;
   let unlocked = false;
 
+  // ---------- 큐피드 화살 게임 전용 배경음악 ----------
+  // 이 경로에 실제 음원 파일(mp3/ogg/wav 등)을 넣으면 게임 중에 자동으로 재생됩니다.
+  // 파일이 없으면 배경음악 없이 조용히 진행됩니다.
+  const BGM_ASSET_PATH = 'assets/bgm.mp3';
+  const BGM_FILE_VOLUME = 0.35;      // 직접 넣은 음원 파일의 재생 볼륨
+  const BGM_MUTE_STORAGE_KEY = 'wedding_bgm_muted';
+
+  let bgmDesired = false;   // 게임 로직상 재생되어야 하는 상태인지 (startBgm~stopBgm 사이)
+  let bgmActive = false;    // 음소거까지 반영해 실제로 소리가 나고 있는 상태인지
+  let muted = false;
+  try{ muted = localStorage.getItem(BGM_MUTE_STORAGE_KEY) === '1'; }catch(e){ /* 저장소 접근 불가 시 기본값(꺼짐 아님) 유지 */ }
+
+  let bgmFileCheckPromise = null;
+  let bgmAudioEl = null;
+  let bgmGeneration = 0;
+
+  /** assets/bgm.* 파일이 실제로 재생 가능한지 한 번만 확인해서 결과를 재사용 */
+  function checkBgmFile(){
+    if (bgmFileCheckPromise) return bgmFileCheckPromise;
+    bgmFileCheckPromise = new Promise((resolve) => {
+      try{
+        const audio = new Audio(BGM_ASSET_PATH);
+        audio.preload = 'auto';
+        let settled = false;
+        const finish = (result) => {
+          if (settled) return;
+          settled = true;
+          audio.removeEventListener('canplaythrough', onOk);
+          audio.removeEventListener('error', onErr);
+          resolve(result);
+        };
+        const onOk = () => finish(audio);
+        const onErr = () => finish(null);
+        audio.addEventListener('canplaythrough', onOk, { once: true });
+        audio.addEventListener('error', onErr, { once: true });
+        audio.load();
+      }catch(e){ resolve(null); }
+    });
+    return bgmFileCheckPromise;
+  }
+
+  /** 실제 재생을 시작 - assets/bgm.* 파일이 있을 때만 재생, 없으면 조용히 아무것도 하지 않음 */
+  async function beginPlayback(){
+    bgmGeneration++;
+    const gen = bgmGeneration;
+    const fileAudio = await checkBgmFile();
+    if (gen !== bgmGeneration || !bgmActive) return; // 대기하는 동안 상태가 바뀌었으면 취소
+    if (!fileAudio) return;
+
+    bgmAudioEl = fileAudio;
+    fileAudio.loop = true;
+    fileAudio.volume = BGM_FILE_VOLUME;
+    try{ fileAudio.currentTime = 0; }catch(e){ /* 무시 */ }
+    fileAudio.play().catch(() => { /* 자동재생 정책으로 실패해도 조용히 무시 */ });
+  }
+
+  function endPlayback(){
+    bgmGeneration++; // 대기 중이던 비동기 재생 시도를 무효화
+    if (bgmAudioEl) bgmAudioEl.pause();
+  }
+
+  /** bgmDesired(게임 재생 여부)와 muted(사용자 설정)를 함께 반영해 최종 재생 상태를 맞춤 */
+  function applyBgmState(){
+    const shouldPlay = bgmDesired && !muted;
+    if (shouldPlay && !bgmActive){
+      bgmActive = true;
+      beginPlayback();
+    } else if (!shouldPlay && bgmActive){
+      bgmActive = false;
+      endPlayback();
+    }
+  }
+
+  /** 게임 시작 시 호출 */
+  function startBgm(){
+    bgmDesired = true;
+    applyBgmState();
+  }
+
+  /** 게임 종료(게임오버) 시 호출 */
+  function stopBgm(){
+    bgmDesired = false;
+    applyBgmState();
+  }
+
+  function setMuted(v){
+    muted = !!v;
+    try{ localStorage.setItem(BGM_MUTE_STORAGE_KEY, muted ? '1' : '0'); }catch(e){ /* 무시 */ }
+    applyBgmState();
+  }
+
+  function toggleMuted(){
+    setMuted(!muted);
+    return muted;
+  }
+
+  function isMuted(){ return muted; }
+
   function getCtx(){
     if (!ctx){
       const AC = window.AudioContext || window.webkitAudioContext;
@@ -23,6 +121,7 @@ const WeddingSound = (() => {
     if (!c) return;
     unlocked = true;
     if (c.state === 'suspended') c.resume().catch(() => {});
+    checkBgmFile(); // 사용자의 첫 터치 시점에 미리 파일 유무를 확인해둬서, 이후 재생 시 지연 없이 바로 재생되도록 함
   }
 
   /** 짧은 8비트 톤(비프) 하나 재생 */
@@ -49,6 +148,10 @@ const WeddingSound = (() => {
 
   return {
     unlock,
+    startBgm,
+    stopBgm,
+    toggleMuted,
+    isMuted,
 
    /** 신랑/신부 터치 */
    tap(){

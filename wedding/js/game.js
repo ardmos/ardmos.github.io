@@ -543,6 +543,7 @@ const WeddingGame = (() => {
     resizeCanvas();
     updateHud();
     spawnTarget();
+    WeddingSound.startBgm();
     rafId = requestAnimationFrame(loop);
   }
 
@@ -553,6 +554,7 @@ const WeddingGame = (() => {
     clearTimeout(respawnTimer);
     clearTimeout(stickTimer);
     cancelAnimationFrame(rafId);
+    WeddingSound.stopBgm();
     WeddingSound.gameOver();
 
     document.getElementById('gameScreen').hidden = true;
@@ -587,11 +589,25 @@ const WeddingGame = (() => {
     });
   }
 
+  /** 게임 콘솔 한 귀퉁이의 배경음악 on/off 버튼 - 눌러도 게임 상태와 무관하게 계속 유지됨(localStorage) */
+  function setupBgmToggle(){
+    const btn = document.getElementById('bgmToggleBtn');
+    if (!btn) return;
+    const syncBtn = () => btn.classList.toggle('is-muted', WeddingSound.isMuted());
+    syncBtn();
+    btn.addEventListener('click', () => {
+      WeddingSound.unlock();
+      WeddingSound.toggleMuted();
+      syncBtn();
+    });
+  }
+
   function start(){
     setupCanvas();
     setupPowerGauge();
     setupInput();
     setupButtons();
+    setupBgmToggle();
     loadImages();
   }
 

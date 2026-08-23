@@ -689,6 +689,20 @@ a{color:inherit;text-decoration:none;}
 .game-console__topbar{ display:flex; align-items:center; gap:8px; margin-bottom:12px; padding:0 2px; }
 .console-dot{ width:8px; height:8px; border-radius:50%; background:var(--c-rose); box-shadow:0 0 6px var(--c-rose); flex-shrink:0; }
 .console-label{ font-size:9px; color:var(--c-cream); letter-spacing:2px; }
+.bgm-toggle-btn{
+  margin-left:auto; position:relative; flex-shrink:0;
+  width:24px; height:20px; padding:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; color:var(--c-ink); background:var(--c-cream);
+  border:2px solid var(--c-ink); box-shadow:2px 2px 0 var(--c-ink);
+  cursor:pointer; line-height:1;
+}
+.bgm-toggle-btn:active{ transform:translate(2px,2px); box-shadow:0 0 0 var(--c-ink); }
+.bgm-toggle-btn.is-muted{ background:rgba(255,255,255,0.55); color:var(--c-ink-soft); }
+.bgm-toggle-btn.is-muted::after{
+  content:''; position:absolute; left:2px; right:2px; top:50%;
+  height:2px; background:var(--c-rose-dark); transform:rotate(-20deg);
+}
 
 /* [hidden] 속성이 display 우선순위에 밀리지 않도록 :not([hidden])로 명시 (모달과 동일 패턴) */
 .game-panel{
