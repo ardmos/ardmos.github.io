@@ -1,11 +1,12 @@
 /**
  * ranking.js
- * 플레이어(닉네임/휴대폰) 정보 관리 + Firestore 랭킹 등록/조회
- * Firebase가 설정되어 있지 않으면 localStorage 기반 로컬 랭킹으로 자동 폴백합니다.
+ * 플레이어(닉네임/휴대폰) 정보는 기존처럼 localStorage에 저장/조회합니다.
+ * 점수는 Firestore(서버)가 유일한 Source of Truth입니다 - 점수를 로컬에 저장하거나
+ * 서버 조회 실패 시 로컬 값으로 대체하는 로직은 존재하지 않습니다.
+ * 서버 조회/제출 실패 시에는 null을 반환하며, 호출부는 이를 "확인 불가/실패" 상태로 표시해야 합니다.
  */
 const WeddingRanking = (() => {
   const LS_PLAYER_KEY = 'wedding_player_info';
-  const LS_LOCAL_RANKING_KEY = 'wedding_local_rankings';
   const COLLECTION = 'rankings';
   const RANKING_DEADLINE = new Date('2026-11-01T11:00:00+09:00');
   const RANKING_LIMIT = 15;
@@ -137,61 +138,26 @@ const WeddingRanking = (() => {
     openPlayerModal(() => onReady(getPlayerInfo()));
   }
 
-  // ---------- 로컬 폴백 저장소 ----------
-  function readLocalRankings(){
-    try{
-      const raw = localStorage.getItem(LS_LOCAL_RANKING_KEY);
-      return raw ? JSON.parse(raw) : {};
-    }catch(e){ return {}; }
-  }
-
-  function writeLocalRankings(map){
-    localStorage.setItem(LS_LOCAL_RANKING_KEY, JSON.stringify(map));
-  }
-
-  function localEntries(limit = RANKING_LIMIT){
-    const map = readLocalRankings();
-    return Object.entries(map)
-      .map(([id, v]) => ({
-        id,
-        nickname: v.nickname,
-        bestScore: v.bestScore,
-        bestScoreAt: v.bestScoreAt || v.updatedAt
-      }))
-      .sort((a, b) => b.bestScore - a.bestScore || a.bestScoreAt - b.bestScoreAt)
-      .slice(0, limit);
-  }
-
-  function allLocalEntriesSorted(){
-    const map = readLocalRankings();
-    return Object.entries(map)
-      .map(([id, v]) => ({
-        id,
-        nickname: v.nickname,
-        bestScore: v.bestScore,
-        bestScoreAt: v.bestScoreAt || v.updatedAt
-      }))
-      .sort((a, b) => b.bestScore - a.bestScore || a.bestScoreAt - b.bestScoreAt);
-  }
-
+  // ---------- 점수 조회 (서버가 유일한 Source of Truth) ----------
+  // 점수는 절대 localStorage에 저장/조회하지 않습니다. 서버(Firestore) 응답만 신뢰하며,
+  // 서버 조회에 실패하면 로컬 값으로 대체하지 않고 실패(null)를 그대로 반환합니다.
+  // 호출부(ranking.js 내부 / game.js)는 null을 "확인 불가" 상태로 처리해야 합니다.
   async function getExistingBestScore(player){
     if (!player) return null;
-    const { phoneHash } = player;
+    if (!window.__FIREBASE_READY__) return null; // 서버 미준비 -> 로컬 폴백 금지
 
-    if (window.__FIREBASE_READY__){
-      try{
-        const doc = await window.__firestoreDB__.collection(COLLECTION).doc(phoneHash).get();
-        if (doc.exists) return doc.data().bestScore;
-      }catch(e){
-        console.warn('[wedding] 기존 점수 조회 실패', e);
-      }
+    try{
+      const doc = await window.__firestoreDB__.collection(COLLECTION).doc(player.phoneHash).get();
+      return doc.exists ? doc.data().bestScore : 0;
+    }catch(e){
+      console.warn('[wedding] 기존 점수 조회 실패', e);
+      return null; // 실패 -> 로컬 값 대신 "확인 불가" 상태
     }
-
-    const local = readLocalRankings()[phoneHash];
-    return local ? local.bestScore : null;
   }
 
   // ---------- 점수 제출 ----------
+  // 반환값: 성공 시 서버가 판단한 최신 bestScore(숫자), 실패/서버 미준비 시 null.
+  // null인 경우 로컬 값으로 절대 대체하지 않으며, 호출부(game.js)가 "확인 불가/실패" 상태를 표시해야 합니다.
   async function submitScore(score){
     const player = getPlayerInfo();
     if (!player) return null;
@@ -200,114 +166,99 @@ const WeddingRanking = (() => {
       return getExistingBestScore(player);
     }
 
+    if (!window.__FIREBASE_READY__) return null; // 서버 미준비 -> 로컬 저장하지 않고 실패 반환
+
     const { nickname, phoneDigits, phoneHash } = player;
     const now = Date.now();
+    const db = window.__firestoreDB__;
+    const ref = db.collection(COLLECTION).doc(phoneHash);
 
-    if (window.__FIREBASE_READY__){
-      const db = window.__firestoreDB__;
-      const ref = db.collection(COLLECTION).doc(phoneHash);
-      try{
-        const result = await db.runTransaction(async (tx) => {
-          const doc = await tx.get(ref);
-          if (!doc.exists){
-            const data = {
-              nickname, phoneNumber: phoneDigits,
-              bestScore: score, lastScore: score, playCount: 1,
-              bestScoreAt: now, createdAt: now, updatedAt: now
-            };
-            tx.set(ref, data);
-            return data;
-          }
-          const existing = doc.data();
-          const isNewBest = score > existing.bestScore;
+    try{
+      const result = await db.runTransaction(async (tx) => {
+        const doc = await tx.get(ref);
+        if (!doc.exists){
           const data = {
             nickname, phoneNumber: phoneDigits,
-            bestScore: isNewBest ? score : existing.bestScore,
-            lastScore: score,
-            playCount: (existing.playCount || 0) + 1,
-            bestScoreAt: isNewBest ? now : existing.bestScoreAt,
-            createdAt: existing.createdAt || now,
-            updatedAt: now
+            bestScore: score, lastScore: score, playCount: 1,
+            bestScoreAt: now, createdAt: now, updatedAt: now
           };
-          tx.set(ref, data, { merge: true });
+          tx.set(ref, data);
           return data;
-        });
-        return result.bestScore;
-      }catch(e){
-        console.warn('[wedding] Firestore 점수 등록 실패, 로컬 저장으로 대체합니다.', e);
-      }
+        }
+        const existing = doc.data();
+        const isNewBest = score > existing.bestScore;
+        const data = {
+          nickname, phoneNumber: phoneDigits,
+          bestScore: isNewBest ? score : existing.bestScore,
+          lastScore: score,
+          playCount: (existing.playCount || 0) + 1,
+          bestScoreAt: isNewBest ? now : existing.bestScoreAt,
+          createdAt: existing.createdAt || now,
+          updatedAt: now
+        };
+        tx.set(ref, data, { merge: true });
+        return data;
+      });
+      return result.bestScore;
+    }catch(e){
+      console.warn('[wedding] Firestore 점수 등록 실패', e);
+      return null; // 실패 -> 로컬 저장 없이 실패를 그대로 알림
     }
-
-    const map = readLocalRankings();
-    const existing = map[phoneHash];
-    if (!existing){
-      map[phoneHash] = { nickname, bestScore: score, lastScore: score, playCount: 1, bestScoreAt: now, updatedAt: now };
-    } else {
-      const isNewBest = score > existing.bestScore;
-      map[phoneHash] = {
-        nickname,
-        bestScore: isNewBest ? score : existing.bestScore,
-        lastScore: score,
-        playCount: (existing.playCount || 0) + 1,
-        bestScoreAt: isNewBest ? now : existing.bestScoreAt,
-        updatedAt: now
-      };
-    }
-    writeLocalRankings(map);
-    return map[phoneHash].bestScore;
   }
 
   // ---------- 순위 계산 (100위 밖) ----------
+  // 서버 조회 실패/미준비 시 null 반환 (로컬 계산으로 대체하지 않음)
   async function computeRank(bestScore, bestScoreAt, phoneHash){
-    if (window.__FIREBASE_READY__){
-      try{
-        const db = window.__firestoreDB__;
-        const [higherSnap, tieSnap] = await Promise.all([
-          db.collection(COLLECTION).where('bestScore', '>', bestScore).get(),
-          db.collection(COLLECTION).where('bestScore', '==', bestScore).where('bestScoreAt', '<', bestScoreAt).get()
-        ]);
-        return higherSnap.size + tieSnap.size + 1;
-      }catch(e){
-        console.warn('[wedding] Firestore 순위 계산 실패, 로컬 방식으로 대체합니다.', e);
-      }
+    if (!window.__FIREBASE_READY__) return null;
+    try{
+      const db = window.__firestoreDB__;
+      const [higherSnap, tieSnap] = await Promise.all([
+        db.collection(COLLECTION).where('bestScore', '>', bestScore).get(),
+        db.collection(COLLECTION).where('bestScore', '==', bestScore).where('bestScoreAt', '<', bestScoreAt).get()
+      ]);
+      return higherSnap.size + tieSnap.size + 1;
+    }catch(e){
+      console.warn('[wedding] Firestore 순위 계산 실패', e);
+      return null;
     }
-
-    const all = allLocalEntriesSorted();
-    const idx = all.findIndex(e => e.id === phoneHash);
-    return idx >= 0 ? idx + 1 : null;
   }
 
+  // 서버 조회 실패/미준비 시 null 반환 (로컬 기록으로 대체하지 않음)
   async function getMyRecord(player){
     if (!player) return null;
+    if (!window.__FIREBASE_READY__) return null;
 
-    if (window.__FIREBASE_READY__){
-      try{
-        const doc = await window.__firestoreDB__.collection(COLLECTION).doc(player.phoneHash).get();
-        if (doc.exists){
-          const d = doc.data();
-          return {
-            nickname: d.nickname,
-            bestScore: d.bestScore,
-            bestScoreAt: d.bestScoreAt
-          };
-        }
-      }catch(e){
-        console.warn('[wedding] 내 기록 조회 실패', e);
-      }
+    try{
+      const doc = await window.__firestoreDB__.collection(COLLECTION).doc(player.phoneHash).get();
+      if (!doc.exists) return null;
+      const d = doc.data();
+      return {
+        nickname: d.nickname,
+        bestScore: d.bestScore,
+        bestScoreAt: d.bestScoreAt
+      };
+    }catch(e){
+      console.warn('[wedding] 내 기록 조회 실패', e);
+      return null;
     }
-
-    const local = readLocalRankings()[player.phoneHash];
-    if (!local) return null;
-    return {
-      nickname: local.nickname,
-      bestScore: local.bestScore,
-      bestScoreAt: local.bestScoreAt || local.updatedAt
-    };
   }
 
   // ---------- 랭킹 렌더 ----------
+  function renderRankingError(){
+    const listEl = document.getElementById('rankingList');
+    const myRowEl = document.getElementById('myRankingRow');
+    const retryBtn = document.getElementById('rankingRetryBtn');
+    if (listEl){
+      listEl.innerHTML = '<li class="ranking-loading ranking-error">랭킹을 불러오지 못했습니다. 네트워크 상태를 확인해주세요.</li>';
+    }
+    if (myRowEl) myRowEl.hidden = true;
+    if (retryBtn) retryBtn.hidden = false;
+  }
+
   function renderRankingList(entries, player){
     const listEl = document.getElementById('rankingList');
+    const retryBtn = document.getElementById('rankingRetryBtn');
+    if (retryBtn) retryBtn.hidden = true;
     if (!listEl) return;
 
     if (!entries.length){
@@ -392,25 +343,23 @@ const WeddingRanking = (() => {
   }
 
   // ---------- 랭킹 조회 (일회성) ----------
+  // 서버 조회 실패/미준비 시 로컬 데이터로 대체하지 않고 에러 상태를 표시합니다.
   async function loadAndRenderRanking(){
     showRankingLoading();
     updateRankingNote();
 
-    let entries = [];
-
-    if (window.__FIREBASE_READY__){
-      try{
-        const snap = await rankingQuery(window.__firestoreDB__).get();
-        entries = entriesFromSnapshot(snap);
-      }catch(e){
-        console.warn('[wedding] Firestore 랭킹 조회 실패, 로컬 데이터로 대체합니다.', e);
-        entries = localEntries();
-      }
-    } else {
-      entries = localEntries();
+    if (!window.__FIREBASE_READY__){
+      renderRankingError();
+      return;
     }
 
-    await applyEntries(entries);
+    try{
+      const snap = await rankingQuery(window.__firestoreDB__).get();
+      await applyEntries(entriesFromSnapshot(snap));
+    }catch(e){
+      console.warn('[wedding] Firestore 랭킹 조회 실패', e);
+      renderRankingError();
+    }
   }
 
   // ---------- 실시간 구독 ----------
@@ -426,24 +375,30 @@ const WeddingRanking = (() => {
     showRankingLoading();
     updateRankingNote();
 
-    if (window.__FIREBASE_READY__){
-      try{
-        rankingUnsubscribe = rankingQuery(window.__firestoreDB__).onSnapshot(
-          (snap) => {
-            applyEntries(entriesFromSnapshot(snap));
-          },
-          (e) => {
-            console.warn('[wedding] Firestore 실시간 랭킹 실패, 로컬 데이터로 대체합니다.', e);
-            applyEntries(localEntries());
-          }
-        );
-        return;
-      }catch(e){
-        console.warn('[wedding] Firestore 리스너 시작 실패', e);
-      }
+    if (!window.__FIREBASE_READY__){
+      renderRankingError();
+      return;
     }
 
-    loadAndRenderRanking();
+    try{
+      rankingUnsubscribe = rankingQuery(window.__firestoreDB__).onSnapshot(
+        (snap) => {
+          applyEntries(entriesFromSnapshot(snap));
+        },
+        (e) => {
+          console.warn('[wedding] Firestore 실시간 랭킹 실패', e);
+          renderRankingError();
+        }
+      );
+    }catch(e){
+      console.warn('[wedding] Firestore 리스너 시작 실패', e);
+      renderRankingError();
+    }
+  }
+
+  /** 랭킹 다시 시도 버튼에서 호출 */
+  function retryRanking(){
+    startRankingListener();
   }
 
   function setupRankingObserver(){
@@ -463,9 +418,19 @@ const WeddingRanking = (() => {
     rankingObserver.observe(section);
   }
 
+  function setupRetryButton(){
+    const btn = document.getElementById('rankingRetryBtn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      btn.hidden = true;
+      retryRanking();
+    });
+  }
+
   function init(){
     updateRankingNote();
     setupRankingObserver();
+    setupRetryButton();
   }
 
   return {

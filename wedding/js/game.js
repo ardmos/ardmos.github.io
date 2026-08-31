@@ -560,22 +560,42 @@ const WeddingGame = (() => {
     document.getElementById('gameScreen').hidden = true;
     document.getElementById('gameOverScreen').hidden = false;
     document.getElementById('finalScoreVal').textContent = score.toLocaleString();
-    document.getElementById('bestScoreVal').textContent = Math.max(score, bestScoreCache).toLocaleString();
+
+    // BEST SCORE는 서버 응답이 오기 전까지는 추측값(로컬/이전 값 등)을 보여주지 않고
+    // "확인 중" 상태만 표시합니다. 서버가 유일한 Source of Truth입니다.
+    const bestScoreEl = document.getElementById('bestScoreVal');
+    const retryBtn = document.getElementById('bestScoreRetryBtn');
+    bestScoreEl.textContent = '확인 중...';
+    bestScoreEl.classList.remove('is-error');
+    if (retryBtn) retryBtn.hidden = true;
 
     const closedNotice = document.getElementById('rankingClosedNotice');
     const rankingClosed = WeddingRanking.isRankingClosed();
     if (closedNotice) closedNotice.hidden = !rankingClosed;
 
-    let updatedBest = null;
-    if (rankingClosed){
-      updatedBest = await WeddingRanking.getExistingBestScore(WeddingRanking.getPlayerInfo());
-    } else {
-      updatedBest = await WeddingRanking.submitScore(score);
+    await fetchAndShowBestScore(rankingClosed);
+  }
+
+  /** 서버에서 최고 점수를 받아와 표시. 실패 시 로컬 값으로 대체하지 않고 에러+재시도를 표시 */
+  async function fetchAndShowBestScore(rankingClosed){
+    const bestScoreEl = document.getElementById('bestScoreVal');
+    const retryBtn = document.getElementById('bestScoreRetryBtn');
+
+    const updatedBest = rankingClosed
+      ? await WeddingRanking.getExistingBestScore(WeddingRanking.getPlayerInfo())
+      : await WeddingRanking.submitScore(score);
+
+    if (updatedBest === null){
+      bestScoreEl.textContent = '확인 실패';
+      bestScoreEl.classList.add('is-error');
+      if (retryBtn) retryBtn.hidden = false;
+      return;
     }
-    if (updatedBest !== null){
-      bestScoreCache = updatedBest;
-      document.getElementById('bestScoreVal').textContent = bestScoreCache.toLocaleString();
-    }
+
+    bestScoreCache = updatedBest;
+    bestScoreEl.textContent = bestScoreCache.toLocaleString();
+    bestScoreEl.classList.remove('is-error');
+    if (retryBtn) retryBtn.hidden = true;
   }
 
   function setupButtons(){
@@ -587,6 +607,16 @@ const WeddingGame = (() => {
     document.getElementById('viewRankingBtn').addEventListener('click', () => {
       document.getElementById('ranking').scrollIntoView({ behavior: 'smooth' });
     });
+    const bestScoreRetryBtn = document.getElementById('bestScoreRetryBtn');
+    if (bestScoreRetryBtn){
+      bestScoreRetryBtn.addEventListener('click', () => {
+        bestScoreRetryBtn.hidden = true;
+        const bestScoreEl = document.getElementById('bestScoreVal');
+        bestScoreEl.textContent = '확인 중...';
+        bestScoreEl.classList.remove('is-error');
+        fetchAndShowBestScore(WeddingRanking.isRankingClosed());
+      });
+    }
   }
 
   /** 게임 콘솔 한 귀퉁이의 배경음악 on/off 버튼 - 눌러도 게임 상태와 무관하게 계속 유지됨(localStorage) */

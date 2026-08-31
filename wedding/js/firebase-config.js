@@ -42,7 +42,9 @@ const firebaseConfig = {
   appId: "1:55110431204:web:e036cd73ca856e25fd17f1"
 };
 
-// 설정 값이 채워져 있는지 확인 -> 미설정 시 로컬 스토리지 랭킹으로 자동 폴백
+// 설정 값이 채워져 있는지 확인.
+// 점수는 서버(Firestore)가 유일한 Source of Truth이므로, __FIREBASE_READY__가 false인 동안
+// ranking.js/game.js는 점수를 로컬로 대체하지 않고 "확인 불가/실패" 상태를 그대로 표시합니다.
 window.__FIREBASE_READY__ = false;
 window.__firestoreDB__ = null;
 
@@ -52,11 +54,11 @@ try{
     firebase.initializeApp(firebaseConfig);
     window.__firestoreDB__ = firebase.firestore();
     window.__FIREBASE_READY__ = true;
-    console.info('[wedding] Firebase 연결됨 - 실시간 랭킹 사용');
+    console.info('[wedding] Firebase 연결됨 - 서버 랭킹 사용');
   } else {
-    console.info('[wedding] Firebase 미설정 - localStorage 랭킹(로컬 테스트 모드)으로 동작합니다.');
+    console.warn('[wedding] Firebase 미설정 - 점수 기능은 "확인 불가" 상태로 표시됩니다 (로컬 폴백 없음).');
   }
 }catch(e){
-  console.warn('[wedding] Firebase 초기화 실패, 로컬 랭킹으로 폴백합니다.', e);
+  console.warn('[wedding] Firebase 초기화 실패 - 점수 기능은 "확인 불가" 상태로 표시됩니다 (로컬 폴백 없음).', e);
   window.__FIREBASE_READY__ = false;
 }
