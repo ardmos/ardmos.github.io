@@ -967,8 +967,6 @@ a{color:inherit;text-decoration:none;}
 ===================================================== */
 .tutorial-overlay{
   position:absolute; inset:0; z-index:20;
-  display:flex; flex-direction:column; align-items:center; justify-content:space-between;
-  padding:40px 8px 10px;
   cursor:pointer;
 }
 .tutorial-overlay[hidden]{ display:none; }
@@ -991,8 +989,11 @@ a{color:inherit;text-decoration:none;}
 }
 .tutorial-skip-btn:active{ background:rgba(20,15,13,0.9); transform:scale(0.96); }
 
+/* 화면 중간보다 아주 살짝 위쪽에 고정 - 상단에 붙어 잘리는 느낌 방지 */
 .tutorial-textbox{
-  position:relative; z-index:22; width:100%; max-width:280px;
+  position:absolute; z-index:22; top:45%; left:50%;
+  transform:translate(-50%, -50%);
+  width:calc(100% - 24px); max-width:280px;
   text-align:center; background:var(--c-cream);
   border:2px solid var(--c-ink); box-shadow:3px 3px 0 rgba(62,47,42,0.22);
   padding:10px 12px; pointer-events:none;
@@ -1001,7 +1002,9 @@ a{color:inherit;text-decoration:none;}
 .tutorial-text{ font-size:12.5px; line-height:1.6; color:var(--c-ink); margin:0; }
 
 .tutorial-next-hint{
-  position:relative; z-index:22; font-size:8px; letter-spacing:0.5px;
+  position:absolute; z-index:22; left:50%; bottom:10px;
+  transform:translateX(-50%);
+  font-size:8px; letter-spacing:0.5px; white-space:nowrap;
   color:var(--c-cream); opacity:0.85; margin:0;
   animation:tutorialHintBlink 1.4s ease-in-out infinite;
 }
