@@ -487,28 +487,43 @@ const WeddingGame = (() => {
     });
   }
 
-  function drawTarget(x, y){
+  function drawTarget(x, y, targetCtx){
+    // targetCtx를 넘기지 않으면(실제 게임 플레이 중) 기존처럼 메인 게임 캔버스(ctx)에 그림.
+    // 튜토리얼에서는 별도의 작은 캔버스 ctx를 넘겨서, 실제 게임과 완전히 동일한 코드로
+    // 완전히 동일한 과녁을 그려서 보여줍니다(색상/테두리선/이미지 유무까지 100% 동일).
+    const c = targetCtx || ctx;
     if (images.target && images.target.ok){
       const size = OUTER_RADIUS * 2.2;
-      ctx.drawImage(images.target.el, x - size / 2, y - size / 2, size, size);
+      c.drawImage(images.target.el, x - size / 2, y - size / 2, size, size);
       return;
     }
     // 기존 배치 그대로 복원 (PERFECT~OK 5개 링) - RINGS[0]은 불스아이라 여기선 제외
     const colors = ['#B94D66', '#fff', '#E7B84C', '#fff', '#7FB88A'];
     for (let i = RINGS.length - 1; i >= 1; i--){
-      ctx.beginPath();
-      ctx.fillStyle = colors[(i - 1) % colors.length];
-      ctx.arc(x, y, RINGS[i].radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = 'rgba(62,47,42,0.5)';
-      ctx.stroke();
+      c.beginPath();
+      c.fillStyle = colors[(i - 1) % colors.length];
+      c.arc(x, y, RINGS[i].radius, 0, Math.PI * 2);
+      c.fill();
+      c.lineWidth = 1.5;
+      c.strokeStyle = 'rgba(62,47,42,0.5)';
+      c.stroke();
     }
     // 정중앙 불스아이 - 검은색 점 (작게, 판정도 좁게)
-    ctx.beginPath();
-    ctx.fillStyle = '#1a1a1a';
-    ctx.arc(x, y, RINGS[0].radius, 0, Math.PI * 2);
-    ctx.fill();
+    c.beginPath();
+    c.fillStyle = '#1a1a1a';
+    c.arc(x, y, RINGS[0].radius, 0, Math.PI * 2);
+    c.fill();
+  }
+
+  /** 튜토리얼 전용: 임의의 작은 캔버스 ctx 위에 실제 게임과 완전히 동일한 과녁을 그려줌.
+   *  (x, y)는 그 캔버스 안에서의 중심 좌표, radiusScale은 RINGS 반지름(최대 OUTER_RADIUS)을
+   *  원하는 실제 픽셀 크기로 맞추기 위한 배율입니다. */
+  function tutorialDrawTargetGhost(targetCtx, x, y, radiusScale){
+    targetCtx.save();
+    targetCtx.translate(x, y);
+    targetCtx.scale(radiusScale, radiusScale);
+    drawTarget(0, 0, targetCtx);
+    targetCtx.restore();
   }
 
   function drawBow(){
@@ -574,7 +589,7 @@ const WeddingGame = (() => {
     resizeCanvas();
     const rect = canvas.getBoundingClientRect();
     return {
-      W, H, bowX: bowX(), bowY: bowY(), targetY: targetY(),
+      W, H, bowX: bowX(), bowY: bowY(), targetY: targetY(), outerRadius: OUTER_RADIUS,
       scaleX: rect.width / W, scaleY: rect.height / H
     };
   }
@@ -712,5 +727,5 @@ const WeddingGame = (() => {
     loadImages();
   }
 
-  return { start, tutorialPrepareCanvas, tutorialDrawFrame };
+  return { start, tutorialPrepareCanvas, tutorialDrawFrame, tutorialDrawTargetGhost };
 })();

@@ -987,6 +987,21 @@ a{color:inherit;text-decoration:none;}
   transition:left 0.25s ease, top 0.25s ease, width 0.25s ease, height 0.25s ease, border-radius 0.25s ease;
 }
 
+/* 2번(움직이는 과녁)/4번(왕복) 스텝 전용: 스포트라이트로 구멍을 뚫는 대신
+   화면 전체를 균일하게 어둡게 깔고, 그 위에 과녁 자체(.tutorial-target-ghost)만
+   또렷하게 띄워서 "과녁이 이동하는 모습"만 보여줍니다. */
+.tutorial-overlay.full-dark{ background:rgba(10,7,6,0.72); }
+
+/* 과녁 자체를 어두운 배경 위로 띄우는 요소 - 위치(left/top)는 매 프레임 JS로 갱신됩니다.
+   실제 게임과 완전히 동일한 코드(WeddingGame.tutorialDrawTargetGhost)로 이 캔버스 위에
+   직접 그려서 보여주므로, 색상/링 순서/테두리선까지 실제 과녁과 100% 동일합니다. */
+.tutorial-target-ghost{
+  position:absolute; z-index:21; pointer-events:none;
+  display:block;
+  transform:translate(-50%, -50%);
+  filter:drop-shadow(0 0 10px rgba(255,255,255,0.55));
+}
+
 .tutorial-skip-btn{
   position:absolute; z-index:23; top:6px; right:6px;
   font-size:8px; letter-spacing:0.5px; color:var(--c-cream);

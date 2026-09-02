@@ -33,7 +33,7 @@ const WeddingTutorial = (() => {
     { demo: 'roundtrip',   text: '과녁은 한 번 왕복하면 사라져요!<br>사라지기 전에 꼭 맞혀보세요!' }
   ];
 
-  let overlay, spotlightEl, textEl, stepCountEl, fingerEl, skipBtn;
+  let overlay, spotlightEl, textEl, stepCountEl, fingerEl, skipBtn, targetGhostEl;
   let listenersReady = false;
   let stepIndex = 0;
   let mode = 'first'; // 'first' | 'replay'
@@ -49,6 +49,7 @@ const WeddingTutorial = (() => {
     skipBtn = document.getElementById('tutorialSkipBtn');
     textEl = document.getElementById('tutorialText');
     stepCountEl = document.getElementById('tutorialStepCount');
+    targetGhostEl = document.getElementById('tutorialTargetGhost');
   }
 
   /** rect: #gameScreen 기준 로컬 좌표({left, top, width, height}) */
@@ -65,6 +66,10 @@ const WeddingTutorial = (() => {
   function stopDemo(){
     if (demoRafId){ cancelAnimationFrame(demoRafId); demoRafId = null; }
     if (fingerEl) fingerEl.hidden = true;
+    // 기본값(스포트라이트로 구멍 뚫기 모드)으로 복원 - 2/4번 스텝에서만 다시 전체 어둡게+과녁 오버레이로 전환함
+    if (spotlightEl) spotlightEl.hidden = false;
+    if (overlay) overlay.classList.remove('full-dark');
+    if (targetGhostEl) targetGhostEl.hidden = true;
     // 하트 데모에서 토글했던 시각 클래스만 원복 (실제 lives 값은 애초에 건드리지 않았음)
     const livesEl = document.getElementById('gameLives');
     if (livesEl){
@@ -104,6 +109,29 @@ const WeddingTutorial = (() => {
     demoRafId = requestAnimationFrame(frame);
   }
 
+  // ---------- Step 2 / Step 4 공용: 스포트라이트 대신 화면을 전체적으로 어둡게 깔고 과녁 이미지를 그 위에 띄움 ----------
+  function setupTargetGhostMode(){
+    if (spotlightEl) spotlightEl.hidden = true;
+    if (overlay) overlay.classList.add('full-dark');
+
+    // 화면에 보일 실제 크기(CSS px) - 실제 게임에서 과녁이 차지하는 크기(OUTER_RADIUS*2)와 동일 비율
+    const sizePx = metrics.outerRadius * 2 * metrics.scaleX;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    targetGhostEl.style.width = sizePx + 'px';
+    targetGhostEl.style.height = sizePx + 'px';
+    targetGhostEl.width = Math.round(sizePx * dpr);
+    targetGhostEl.height = Math.round(sizePx * dpr);
+
+    const gctx = targetGhostEl.getContext('2d');
+    gctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    gctx.clearRect(0, 0, sizePx, sizePx);
+    // RINGS 최대 반지름(OUTER_RADIUS)이 캔버스 절반 크기에 정확히 맞도록 배율을 계산해서
+    // WeddingGame.drawTarget()과 완전히 동일한 코드로 중앙에 그림 (색상/테두리선까지 100% 동일)
+    const radiusScale = (sizePx / 2) / metrics.outerRadius;
+    WeddingGame.tutorialDrawTargetGhost(gctx, sizePx / 2, sizePx / 2, radiusScale);
+  }
+
   // ---------- Step 2 / Step 4: 과녁 이동 ----------
   function runTargetDemo(canvasOffset, roundtripMode){
     const SWING_CYCLE = 2600;
@@ -136,16 +164,18 @@ const WeddingTutorial = (() => {
       }
 
       const targetX = targetXRatio != null ? targetXRatio * W : null;
-      WeddingGame.tutorialDrawFrame({ targetX, bgIndex: 1 });
+      // 과녁은 더 이상 캔버스(어두운 오버레이 아래)에 그리지 않고, 오버레이 위에 뜨는
+      // targetGhostEl(실제 과녁 이미지)의 위치만 매 프레임 갱신합니다.
+      WeddingGame.tutorialDrawFrame({ bgIndex: 1 });
 
       if (targetX != null){
         // targetX/metrics.targetY는 게임 내부 고정 좌표계 값이라, DOM(canvasOffset) 좌표에 더하기 전에
         // 반드시 scaleX/scaleY를 곱해 실제 화면 픽셀로 환산해야 캔버스 위 과녁 위치와 정확히 맞습니다.
-        const localX = canvasOffset.x + targetX * metrics.scaleX;
-        const localY = canvasOffset.y + metrics.targetY * metrics.scaleY;
-        setSpotlightRect({ left: localX - 46, top: localY - 46, width: 92, height: 92 }, 999);
+        targetGhostEl.hidden = false;
+        targetGhostEl.style.left = (canvasOffset.x + targetX * metrics.scaleX) + 'px';
+        targetGhostEl.style.top = (canvasOffset.y + metrics.targetY * metrics.scaleY) + 'px';
       } else {
-        setSpotlightRect({ left: canvasOffset.x + (W / 2) * metrics.scaleX, top: canvasOffset.y + metrics.targetY * metrics.scaleY, width: 0, height: 0 });
+        targetGhostEl.hidden = true; // 왕복이 끝나 과녁이 사라진 구간
       }
 
       demoRafId = requestAnimationFrame(frame);
@@ -194,9 +224,11 @@ const WeddingTutorial = (() => {
       runAimDemo(canvasOffset);
     } else if (step.demo === 'targetSwing'){
       metrics = WeddingGame.tutorialPrepareCanvas();
+      setupTargetGhostMode();
       runTargetDemo(canvasOffset, false);
     } else if (step.demo === 'roundtrip'){
       metrics = WeddingGame.tutorialPrepareCanvas();
+      setupTargetGhostMode();
       runTargetDemo(canvasOffset, true);
     } else if (step.demo === 'hearts'){
       const livesEl = document.getElementById('gameLives');
