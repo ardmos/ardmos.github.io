@@ -751,7 +751,7 @@ a{color:inherit;text-decoration:none;}
    이전처럼 width:100%(고정값)를 주면 세로가 max-height에 눌릴 때 가로가 따라서 줄지 않아
    비율이 깨졌던 것이 문제였습니다. 실제로 캔버스가 줄어든 만큼은 위에서 .game-screen을
    width:fit-content로 바꿔 그대로 감싸도록 해서, 남는 배경(빈 공간)도 생기지 않습니다. */
-#gameCanvas{ display:block; width:auto; height:auto; max-width:100%; max-height:70vh; aspect-ratio:1/2; touch-action:none; }
+#gameCanvas{ display:block; width:auto; height:auto; max-width:100%; max-height:70vh; aspect-ratio:1/1.8; touch-action:none; }
 
 /* 파워(당김) 게이지 - 터치를 누르고 있는 동안 활 위쪽에 떠오르는 세기 표시 */
 .power-gauge{

@@ -66,7 +66,7 @@ const WeddingGame = (() => {
   // 실제 화면에 보이는 크기는 CSS(width/aspect-ratio)가 알아서 이 비율 그대로 확대/축소해서 그려주므로,
   // 화살이 과녁까지 이동하는 실제 거리(H)가 기기마다 달라져 난이도가 변하는 문제가 원천적으로 사라집니다.
   const FIXED_GAME_W = 360;
-  const FIXED_GAME_H = 720;
+  const FIXED_GAME_H = 648; // 세로 비율을 기존(1:2)보다 10% 줄임 (CSS의 aspect-ratio:1/1.8과 항상 일치시킬 것)
 
   let canvas, ctx, W, H, dpr;
   let powerGaugeEl, powerGaugeFillEl;
