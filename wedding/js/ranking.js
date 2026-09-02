@@ -346,11 +346,41 @@ const WeddingRanking = (() => {
     if (myRowEl) myRowEl.hidden = true;
   }
 
+  // ---------- 큐피드(참여자) 총 인원수 ----------
+  // 랭킹 TOP15와 별개로, rankings 컬렉션 전체 문서 수(=지금까지 게임에 참여해 점수를 등록한 총 인원)를
+  // Firestore 집계 쿼리(count())로 가볍게 조회합니다. 조회 실패/서버 미준비 시에는 어색한 숫자
+  // 대신 문구 자체를 숨깁니다(로컬 값으로 대체하지 않음).
+  async function getTotalPlayerCount(){
+    if (!window.__FIREBASE_READY__) return null;
+    try{
+      const snap = await window.__firestoreDB__.collection(COLLECTION).count().get();
+      return snap.data().count;
+    }catch(e){
+      console.warn('[wedding] 큐피드 참여자 수 조회 실패', e);
+      return null;
+    }
+  }
+
+  async function renderCupidCount(){
+    const noteEl = document.getElementById('cupidCountNote');
+    const valEl = document.getElementById('cupidCountVal');
+    if (!noteEl || !valEl) return;
+
+    const total = await getTotalPlayerCount();
+    if (total === null){
+      noteEl.hidden = true;
+      return;
+    }
+    valEl.textContent = total.toLocaleString();
+    noteEl.hidden = false;
+  }
+
   // ---------- 랭킹 조회 (일회성) ----------
   // 서버 조회 실패/미준비 시 로컬 데이터로 대체하지 않고 에러 상태를 표시합니다.
   async function loadAndRenderRanking(){
     showRankingLoading();
     updateRankingNote();
+    renderCupidCount();
 
     if (!window.__FIREBASE_READY__){
       renderRankingError();
@@ -378,6 +408,7 @@ const WeddingRanking = (() => {
     stopRankingListener();
     showRankingLoading();
     updateRankingNote();
+    renderCupidCount();
 
     if (!window.__FIREBASE_READY__){
       renderRankingError();
