@@ -622,10 +622,10 @@ const WeddingGame = (() => {
   function setupButtons(){
     document.getElementById('gameStartBtn').addEventListener('click', () => {
       WeddingSound.unlock();
-      WeddingRanking.ensurePlayerInfo(() => {
-        // 최초 1회만: 정보입력 완료 직후 튜토리얼을 보여주고, 튜토리얼이 끝나면 그때 실제 게임을 시작함.
-        // 이미 튜토리얼을 본 적이 있으면(스킵 포함) 곧바로 게임 시작 (기존 흐름과 동일).
-        if (!WeddingTutorial.hasSeenTutorial()){
+      WeddingRanking.ensurePlayerInfo((info, isFirstTime) => {
+        // 방금 유저정보 입력 팝업을 통해 "처음" 정보를 등록한 사람에게만 튜토리얼을 보여줌.
+        // 이미 정보가 저장되어 있던(재방문) 유저는 튜토리얼 없이 곧바로 게임 시작.
+        if (isFirstTime){
           WeddingTutorial.start('first', () => startGame());
         } else {
           startGame();

@@ -10,26 +10,30 @@
  * - 하트가 줄어드는 연출은 실제 lives 값과 무관하게 heart-icon의 CSS 클래스만
  *   토글했다가, 튜토리얼이 끝나면 원래 상태로 되돌립니다.
  *
+ * 표시 범위: 튜토리얼 오버레이(검은 반투명 배경 + 스포트라이트 + 안내문구)는
+ * 전체 화면이 아니라 #gameScreen(게임 콘솔 프레임) 안에만 그려집니다.
+ * #gameScreen이 overflow:hidden이라 오버레이를 그 안에 두면 프레임 밖으로는
+ * 아무것도 삐져나가지 않습니다. 그래서 모든 좌표 계산은 "뷰포트 기준"이 아니라
+ * "#gameScreen 기준 로컬 좌표"로 합니다.
+ *
  * 진입 모드 2가지:
- *   'first'  - 최초 실행: 유저 정보입력 완료 직후. 종료(완료/스킵) 후 게임 시작.
+ *   'first'  - 방금 유저 정보입력을 "새로" 마친 직후(진짜 최초 실행)에만 진입.
+ *              이미 정보가 저장돼 있던 재방문 유저는 이 모드로 진입하지 않음
+ *              (game.js가 WeddingRanking.ensurePlayerInfo의 isFirstTime 값으로 분기).
+ *              종료(완료/스킵) 후 실제 게임 시작.
  *   'replay' - 결과 화면의 [게임방법] 버튼. 종료 후 결과 화면으로 복귀,
  *              새 게임을 시작하지 않고 점수/랭킹도 그대로 유지.
- *
- * 최초 실행 여부는 localStorage('wedding_tutorial_seen')에 저장합니다.
- * (기존 유저 정보 저장 키 'wedding_player_info'와는 별개의 키라 서로 충돌하지 않습니다.)
  */
 const WeddingTutorial = (() => {
-  const LS_SEEN_KEY = 'wedding_tutorial_seen';
-
   // Step 순서/문구/연출 종류 - 나중에 여기만 수정하면 튜토리얼 내용을 바꿀 수 있음
   const STEPS = [
-    { demo: 'aim',       text: '화면을 꾹 눌러 화살을 당겨보세요!<br>손을 떼면 화살이 발사돼요.' },
+    { demo: 'aim',         text: '화면을 꾹 눌러 화살을 당겨보세요!<br>손을 떼면 화살이 발사돼요.' },
     { demo: 'targetSwing', text: '움직이는 과녁을 노려보세요!<br>타이밍에 맞춰 화살을 쏴보세요!' },
-    { demo: 'hearts',    text: '화살이 빗나가면 하트가 하나 줄어요!<br>하트 3개를 모두 잃으면 게임 오버예요!' },
-    { demo: 'roundtrip', text: '과녁은 한 번 왕복하면 사라져요!<br>사라지기 전에 꼭 맞혀보세요!' }
+    { demo: 'hearts',      text: '화살이 빗나가면 하트가 하나 줄어요!<br>하트 3개를 모두 잃으면 게임 오버예요!' },
+    { demo: 'roundtrip',   text: '과녁은 한 번 왕복하면 사라져요!<br>사라지기 전에 꼭 맞혀보세요!' }
   ];
 
-  let overlay, spotlightEl, textEl, stepCountEl, fingerEl, skipBtn, nextHintEl;
+  let overlay, spotlightEl, textEl, stepCountEl, fingerEl, skipBtn;
   let listenersReady = false;
   let stepIndex = 0;
   let mode = 'first'; // 'first' | 'replay'
@@ -37,17 +41,6 @@ const WeddingTutorial = (() => {
   let demoRafId = null;
   let demoStartTs = 0;
   let metrics = null; // tutorialPrepareCanvas()의 결과 캐시
-  let bodyOverflowPrev = '';
-
-  // ---------- 최초 실행 여부 저장 ----------
-  function hasSeenTutorial(){
-    try{ return localStorage.getItem(LS_SEEN_KEY) === '1'; }
-    catch(e){ return false; } // 저장소 접근 불가 시 매번 튜토리얼을 보여주는 쪽이 더 안전
-  }
-  function markSeen(){
-    try{ localStorage.setItem(LS_SEEN_KEY, '1'); }
-    catch(e){ /* 저장 실패해도 튜토리얼 진행 자체에는 영향 없음 */ }
-  }
 
   function cacheDom(){
     overlay = document.getElementById('tutorialOverlay');
@@ -56,9 +49,9 @@ const WeddingTutorial = (() => {
     skipBtn = document.getElementById('tutorialSkipBtn');
     textEl = document.getElementById('tutorialText');
     stepCountEl = document.getElementById('tutorialStepCount');
-    nextHintEl = document.getElementById('tutorialNextHint');
   }
 
+  /** rect: #gameScreen 기준 로컬 좌표({left, top, width, height}) */
   function setSpotlightRect(rect, radius){
     if (!spotlightEl) return;
     spotlightEl.style.left = rect.left + 'px';
@@ -81,7 +74,7 @@ const WeddingTutorial = (() => {
   }
 
   // ---------- Step 1: 활 당기기 / 발사 ----------
-  function runAimDemo(canvasRect){
+  function runAimDemo(canvasOffset){
     const PULL_MS = 1300, FLY_MS = 420, PAUSE_MS = 500;
     const CYCLE = PULL_MS + FLY_MS + PAUSE_MS;
 
@@ -94,8 +87,8 @@ const WeddingTutorial = (() => {
         if (fingerEl){
           fingerEl.hidden = false;
           fingerEl.classList.toggle('pressed', pullT > 0.12);
-          fingerEl.style.left = (canvasRect.left + metrics.bowX) + 'px';
-          fingerEl.style.top = (canvasRect.top + metrics.bowY - 14 + pullT * 20) + 'px';
+          fingerEl.style.left = (canvasOffset.x + metrics.bowX) + 'px';
+          fingerEl.style.top = (canvasOffset.y + metrics.bowY - 14 + pullT * 20) + 'px';
         }
       } else if (t < PULL_MS + FLY_MS){
         if (fingerEl) fingerEl.hidden = true;
@@ -112,7 +105,7 @@ const WeddingTutorial = (() => {
   }
 
   // ---------- Step 2 / Step 4: 과녁 이동 ----------
-  function runTargetDemo(canvasRect, roundtripMode){
+  function runTargetDemo(canvasOffset, roundtripMode){
     const SWING_CYCLE = 2600;
     const MARGIN = 40, RT_OUT = 1450, RT_BACK = 1450, RT_GONE = 650;
     const RT_CYCLE = RT_OUT + RT_BACK + RT_GONE;
@@ -146,11 +139,11 @@ const WeddingTutorial = (() => {
       WeddingGame.tutorialDrawFrame({ targetX, bgIndex: 1 });
 
       if (targetX != null){
-        const screenX = canvasRect.left + targetX;
-        const screenY = canvasRect.top + metrics.targetY;
-        setSpotlightRect({ left: screenX - 46, top: screenY - 46, width: 92, height: 92 }, 999);
+        const localX = canvasOffset.x + targetX;
+        const localY = canvasOffset.y + metrics.targetY;
+        setSpotlightRect({ left: localX - 46, top: localY - 46, width: 92, height: 92 }, 999);
       } else {
-        setSpotlightRect({ left: canvasRect.left + canvasRect.width / 2, top: canvasRect.top + metrics.targetY, width: 0, height: 0 });
+        setSpotlightRect({ left: canvasOffset.x + W / 2, top: canvasOffset.y + metrics.targetY, width: 0, height: 0 });
       }
 
       demoRafId = requestAnimationFrame(frame);
@@ -183,28 +176,32 @@ const WeddingTutorial = (() => {
   // ---------- Step 진행 ----------
   function startStepDemo(step){
     demoStartTs = performance.now();
-    const canvasEl = document.getElementById('gameCanvas');
-    const canvasRect = canvasEl.getBoundingClientRect();
+
+    // 모든 좌표는 #gameScreen 기준 로컬 좌표로 변환해서 사용 (뷰포트 좌표 X)
+    const gameScreenRect = document.getElementById('gameScreen').getBoundingClientRect();
+    const canvasRect = document.getElementById('gameCanvas').getBoundingClientRect();
+    const canvasOffset = { x: canvasRect.left - gameScreenRect.left, y: canvasRect.top - gameScreenRect.top };
 
     if (step.demo === 'aim'){
       metrics = WeddingGame.tutorialPrepareCanvas();
       setSpotlightRect({
-        left: canvasRect.left + metrics.bowX - 62,
-        top: canvasRect.top + metrics.bowY - 56,
+        left: canvasOffset.x + metrics.bowX - 62,
+        top: canvasOffset.y + metrics.bowY - 56,
         width: 124, height: 100
       }, 22);
-      runAimDemo(canvasRect);
+      runAimDemo(canvasOffset);
     } else if (step.demo === 'targetSwing'){
       metrics = WeddingGame.tutorialPrepareCanvas();
-      runTargetDemo(canvasRect, false);
+      runTargetDemo(canvasOffset, false);
     } else if (step.demo === 'roundtrip'){
       metrics = WeddingGame.tutorialPrepareCanvas();
-      runTargetDemo(canvasRect, true);
+      runTargetDemo(canvasOffset, true);
     } else if (step.demo === 'hearts'){
       const livesEl = document.getElementById('gameLives');
       const rect = livesEl.getBoundingClientRect();
       setSpotlightRect({
-        left: rect.left - 10, top: rect.top - 8,
+        left: (rect.left - gameScreenRect.left) - 10,
+        top: (rect.top - gameScreenRect.top) - 8,
         width: rect.width + 20, height: rect.height + 16
       }, 14);
       runHeartsDemo(livesEl);
@@ -227,9 +224,7 @@ const WeddingTutorial = (() => {
 
   function finish(){
     stopDemo();
-    markSeen();
     overlay.hidden = true;
-    document.body.style.overflow = bodyOverflowPrev;
 
     if (mode === 'replay'){
       // 게임을 새로 시작하지 않고 결과 화면(점수/랭킹)으로 그대로 복귀
@@ -273,15 +268,13 @@ const WeddingTutorial = (() => {
       document.getElementById('gameScreen').hidden = false;
     }
 
-    bodyOverflowPrev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
+    // #gameScreen 기준 좌표를 쓰므로, 페이지가 스크롤 중이어도 좌표가 어긋나지 않음
     const minigame = document.getElementById('minigame');
-    if (minigame) minigame.scrollIntoView({ behavior: 'auto', block: 'center' });
+    if (minigame) minigame.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
     overlay.hidden = false;
     renderStep();
   }
 
-  return { start, hasSeenTutorial };
+  return { start };
 })();

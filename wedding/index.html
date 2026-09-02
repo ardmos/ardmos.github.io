@@ -348,6 +348,21 @@
       </div>
       <div id="missFlash" class="miss-flash"></div>
       <div id="gamePopupLayer" class="game-popup-layer"></div>
+
+      <!-- 튜토리얼 오버레이 (최초 실행 안내 / 결과화면 "게임방법" 다시보기 공용)
+           #gameScreen 프레임 안에만 그려짐 (부모가 overflow:hidden이라 프레임 밖으로 안 나감) -->
+      <div id="tutorialOverlay" class="tutorial-overlay" hidden>
+        <div class="tutorial-textbox pixel-panel">
+          <p id="tutorialStepCount" class="pixel-font tutorial-step-count">1 / 4</p>
+          <p id="tutorialText" class="tutorial-text"></p>
+        </div>
+
+        <div id="tutorialSpotlight" class="tutorial-spotlight" aria-hidden="true"></div>
+        <div id="tutorialFinger" class="tutorial-finger" hidden aria-hidden="true"></div>
+        <button id="tutorialSkipBtn" type="button" class="tutorial-skip-btn pixel-font">SKIP ✕</button>
+
+        <p id="tutorialNextHint" class="tutorial-next-hint pixel-font">탭하면 계속 NEXT ▶</p>
+      </div>
     </div>
 
     <!-- 게임오버 화면 -->
@@ -409,22 +424,6 @@
 
     <button id="playerSubmitBtn" class="pixel-btn large">START</button>
   </div>
-</div>
-
-<!-- ============================================= -->
-<!-- 튜토리얼 오버레이 (최초 실행 안내 / 결과화면 "게임방법" 다시보기 공용) -->
-<!-- ============================================= -->
-<div id="tutorialOverlay" class="tutorial-overlay" hidden>
-  <div class="tutorial-textbox pixel-panel">
-    <p id="tutorialStepCount" class="pixel-font tutorial-step-count">1 / 4</p>
-    <p id="tutorialText" class="tutorial-text"></p>
-  </div>
-
-  <div id="tutorialSpotlight" class="tutorial-spotlight" aria-hidden="true"></div>
-  <div id="tutorialFinger" class="tutorial-finger" hidden aria-hidden="true"></div>
-  <button id="tutorialSkipBtn" type="button" class="tutorial-skip-btn pixel-font">SKIP ✕</button>
-
-  <p id="tutorialNextHint" class="tutorial-next-hint pixel-font">탭하면 계속 NEXT ▶</p>
 </div>
 
 <!-- Firebase SDK (compat 버전, 교체 용이) -->

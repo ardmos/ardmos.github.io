@@ -131,11 +131,15 @@ const WeddingRanking = (() => {
     }
   }
 
-  /** 플레이어 정보가 있으면 바로 콜백, 없으면 모달을 띄운 뒤 콜백 */
+  /**
+   * 플레이어 정보가 있으면 바로 콜백(onReady(info, false)), 없으면 모달을 띄운 뒤
+   * 콜백(onReady(info, true))을 호출합니다. 두 번째 인자는 "이번에 방금 정보를
+   * 새로 입력했는지"를 나타내며, 최초 진입 튜토리얼을 띄울지 판단하는 데 쓰입니다.
+   */
   function ensurePlayerInfo(onReady){
     const info = getPlayerInfo();
-    if (info) { onReady(info); return; }
-    openPlayerModal(() => onReady(getPlayerInfo()));
+    if (info) { onReady(info, false); return; }
+    openPlayerModal(() => onReady(getPlayerInfo(), true));
   }
 
   // ---------- 점수 조회 (서버가 유일한 Source of Truth) ----------

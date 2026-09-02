@@ -958,44 +958,50 @@ a{color:inherit;text-decoration:none;}
 
 /* =====================================================
    14-1. 튜토리얼 오버레이 (최초 실행 안내 / 게임방법 다시보기)
+   - #gameScreen 프레임 "안에서만" 그려집니다. #gameScreen이 overflow:hidden
+     이라, 여기서 position:absolute로 배치하면 자연히 프레임 밖으로는
+     아무것도(어두운 배경/텍스트/버튼) 삐져나가지 않습니다.
    - 검은 반투명(약 72%) 배경 위에 실제 게임 요소(캔버스/하트) 자리만
      box-shadow 스포트라이트 기법으로 밝게 뚫어서 강조합니다.
    - 오버레이 전체가 "다음 스텝" 터치 영역이며, SKIP 버튼만 예외입니다.
 ===================================================== */
 .tutorial-overlay{
-  position:fixed; inset:0; z-index:3000;
+  position:absolute; inset:0; z-index:20;
   display:flex; flex-direction:column; align-items:center; justify-content:space-between;
-  padding:max(60px, calc(env(safe-area-inset-top) + 48px)) 16px max(26px, env(safe-area-inset-bottom));
+  padding:40px 8px 10px;
   cursor:pointer;
 }
 .tutorial-overlay[hidden]{ display:none; }
 
-/* 스포트라이트: 이 요소의 위치/크기만큼 "구멍"이 뚫린 것처럼 주변이 어두워짐 */
+/* 스포트라이트: 이 요소의 위치/크기만큼 "구멍"이 뚫린 것처럼 주변이 어두워짐.
+   #gameScreen 기준 로컬 좌표로 배치되며, 부모의 overflow:hidden 때문에
+   9999px 스프레드도 프레임 밖으로는 새어나가지 않음 */
 .tutorial-spotlight{
-  position:fixed; z-index:3001; pointer-events:none;
+  position:absolute; z-index:21; pointer-events:none;
   box-shadow:0 0 0 9999px rgba(10,7,6,0.72);
   border-radius:16px;
   transition:left 0.25s ease, top 0.25s ease, width 0.25s ease, height 0.25s ease, border-radius 0.25s ease;
 }
 
 .tutorial-skip-btn{
-  position:fixed; z-index:3003;
-  top:max(16px, env(safe-area-inset-top)); right:16px;
-  font-size:9px; letter-spacing:1px; color:var(--c-cream);
-  background:rgba(20,15,13,0.55); border:1px solid rgba(255,255,255,0.4);
-  border-radius:20px; padding:7px 13px; cursor:pointer;
+  position:absolute; z-index:23; top:6px; right:6px;
+  font-size:8px; letter-spacing:0.5px; color:var(--c-cream);
+  background:rgba(20,15,13,0.6); border:1px solid rgba(255,255,255,0.4);
+  border-radius:16px; padding:5px 9px; cursor:pointer;
 }
-.tutorial-skip-btn:active{ background:rgba(20,15,13,0.85); transform:scale(0.96); }
+.tutorial-skip-btn:active{ background:rgba(20,15,13,0.9); transform:scale(0.96); }
 
 .tutorial-textbox{
-  position:relative; z-index:3002; width:100%; max-width:340px;
-  text-align:center; background:var(--c-cream); pointer-events:none;
+  position:relative; z-index:22; width:100%; max-width:280px;
+  text-align:center; background:var(--c-cream);
+  border:2px solid var(--c-ink); box-shadow:3px 3px 0 rgba(62,47,42,0.22);
+  padding:10px 12px; pointer-events:none;
 }
-.tutorial-step-count{ font-size:9px; color:var(--c-ink-faint); margin:0 0 8px; }
-.tutorial-text{ font-size:14.5px; line-height:1.75; color:var(--c-ink); margin:0; }
+.tutorial-step-count{ font-size:8px; color:var(--c-ink-faint); margin:0 0 6px; }
+.tutorial-text{ font-size:12.5px; line-height:1.6; color:var(--c-ink); margin:0; }
 
 .tutorial-next-hint{
-  position:relative; z-index:3002; font-size:9px; letter-spacing:0.5px;
+  position:relative; z-index:22; font-size:8px; letter-spacing:0.5px;
   color:var(--c-cream); opacity:0.85; margin:0;
   animation:tutorialHintBlink 1.4s ease-in-out infinite;
 }
@@ -1003,10 +1009,10 @@ a{color:inherit;text-decoration:none;}
 
 /* Step1(활 당기기) 데모에서만 쓰이는 손가락(터치) 아이콘 */
 .tutorial-finger{
-  position:fixed; z-index:3002; width:34px; height:34px; margin:-17px 0 0 -17px;
+  position:absolute; z-index:22; width:26px; height:26px; margin:-13px 0 0 -13px;
   border-radius:50%; background:rgba(255,255,255,0.88);
   border:2px solid var(--c-rose-dark); pointer-events:none;
-  box-shadow:0 0 10px rgba(0,0,0,0.25);
+  box-shadow:0 0 8px rgba(0,0,0,0.25);
   transition:transform 0.1s ease, background 0.1s ease;
 }
 .tutorial-finger.pressed{ transform:scale(0.7); background:rgba(255,255,255,0.65); }
