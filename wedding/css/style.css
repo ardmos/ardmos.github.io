@@ -719,7 +719,7 @@ a{color:inherit;text-decoration:none;}
 .game-rules p{ font-size:12.5px; margin:6px 0; color:var(--c-ink-soft); }
 
 .game-screen{
-  position:relative; width:100%; margin:0 auto;
+  position:relative; width:fit-content; max-width:100%; margin:0 auto;
   background:linear-gradient(180deg,var(--c-sky-top),var(--c-sky-bottom));
   border:3px solid var(--c-ink);
   overflow:hidden; touch-action:none;
@@ -745,11 +745,13 @@ a{color:inherit;text-decoration:none;}
 }
 .game-hud__round::before{ content:'★ '; color:var(--c-gold); }
 .game-hud__score::before{ content:'♦ '; color:var(--c-gold); }
-/* width:100%와 max-height:70vh를 동시에 쓰면 화면 비율에 따라 둘 중 하나가 깨지면서
-   aspect-ratio(1/2)가 무시되고 화면이 눌리거나 늘어나는 문제가 있었습니다.
-   width를 "컨테이너 100%"와 "뷰포트 높이 기준 35vh(= 70vh일 때 세로가 나오는 값)" 중
-   더 작은 값으로 미리 제한해두면, 항상 두 조건을 동시에 만족해서 1:2 비율이 절대 깨지지 않습니다. */
-#gameCanvas{ display:block; width:min(100%, 35vh); aspect-ratio:1/2; touch-action:none; }
+/* canvas는 브라우저가 img/video와 동일하게 취급하는 "교체 요소"라, width/height를 auto로
+   두고 max-width/max-height/aspect-ratio를 함께 주면 두 제약을 모두 만족하는 가장 큰 크기로
+   비율을 유지한 채 자동으로 줄어듭니다(= object-fit:contain과 같은 동작).
+   이전처럼 width:100%(고정값)를 주면 세로가 max-height에 눌릴 때 가로가 따라서 줄지 않아
+   비율이 깨졌던 것이 문제였습니다. 실제로 캔버스가 줄어든 만큼은 위에서 .game-screen을
+   width:fit-content로 바꿔 그대로 감싸도록 해서, 남는 배경(빈 공간)도 생기지 않습니다. */
+#gameCanvas{ display:block; width:auto; height:auto; max-width:100%; max-height:70vh; aspect-ratio:1/2; touch-action:none; }
 
 /* 파워(당김) 게이지 - 터치를 누르고 있는 동안 활 위쪽에 떠오르는 세기 표시 */
 .power-gauge{
