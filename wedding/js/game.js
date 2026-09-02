@@ -54,11 +54,19 @@ const WeddingGame = (() => {
   const DECEL_TAIL_MS = 260;
 
   const BASE_TARGET_SPEED = 55;   // px/sec (round 1)
-  const TARGET_SPEED_STEP = 13;   // 라운드당 증가량
-  const ABS_MAX_TARGET_SPEED = 430; // 아무리 라운드가 올라가도 이 이상은 넘지 않음(플레이 가능선 유지)
+  const TARGET_SPEED_STEP = 13;   // 라운드당 증가량 (80라운드까지 계속 동일하게 적용)
+  const RANDOM_PHASE_START_ROUND = 80; // 이 라운드부터는 속도가 더 이상 계속 오르지 않고 랜덤 변동으로 전환
+  const RANDOM_VARIANCE_MIN = 70;      // 80라운드 속도 기준 랜덤 변동폭 최소값(px/sec)
+  const RANDOM_VARIANCE_MAX = 90;      // 80라운드 속도 기준 랜덤 변동폭 최대값(px/sec)
   const STICK_DELAY = 550;        // 명중 후 화살이 과녁에 꽂힌 채 보여지는 시간(ms)
   const RESPAWN_DELAY = 420;      // 완전히 놓쳤을 때 다음 과녁이 나오기까지(ms)
   const ARROW_STOP_Y_OFFSET = -8; // 화살촉이 과녁 실제 타격 위치보다 살짝 위에서 멈추도록
+
+  // 게임 내부 좌표계(물리/난이도 기준)는 화면 크기와 무관하게 항상 이 값으로 고정합니다.
+  // 실제 화면에 보이는 크기는 CSS(width/aspect-ratio)가 알아서 이 비율 그대로 확대/축소해서 그려주므로,
+  // 화살이 과녁까지 이동하는 실제 거리(H)가 기기마다 달라져 난이도가 변하는 문제가 원천적으로 사라집니다.
+  const FIXED_GAME_W = 360;
+  const FIXED_GAME_H = 720;
 
   let canvas, ctx, W, H, dpr;
   let powerGaugeEl, powerGaugeFillEl;
@@ -94,10 +102,12 @@ const WeddingGame = (() => {
   }
 
   function resizeCanvas(){
-    const rect = canvas.getBoundingClientRect();
+    // 실제 화면(getBoundingClientRect)에 맞추지 않고, 항상 고정된 논리 해상도(FIXED_GAME_W/H)를 사용합니다.
+    // 이렇게 해야 기기/화면 크기와 무관하게 화살-과녁 간 이동 거리, 과녁 속도 체감 난이도가 항상 동일합니다.
+    // 실제로 화면에 표시되는 크기는 CSS의 aspect-ratio(1/2)가 이 비율 그대로 확대/축소해서 보여줍니다.
     dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = rect.width;
-    H = rect.height;
+    W = FIXED_GAME_W;
+    H = FIXED_GAME_H;
     canvas.width = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
     // width/height를 다시 지정하면 캔버스 상태가 초기화되므로 매번 다시 설정
@@ -191,8 +201,23 @@ const WeddingGame = (() => {
   // ---------- 스폰 / 라운드 ----------
   // 과녁은 항상 오른쪽 화면 밖에서 시작해 왼쪽 끝까지 갔다가, 다시 오른쪽 끝으로 돌아옵니다.
   // 이 왕복이 끝날 때까지(오른쪽으로 완전히 돌아올 때까지) 못 맞히면 실패 처리됩니다.
+
+  /** 1~80라운드: 라운드당 TARGET_SPEED_STEP만큼 계속 증가(상한 없음) */
+  function baseSpeedForRound(r){
+    return BASE_TARGET_SPEED + (r - 1) * TARGET_SPEED_STEP;
+  }
+
+  // 80라운드 시점의 속도를 기준값으로 캐싱 (81라운드 이후 랜덤 변동의 중심값)
+  const SPEED_AT_RANDOM_PHASE_START = baseSpeedForRound(RANDOM_PHASE_START_ROUND);
+
   function targetSpeedForRound(r){
-    return Math.min(BASE_TARGET_SPEED + (r - 1) * TARGET_SPEED_STEP, ABS_MAX_TARGET_SPEED);
+    if (r <= RANDOM_PHASE_START_ROUND){
+      return baseSpeedForRound(r);
+    }
+    // 81라운드부터는 계속 빨라지지 않고, 80라운드 속도를 중심으로 ±70~90 사이 랜덤 변동
+    const variance = RANDOM_VARIANCE_MIN + Math.random() * (RANDOM_VARIANCE_MAX - RANDOM_VARIANCE_MIN);
+    const sign = Math.random() < 0.5 ? -1 : 1;
+    return Math.max(BASE_TARGET_SPEED, SPEED_AT_RANDOM_PHASE_START + sign * variance);
   }
 
   /** 새 과녁이 등장할 때마다(명중해서 나오든, 끝까지 못 맞혀서 나오든) 배경을 다음 시간대로 넘김 */
