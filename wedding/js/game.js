@@ -524,6 +524,31 @@ const WeddingGame = (() => {
     ctx.fill();
   }
 
+  // ---------- 튜토리얼 전용 렌더 ----------
+  // 아래 두 함수는 tutorial.js가 사용합니다. score/lives/round/target/arrow 등
+  // 실제 게임 상태 변수는 절대 읽거나 쓰지 않고, 이미 존재하는 draw 함수들을
+  // "그리기 용도"로만 재사용합니다 - 실제 게임 로직/루프와는 완전히 분리되어 있습니다.
+
+  /** 캔버스를 최신 화면 크기로 맞추고, 튜토리얼이 좌표 계산에 쓸 기준값을 돌려줌 */
+  function tutorialPrepareCanvas(){
+    resizeCanvas();
+    return { W, H, bowX: bowX(), bowY: bowY(), targetY: targetY() };
+  }
+
+  /** 튜토리얼 전용 한 프레임 그리기 (배경/구름/과녁/활/화살 중 필요한 것만) */
+  function tutorialDrawFrame({ targetX = null, pullT = null, arrowY = null, bgIndex = 1 } = {}){
+    if (!canvas) return;
+    drawBackground(bgIndex);
+    drawClouds(bgIndex);
+    if (targetX !== null) drawTarget(targetX, targetY());
+    drawBow();
+    if (pullT !== null){
+      drawArrow(bowX(), bowY() - 6 + pullT * PULL_MAX_PX);
+    } else if (arrowY !== null){
+      drawArrow(bowX(), arrowY);
+    }
+  }
+
   // ---------- 게임 흐름 ----------
   function startGame(){
     score = 0; lives = 3; round = 1; bgRound = 1; bgCounter = 0;
@@ -564,10 +589,8 @@ const WeddingGame = (() => {
     // BEST SCORE는 서버 응답이 오기 전까지는 추측값(로컬/이전 값 등)을 보여주지 않고
     // "확인 중" 상태만 표시합니다. 서버가 유일한 Source of Truth입니다.
     const bestScoreEl = document.getElementById('bestScoreVal');
-    const retryBtn = document.getElementById('bestScoreRetryBtn');
     bestScoreEl.textContent = '확인 중...';
     bestScoreEl.classList.remove('is-error');
-    if (retryBtn) retryBtn.hidden = true;
 
     const closedNotice = document.getElementById('rankingClosedNotice');
     const rankingClosed = WeddingRanking.isRankingClosed();
@@ -576,10 +599,10 @@ const WeddingGame = (() => {
     await fetchAndShowBestScore(rankingClosed);
   }
 
-  /** 서버에서 최고 점수를 받아와 표시. 실패 시 로컬 값으로 대체하지 않고 에러+재시도를 표시 */
+  /** 서버에서 최고 점수를 받아와 표시. 실패 시 로컬 값으로 대체하지 않고 에러 상태만 표시
+   *  (재시도는 PLAY AGAIN으로 다시 게임을 마치거나, 페이지를 새로고침해 다시 시도) */
   async function fetchAndShowBestScore(rankingClosed){
     const bestScoreEl = document.getElementById('bestScoreVal');
-    const retryBtn = document.getElementById('bestScoreRetryBtn');
 
     const updatedBest = rankingClosed
       ? await WeddingRanking.getExistingBestScore(WeddingRanking.getPlayerInfo())
@@ -588,33 +611,37 @@ const WeddingGame = (() => {
     if (updatedBest === null){
       bestScoreEl.textContent = '확인 실패';
       bestScoreEl.classList.add('is-error');
-      if (retryBtn) retryBtn.hidden = false;
       return;
     }
 
     bestScoreCache = updatedBest;
     bestScoreEl.textContent = bestScoreCache.toLocaleString();
     bestScoreEl.classList.remove('is-error');
-    if (retryBtn) retryBtn.hidden = true;
   }
 
   function setupButtons(){
     document.getElementById('gameStartBtn').addEventListener('click', () => {
       WeddingSound.unlock();
-      WeddingRanking.ensurePlayerInfo(() => startGame());
+      WeddingRanking.ensurePlayerInfo(() => {
+        // 최초 1회만: 정보입력 완료 직후 튜토리얼을 보여주고, 튜토리얼이 끝나면 그때 실제 게임을 시작함.
+        // 이미 튜토리얼을 본 적이 있으면(스킵 포함) 곧바로 게임 시작 (기존 흐름과 동일).
+        if (window.WeddingTutorial && !WeddingTutorial.hasSeenTutorial()){
+          WeddingTutorial.start('first', () => startGame());
+        } else {
+          startGame();
+        }
+      });
     });
     document.getElementById('playAgainBtn').addEventListener('click', () => startGame());
     document.getElementById('viewRankingBtn').addEventListener('click', () => {
       document.getElementById('ranking').scrollIntoView({ behavior: 'smooth' });
     });
-    const bestScoreRetryBtn = document.getElementById('bestScoreRetryBtn');
-    if (bestScoreRetryBtn){
-      bestScoreRetryBtn.addEventListener('click', () => {
-        bestScoreRetryBtn.hidden = true;
-        const bestScoreEl = document.getElementById('bestScoreVal');
-        bestScoreEl.textContent = '확인 중...';
-        bestScoreEl.classList.remove('is-error');
-        fetchAndShowBestScore(WeddingRanking.isRankingClosed());
+    // 결과 화면의 "게임방법" 버튼 - 기존 튜토리얼을 다시 보여줄 뿐, 새 게임을 시작하거나
+    // 점수/랭킹 상태를 건드리지 않음 (튜토리얼 종료 시 WeddingTutorial이 결과 화면으로 복귀시킴)
+    const tutorialReplayBtn = document.getElementById('tutorialReplayBtn');
+    if (tutorialReplayBtn){
+      tutorialReplayBtn.addEventListener('click', () => {
+        if (window.WeddingTutorial) WeddingTutorial.start('replay', () => {});
       });
     }
   }
@@ -641,5 +668,5 @@ const WeddingGame = (() => {
     loadImages();
   }
 
-  return { start };
+  return { start, tutorialPrepareCanvas, tutorialDrawFrame };
 })();

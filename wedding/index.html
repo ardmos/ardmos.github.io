@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Hahmlet:wght@300;400;500;600;700&family=Pretendard+Variable:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css?v5">
+<link rel="stylesheet" href="css/style.css?v6">
 </head>
 <body>
 
@@ -358,7 +358,7 @@
         <div><span class="pixel-font label">FINAL SCORE</span><span class="pixel-font value" id="finalScoreVal">0</span></div>
         <div><span class="pixel-font label">BEST SCORE</span><span class="pixel-font value" id="bestScoreVal">0</span></div>
       </div>
-      <button id="bestScoreRetryBtn" class="pixel-btn ghost small bestscore-retry-btn" hidden>다시 확인하기</button>
+      <button id="tutorialReplayBtn" type="button" class="pixel-btn ghost small gameover-secondary-btn">게임방법</button>
       <p id="rankingClosedNotice" class="gameover-ranking-notice" hidden>랭킹 등록이 마감되었습니다. 게임은 계속 즐기실 수 있어요!</p>
       <div class="gameover-btn-row">
         <button id="playAgainBtn" class="pixel-btn">PLAY AGAIN</button>
@@ -411,6 +411,22 @@
   </div>
 </div>
 
+<!-- ============================================= -->
+<!-- 튜토리얼 오버레이 (최초 실행 안내 / 결과화면 "게임방법" 다시보기 공용) -->
+<!-- ============================================= -->
+<div id="tutorialOverlay" class="tutorial-overlay" hidden>
+  <div class="tutorial-textbox pixel-panel">
+    <p id="tutorialStepCount" class="pixel-font tutorial-step-count">1 / 4</p>
+    <p id="tutorialText" class="tutorial-text"></p>
+  </div>
+
+  <div id="tutorialSpotlight" class="tutorial-spotlight" aria-hidden="true"></div>
+  <div id="tutorialFinger" class="tutorial-finger" hidden aria-hidden="true"></div>
+  <button id="tutorialSkipBtn" type="button" class="tutorial-skip-btn pixel-font">SKIP ✕</button>
+
+  <p id="tutorialNextHint" class="tutorial-next-hint pixel-font">탭하면 계속 NEXT ▶</p>
+</div>
+
 <!-- Firebase SDK (compat 버전, 교체 용이) -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -430,7 +446,8 @@
 <script src="js/ranking.js?v5"></script>
 <script src="js/intro.js?v5"></script>
 <script src="js/invitation.js?v6"></script>
-<script src="js/game.js?v5"></script>
+<script src="js/tutorial.js?v1"></script>
+<script src="js/game.js?v6"></script>
 <script src="js/app.js?v5"></script>
 </body>
 </html>
