@@ -625,7 +625,7 @@ const WeddingGame = (() => {
       WeddingRanking.ensurePlayerInfo(() => {
         // 최초 1회만: 정보입력 완료 직후 튜토리얼을 보여주고, 튜토리얼이 끝나면 그때 실제 게임을 시작함.
         // 이미 튜토리얼을 본 적이 있으면(스킵 포함) 곧바로 게임 시작 (기존 흐름과 동일).
-        if (window.WeddingTutorial && !WeddingTutorial.hasSeenTutorial()){
+        if (!WeddingTutorial.hasSeenTutorial()){
           WeddingTutorial.start('first', () => startGame());
         } else {
           startGame();
@@ -641,7 +641,7 @@ const WeddingGame = (() => {
     const tutorialReplayBtn = document.getElementById('tutorialReplayBtn');
     if (tutorialReplayBtn){
       tutorialReplayBtn.addEventListener('click', () => {
-        if (window.WeddingTutorial) WeddingTutorial.start('replay', () => {});
+        WeddingTutorial.start('replay', () => {});
       });
     }
   }
