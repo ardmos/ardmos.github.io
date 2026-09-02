@@ -87,8 +87,8 @@ const WeddingTutorial = (() => {
         if (fingerEl){
           fingerEl.hidden = false;
           fingerEl.classList.toggle('pressed', pullT > 0.12);
-          fingerEl.style.left = (canvasOffset.x + metrics.bowX) + 'px';
-          fingerEl.style.top = (canvasOffset.y + metrics.bowY - 14 + pullT * 20) + 'px';
+          fingerEl.style.left = (canvasOffset.x + metrics.bowX * metrics.scaleX) + 'px';
+          fingerEl.style.top = (canvasOffset.y + (metrics.bowY - 14 + pullT * 20) * metrics.scaleY) + 'px';
         }
       } else if (t < PULL_MS + FLY_MS){
         if (fingerEl) fingerEl.hidden = true;
@@ -139,11 +139,13 @@ const WeddingTutorial = (() => {
       WeddingGame.tutorialDrawFrame({ targetX, bgIndex: 1 });
 
       if (targetX != null){
-        const localX = canvasOffset.x + targetX;
-        const localY = canvasOffset.y + metrics.targetY;
+        // targetX/metrics.targetY는 게임 내부 고정 좌표계 값이라, DOM(canvasOffset) 좌표에 더하기 전에
+        // 반드시 scaleX/scaleY를 곱해 실제 화면 픽셀로 환산해야 캔버스 위 과녁 위치와 정확히 맞습니다.
+        const localX = canvasOffset.x + targetX * metrics.scaleX;
+        const localY = canvasOffset.y + metrics.targetY * metrics.scaleY;
         setSpotlightRect({ left: localX - 46, top: localY - 46, width: 92, height: 92 }, 999);
       } else {
-        setSpotlightRect({ left: canvasOffset.x + W / 2, top: canvasOffset.y + metrics.targetY, width: 0, height: 0 });
+        setSpotlightRect({ left: canvasOffset.x + (W / 2) * metrics.scaleX, top: canvasOffset.y + metrics.targetY * metrics.scaleY, width: 0, height: 0 });
       }
 
       demoRafId = requestAnimationFrame(frame);
@@ -185,8 +187,8 @@ const WeddingTutorial = (() => {
     if (step.demo === 'aim'){
       metrics = WeddingGame.tutorialPrepareCanvas();
       setSpotlightRect({
-        left: canvasOffset.x + metrics.bowX - 62,
-        top: canvasOffset.y + metrics.bowY - 56,
+        left: canvasOffset.x + metrics.bowX * metrics.scaleX - 62,
+        top: canvasOffset.y + metrics.bowY * metrics.scaleY - 56,
         width: 124, height: 100
       }, 22);
       runAimDemo(canvasOffset);

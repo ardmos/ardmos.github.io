@@ -303,7 +303,15 @@ const WeddingGame = (() => {
   }
 
   // ---------- 팝업 / 이펙트 ----------
-  function showPopup(x, y, text, tier, subText){
+  // 팝업/파티클 좌표는 게임 내부 고정 좌표계(W,H = FIXED_GAME_W/H) 기준으로 넘어오는데,
+  // 화면에 실제로 그려지는 #gamePopupLayer는 화면 크기에 맞춰 늘어나거나 줄어든 실제 CSS 픽셀 좌표계이므로,
+  // 항상 canvas.getBoundingClientRect()로 실제 렌더 크기를 구해 내부 좌표를 실제 화면 좌표로 환산해줍니다.
+  function canvasScale(){
+    const rect = canvas.getBoundingClientRect();
+    return { x: rect.width / W, y: rect.height / H };
+  }
+
+  function showPopup(gameX, gameY, text, tier, subText){
     const layer = document.getElementById('gamePopupLayer');
     const el = document.createElement('div');
     el.className = 'score-popup tier-' + tier;
@@ -318,14 +326,18 @@ const WeddingGame = (() => {
     } else {
       el.textContent = text;
     }
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
+    const scale = canvasScale();
+    el.style.left = (gameX * scale.x) + 'px';
+    el.style.top = (gameY * scale.y) + 'px';
     layer.appendChild(el);
     setTimeout(() => el.remove(), 900);
   }
 
-  function showHitParticles(x, y, celebrate, bullseye){
+  function showHitParticles(gameX, gameY, celebrate, bullseye){
     const layer = document.getElementById('gamePopupLayer');
+    const scale = canvasScale();
+    const x = gameX * scale.x;
+    const y = gameY * scale.y;
     const count = bullseye ? 18 : (celebrate ? 14 : 9);
     for (let i = 0; i < count; i++){
       const p = document.createElement('span');
@@ -554,10 +566,17 @@ const WeddingGame = (() => {
   // 실제 게임 상태 변수는 절대 읽거나 쓰지 않고, 이미 존재하는 draw 함수들을
   // "그리기 용도"로만 재사용합니다 - 실제 게임 로직/루프와는 완전히 분리되어 있습니다.
 
-  /** 캔버스를 최신 화면 크기로 맞추고, 튜토리얼이 좌표 계산에 쓸 기준값을 돌려줌 */
+  /** 캔버스를 최신 화면 크기로 맞추고, 튜토리얼이 좌표 계산에 쓸 기준값을 돌려줌
+   *  scaleX/scaleY: 게임 내부 고정 좌표계(W,H) 값을 실제 화면에 렌더링된 캔버스 픽셀로 환산하는 배율.
+   *  튜토리얼은 canvasOffset(실제 DOM 픽셀)과 metrics 값을 함께 써서 오버레이 위치를 잡으므로,
+   *  metrics 쪽 값에는 반드시 이 배율을 곱해줘야 실제 화면과 좌표가 맞습니다. */
   function tutorialPrepareCanvas(){
     resizeCanvas();
-    return { W, H, bowX: bowX(), bowY: bowY(), targetY: targetY() };
+    const rect = canvas.getBoundingClientRect();
+    return {
+      W, H, bowX: bowX(), bowY: bowY(), targetY: targetY(),
+      scaleX: rect.width / W, scaleY: rect.height / H
+    };
   }
 
   /** 튜토리얼 전용 한 프레임 그리기 (배경/구름/과녁/활/화살 중 필요한 것만) */
