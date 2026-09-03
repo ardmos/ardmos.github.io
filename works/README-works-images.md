@@ -16,6 +16,8 @@ works/           ← 새로 만드는 폴더
 
 **파일명 규칙은 카드가 화면에 보이는 순서 그대로예요.** 첫 번째 카드가 `works1`, 두 번째 카드가 `works2`... 이런 식이라 프로젝트 이름이 바뀌거나 내용이 교체돼도 헷갈릴 일이 없어요. 지금은 이렇게 배정되어 있어요.
 
+**확장자는 `.jpg`든 `.png`든 상관없어요.** 파일명(예: `works1-thumb`)만 규칙대로 맞추면, `.jpg`를 먼저 찾아보고 없으면 자동으로 `.png`를 찾아요. 둘 다 없으면 그때 최종 폴백(썸네일→`Worksempty.png`, 디테일→칸 숨김)으로 넘어가요. 그러니 `.jpg`와 `.png`를 신경 써서 구분할 필요 없이, 갖고 있는 파일 형식 그대로 이름만 맞춰서 넣으면 돼요.
+
 | 순서 | 현재 프로젝트 |
 |---|---|
 | works1 | 크레인 시뮬레이터 |
@@ -67,13 +69,15 @@ works/works3-detail1.jpg
 
 ```html
 <div class="work-photo" data-work="works1">
-  <img src="works/works1-detail3.jpg" alt="상세 이미지" onerror="handleWorkPhotoError(this)">
+  <img src="works/works1-detail3.jpg" data-base="works/works1-detail3" alt="상세 이미지" onerror="handleWorkPhotoError(this)">
   <div class="work-photo-lock">
     <span class="work-photo-lock-line1">CONFIDENTIAL</span>
     <span class="work-photo-lock-line2">UNRELEASED PROJECT</span>
   </div>
 </div>
 ```
+
+`src`는 `.jpg` 기준으로 적어두면 되고(없으면 자동으로 `.png`도 찾아봐요), `data-base`는 확장자를 뺀 같은 경로를 그대로 적어주면 돼요.
 
 `data-work="works1"` 부분만 그대로 유지하면, 아래 4번의 공개/비공개 설정이 이 사진에도 자동으로 적용돼요.
 
