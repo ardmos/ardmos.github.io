@@ -443,7 +443,7 @@
         <div class="review-container">
           <div class="review-content">
             <div class="quote-left">"</div>
-            <div class="review-text" id="review-text">
+            <div class="review-text review-text--short" id="review-text">
               정말 꼼꼼하시고 완성도 있는 결과물을 제작해주셔서 너무 감사드립니다.<br>
               앞으로도 게임은 개발자님과 함께 개발할거예요!<br>
               완벽한 작업 경험이었어요 너무 감사합니다.
@@ -1096,10 +1096,21 @@
       var clientProfiles = document.querySelectorAll('.client-profile');
       var prevBtn = document.querySelector('.review-prev');
       var nextBtn = document.querySelector('.review-next');
-      
+
+      // 리뷰 글자 수에 따라 폰트 크기 등급을 매김 (모바일에서만 실제로 작동)
+      function getReviewLengthClass(text) {
+        var plainLength = text.replace(/<br\s*\/?>/g, '').length;
+        if (plainLength <= 90) return 'review-text--short';
+        if (plainLength <= 130) return 'review-text--medium';
+        if (plainLength <= 170) return 'review-text--long';
+        return 'review-text--xlong';
+      }
+
       function updateReview(index) {
         currentReview = index;
         reviewText.innerHTML = reviews[index];
+        reviewText.classList.remove('review-text--short', 'review-text--medium', 'review-text--long', 'review-text--xlong');
+        reviewText.classList.add(getReviewLengthClass(reviews[index]));
         
         // 모든 프로필에서 active 클래스 제거
         clientProfiles.forEach(function(profile) {

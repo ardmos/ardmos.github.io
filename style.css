@@ -963,6 +963,61 @@ nav a:hover {
   margin: 0;
 }
 
+/* 모바일: 리뷰 박스 높이를 어느정도 고정하고, 글자 수가 많을수록 폰트를 작게 */
+@media (max-width: 768px) {
+  .review-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 170px;
+  }
+
+  .review-text {
+    font-size: 1.05rem;
+    line-height: 1.55;
+    padding: 0 34px;
+  }
+
+  .review-text.review-text--short {
+    font-size: 1.1rem;
+  }
+
+  .review-text.review-text--medium {
+    font-size: 0.98rem;
+  }
+
+  .review-text.review-text--long {
+    font-size: 0.88rem;
+  }
+
+  .review-text.review-text--xlong {
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 480px) {
+  .review-content {
+    min-height: 190px;
+  }
+
+  .review-text {
+    padding: 0 24px;
+  }
+
+  .quote-left, .quote-right {
+    font-size: 2rem;
+  }
+
+  .quote-left {
+    left: -4px;
+  }
+
+  .quote-right {
+    right: -4px;
+  }
+}
+
 /* 클라이언트 프로필 섹션 */
 .clients-profiles-wrapper {
   position: relative;
