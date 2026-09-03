@@ -28,9 +28,9 @@ const WeddingTutorial = (() => {
   // Step 순서/문구/연출 종류 - 나중에 여기만 수정하면 튜토리얼 내용을 바꿀 수 있음
   const STEPS = [
     { demo: 'aim',         text: '화면을 꾹 눌러 화살을 당겨보세요!<br>손을 떼면 화살이 발사돼요.' },
-    { demo: 'targetSwing', text: '움직이는 과녁을 노려보세요!<br>타이밍에 맞춰 화살을 쏴보세요!' },
-    { demo: 'hearts',      text: '화살이 빗나가면 하트가 하나 줄어요!<br>하트 3개를 모두 잃으면 게임 오버예요!' },
-    { demo: 'roundtrip',   text: '과녁은 한 번 왕복하면 사라져요!<br>사라지기 전에 꼭 맞혀보세요!' }
+    { demo: 'targetSwing', text: '움직이는 과녁에<br>타이밍을 맞춰 화살을 쏴보세요!' },
+    { demo: 'hearts',      text: '화살이 빗나가면 하트가 하나 줄어요!<br>하트 3개를 모두 잃으면 게임 오버!' },
+    { demo: 'roundtrip',   text: '과녁은 한 번 왕복하면 사라져요<br>사라지기 전에 꼭 맞혀보세요!' }
   ];
 
   let overlay, spotlightEl, textEl, stepCountEl, fingerEl, skipBtn, targetGhostEl;
