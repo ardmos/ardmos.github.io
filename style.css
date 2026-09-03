@@ -580,12 +580,33 @@ nav a:hover {
   box-shadow: 0 5px 20px rgba(0,0,0,0.2);
 }
 
-.news-image img {
+.news-image {
+  position: relative;
   width: 100%;
   height: 200px;
-  object-fit: cover;
   border-radius: 10px;
+  overflow: hidden;
   margin-bottom: 20px;
+  background: #fff3df;
+}
+
+.news-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.work-tag {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 50px;
+  background: #fff3df;
+  color: #c9822f;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 12px;
 }
 
 .news-card h3 {
@@ -610,6 +631,101 @@ nav a:hover {
   border-radius: 5px;
   font-weight: 600;
   cursor: pointer;
+}
+
+/* Works 상세 모달 내부 사진 그리드 */
+.modal-dialog--work {
+  max-width: 640px;
+}
+
+.work-photos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+}
+
+@media (max-width: 420px) {
+  .work-photos {
+    grid-template-columns: 1fr;
+  }
+}
+
+.work-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff3df;
+}
+
+.work-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 0.3s ease;
+}
+
+.work-photo-lock,
+.news-image-lock {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.work-photo-lock-line1,
+.news-image-lock-line1 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: rgba(255, 255, 255, 0.55);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.work-photo-lock-line2,
+.news-image-lock-line2 {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.45);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.news-image-lock-line1 {
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+}
+
+.news-image-lock-line2 {
+  font-size: 0.58rem;
+}
+
+/* 보안 비공개 처리: 이 클래스를 지우면 공개, 붙이면 블러+워터마크 처리됨 */
+.work-photo--private img,
+.news-image--private img {
+  filter: blur(16px) brightness(0.85);
+  transform: scale(1.1);
+}
+
+.work-photo--private .work-photo-lock,
+.news-image--private .news-image-lock {
+  display: flex;
+}
+
+.work-confidential-note {
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: -6px;
+  margin-bottom: 18px;
 }
 
 /* Works 캐러셀 */
