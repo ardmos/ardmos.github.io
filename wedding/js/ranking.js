@@ -9,7 +9,10 @@ const WeddingRanking = (() => {
   const LS_PLAYER_KEY = 'wedding_player_info';
   const COLLECTION = 'rankings';
   const RANKING_DEADLINE = new Date('2026-11-01T11:00:00+09:00');
-  const RANKING_LIMIT = 15;
+  // 전체 참가자를 다 보여주기 위한 쿼리 상한선(안전마진). 실제 참가자는 200명 내외로
+  // 예상되지만, 혹시 모를 초과 상황에 대비해 넉넉하게 잡아둠. 더 이상 "상위 N명만
+  // 보여준다"는 의미의 제한이 아니라, 문서를 무한정 가져오지 않기 위한 안전장치임.
+  const RANKING_QUERY_LIMIT = 300;
 
   let rankingUnsubscribe = null;
   let rankingObserver = null;
@@ -54,7 +57,7 @@ const WeddingRanking = (() => {
     return db.collection(COLLECTION)
       .orderBy('bestScore', 'desc')
       .orderBy('bestScoreAt', 'asc')
-      .limit(RANKING_LIMIT);
+      .limit(RANKING_QUERY_LIMIT);
   }
 
   function entriesFromSnapshot(snap){
@@ -65,7 +68,8 @@ const WeddingRanking = (() => {
         id: doc.id,
         nickname: d.nickname,
         bestScore: d.bestScore,
-        bestScoreAt: d.bestScoreAt
+        bestScoreAt: d.bestScoreAt,
+        playCount: d.playCount || 0
       });
     });
     return entries;
@@ -210,44 +214,12 @@ const WeddingRanking = (() => {
     }
   }
 
-  // ---------- 순위 계산 (100위 밖) ----------
-  // 서버 조회 실패/미준비 시 null 반환 (로컬 계산으로 대체하지 않음)
-  async function computeRank(bestScore, bestScoreAt, phoneHash){
-    if (!window.__FIREBASE_READY__) return null;
-    try{
-      const db = window.__firestoreDB__;
-      const [higherSnap, tieSnap] = await Promise.all([
-        db.collection(COLLECTION).where('bestScore', '>', bestScore).get(),
-        db.collection(COLLECTION).where('bestScore', '==', bestScore).where('bestScoreAt', '<', bestScoreAt).get()
-      ]);
-      return higherSnap.size + tieSnap.size + 1;
-    }catch(e){
-      console.warn('[wedding] Firestore 순위 계산 실패', e);
-      return null;
-    }
-  }
-
-  // 서버 조회 실패/미준비 시 null 반환 (로컬 기록으로 대체하지 않음)
-  async function getMyRecord(player){
-    if (!player) return null;
-    if (!window.__FIREBASE_READY__) return null;
-
-    try{
-      const doc = await window.__firestoreDB__.collection(COLLECTION).doc(player.phoneHash).get();
-      if (!doc.exists) return null;
-      const d = doc.data();
-      return {
-        nickname: d.nickname,
-        bestScore: d.bestScore,
-        bestScoreAt: d.bestScoreAt
-      };
-    }catch(e){
-      console.warn('[wedding] 내 기록 조회 실패', e);
-      return null;
-    }
-  }
-
   // ---------- 랭킹 렌더 ----------
+  // 예전에는 상위 15명만 가져왔기 때문에 내가 그 밖에 있으면 순위 계산을 위해
+  // Firestore에 별도로 2번(higher count, tie count) 쿼리를 더 날려야 했습니다.
+  // 이제는 rankingQuery()가 참가자 전원(RANKING_QUERY_LIMIT 이내)을 한 번에 받아오므로,
+  // 이미 받아온 entries 배열 안에서 내 위치를 찾기만 하면 되고, 추가 서버 조회는
+  // 필요 없습니다 (아래 renderMyRankingRow 참고).
   function renderRankingError(){
     const listEl = document.getElementById('rankingList');
     const myRowEl = document.getElementById('myRankingRow');
@@ -286,7 +258,14 @@ const WeddingRanking = (() => {
     }).join('');
   }
 
-  async function renderMyRankingRow(player, entries){
+  /**
+   * 리스트(.ranking-scroll) 바깥에 항상 고정으로 보이는 "내 순위" 요약 행.
+   * 이제 rankingQuery()가 참가자 전원을 받아오므로, 별도 서버 조회 없이 이미
+   * 받아온 entries 배열에서 내 위치를 찾기만 하면 됩니다. 상위 몇 등인지와
+   * 무관하게(1등이어도) 항상 표시해서, 리스트를 아무리 스크롤해도 내 순위가
+   * 계속 눈에 보이도록 합니다.
+   */
+  function renderMyRankingRow(player, entries){
     const myRowEl = document.getElementById('myRankingRow');
     if (!myRowEl) return;
 
@@ -296,35 +275,26 @@ const WeddingRanking = (() => {
     }
 
     const myIndex = entries.findIndex(e => e.id === player.phoneHash);
-    if (myIndex >= 0 && myIndex < RANKING_LIMIT){
+    if (myIndex < 0){
+      // 아직 점수를 등록하지 않았거나(플레이 전) 조회에 포함되지 않은 경우
       myRowEl.hidden = true;
       return;
     }
 
-    const myRecord = await getMyRecord(player);
-    if (!myRecord){
-      myRowEl.hidden = true;
-      return;
-    }
-
-    const rank = await computeRank(myRecord.bestScore, myRecord.bestScoreAt, player.phoneHash);
-    if (!rank){
-      myRowEl.hidden = true;
-      return;
-    }
-
+    const myEntry = entries[myIndex];
     myRowEl.innerHTML = `
-      <span class="col-rank">${rank}</span>
-      <span class="col-name">${escapeHtml(myRecord.nickname)} (나)</span>
-      <span class="col-score">${myRecord.bestScore.toLocaleString()}</span>
+      <span class="col-rank">${myIndex + 1}</span>
+      <span class="col-name">${escapeHtml(myEntry.nickname)} (나)</span>
+      <span class="col-score">${myEntry.bestScore.toLocaleString()}</span>
     `;
     myRowEl.hidden = false;
   }
 
-  async function applyEntries(entries){
+  function applyEntries(entries){
     const player = getPlayerInfo();
     renderRankingList(entries, player);
-    await renderMyRankingRow(player, entries);
+    renderMyRankingRow(player, entries);
+    renderCupidCount(entries);
   }
 
   function updateRankingNote(){
@@ -346,34 +316,22 @@ const WeddingRanking = (() => {
     if (myRowEl) myRowEl.hidden = true;
   }
 
-  // ---------- 큐피드(참여자) 총 인원수 ----------
-  // 랭킹 TOP15와 별개로, rankings 컬렉션 전체 문서 수(=지금까지 게임에 참여해 점수를 등록한 총 인원)를
-  // 구합니다. Firestore의 count() 집계 쿼리는 사용 중인 SDK 버전에 따라 지원되지 않을 수 있어
-  // (실제로 이 프로젝트 환경에서 "collection(...).count is not a function" 에러가 확인됨),
-  // 항상 동작하는 방식으로 전체 문서를 가져와 그 개수(snapshot.size)만 사용합니다.
-  // 참여 인원이 아주 많아지지 않는 한(수만 명 단위) 문제되지 않는 수준입니다.
-  // 조회 실패/서버 미준비 시에는 어색한 숫자 대신 문구 자체를 숨깁니다(로컬 값으로 대체하지 않음).
-  async function getTotalPlayerCount(){
-    if (!window.__FIREBASE_READY__) return null;
-    try{
-      const snap = await window.__firestoreDB__.collection(COLLECTION).get();
-      return snap.size;
-    }catch(e){
-      console.warn('[wedding] 큐피드 참여자 수 조회 실패', e);
-      return null;
-    }
-  }
-
-  async function renderCupidCount(){
+  // ---------- 큐피드(누적 플레이 횟수) ----------
+  // "지금까지 다녀간 큐피드 수"는 더 이상 참가자 수(문서 개수)가 아니라, 모든
+  // 참가자의 playCount(각자 플레이한 횟수)를 합산한 값입니다 - 예: 한 명이 150번,
+  // 다른 한 명이 20번 플레이했다면 총 170번. rankingQuery()가 이제 참가자 전원을
+  // 한 번에 가져오기 때문에, 그 entries에 이미 담긴 playCount만 더하면 되고
+  // 별도의 Firestore 조회는 필요 없습니다(예전엔 컬렉션 전체를 한 번 더 읽었음).
+  function renderCupidCount(entries){
     const noteEl = document.getElementById('cupidCountNote');
     const valEl = document.getElementById('cupidCountVal');
     if (!noteEl || !valEl) return;
 
-    const total = await getTotalPlayerCount();
-    if (total === null){
+    if (!entries){
       noteEl.hidden = true;
       return;
     }
+    const total = entries.reduce((sum, e) => sum + (e.playCount || 0), 0);
     valEl.textContent = total.toLocaleString();
     noteEl.hidden = false;
   }
@@ -383,7 +341,7 @@ const WeddingRanking = (() => {
   async function loadAndRenderRanking(){
     showRankingLoading();
     updateRankingNote();
-    renderCupidCount();
+    renderCupidCount(null);
 
     if (!window.__FIREBASE_READY__){
       renderRankingError();
@@ -392,7 +350,7 @@ const WeddingRanking = (() => {
 
     try{
       const snap = await rankingQuery(window.__firestoreDB__).get();
-      await applyEntries(entriesFromSnapshot(snap));
+      applyEntries(entriesFromSnapshot(snap));
     }catch(e){
       console.warn('[wedding] Firestore 랭킹 조회 실패', e);
       renderRankingError();
@@ -411,7 +369,7 @@ const WeddingRanking = (() => {
     stopRankingListener();
     showRankingLoading();
     updateRankingNote();
-    renderCupidCount();
+    renderCupidCount(null);
 
     if (!window.__FIREBASE_READY__){
       renderRankingError();
