@@ -384,7 +384,7 @@
             </div>
           </div>
           <span class="work-tag">교육용 앱</span>
-          <h3>삼성 오프라인 행사용 퀴즈 앱</h3>
+          <h3>오프라인 행사용 퀴즈 앱</h3>
           <p>삼성 오프라인 행사에서 사용된 참여형 퀴즈 애플리케이션입니다. 실시간 정답 집계와 이벤트 연동 기능을 개발했습니다.</p>
           <button class="open-modal" data-modal="#modal-works3">상세 보기</button>
         </div>
@@ -652,6 +652,7 @@
         if (!modal) return;
         modal.classList.add('open');
         modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
         activeModal = modal;
       }
 
@@ -659,6 +660,7 @@
         if (!activeModal) return;
         activeModal.classList.remove('open');
         activeModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
         activeModal = null;
       }
 

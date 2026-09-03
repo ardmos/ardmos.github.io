@@ -339,7 +339,10 @@ nav a:hover {
 }
 
 .modal.open {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
 .modal-overlay {
@@ -350,9 +353,11 @@ nav a:hover {
 
 .modal-dialog {
   position: relative;
+  width: 100%;
   max-width: 720px;
-  margin: 40vh auto; /* 정중앙에서 10% 위로 이동 */
-  transform: translateY(-50%); /* 정확한 중앙 정렬을 위한 변환 */
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.25);
@@ -379,9 +384,9 @@ nav a:hover {
 }
 
 .modal-close {
-  position: absolute;
-  top: 8px;
-  right: 12px;
+  position: fixed;
+  top: 16px;
+  right: 16px;
   width: 36px;
   height: 36px;
   border: none;
@@ -391,6 +396,8 @@ nav a:hover {
   font-size: 22px;
   line-height: 36px;
   cursor: pointer;
+  z-index: 2100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 /* Contact 섹션 */
@@ -1753,10 +1760,14 @@ footer {
     margin-bottom: 2px;
   }
   
+  .modal.open {
+    padding: 12px;
+  }
+
   .modal-dialog {
-    margin: 35vh auto;
+    max-width: 100%;
+    max-height: calc(100vh - 24px);
     padding: 25px 20px 20px;
-    max-width: 90%;
   }
   
   .modal-dialog h3 {
@@ -1772,6 +1783,8 @@ footer {
   }
   
   .modal-close {
+    top: 10px;
+    right: 10px;
     width: 32px;
     height: 32px;
     font-size: 20px;
