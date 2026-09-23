@@ -301,7 +301,7 @@ const WeddingRanking = (() => {
     const noteEl = document.getElementById('rankingNote');
     if (!noteEl) return;
 
-    const base = 'TOP3 세 분께는 소정의 축하 선물이 준비되어 있습니다! <br>결혼식 중 현장에서 선물 증정 이벤트가 있을 예정이니 꼭 참여해주세요 :)';
+    const base = '게임을 즐겨주신 TOP3 세 분과, 현장에서 추첨하여 무작위 순위의 한 분께 <br>소정의 축하 선물이 준비되어 있습니다! <br>결혼식 중 현장에서 선물 증정 이벤트가 있을 예정이니 꼭 참여해주세요 :)';
     if (isRankingClosed()){
       noteEl.innerHTML = `${base}<br><strong>게임 랭킹 등록이 마감되었습니다.</strong> 아래는 최종 순위이며, 게임은 계속 즐기실 수 있어요!`;
     } else {
