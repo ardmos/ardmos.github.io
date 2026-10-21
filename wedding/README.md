@@ -64,7 +64,8 @@ python3 -m http.server 8000
 2. `js/firebase-config.js` 상단 `firebaseConfig` 값을 본인 프로젝트 값으로 교체
 3. 같은 파일 상단 주석에 있는 Firestore 보안 규칙 예시를 Firestore > 규칙 탭에 붙여넣기
    - 한 명(휴대폰번호 해시를 문서 ID로 사용)당 하나의 문서만 생성되고, `bestScore`는 더 높아지는 경우에만 갱신되도록 설계되어 있습니다.
-   - **복합 인덱스** 필요: `rankings` 컬렉션 — `bestScore`(내림차순), `bestScoreAt`(오름차순). 첫 쿼리 실패 시 콘솔 링크로 생성하세요.
+   - **복합 인덱스** 필요: `scores`, `rankings`, `legacy_scores` 컬렉션 각각 — `bestScore`(내림차순), `bestScoreAt`(오름차순). 첫 쿼리 실패 시 콘솔 링크로 생성하세요.
+   - **보안 규칙/익명 인증/App Check/마이그레이션은 [`SECURITY.md`](SECURITY.md)를 따르세요.** 규칙 원본은 `firestore.rules`입니다.
    - 더 강력한 부정 방지(점수 조작·마감 시각 우회)가 필요하면 Cloud Functions를 통한 서버측 검증을 추가하는 것을 권장합니다.
 4. 설정을 채우면 자동으로 `window.__FIREBASE_READY__ = true`가 되어 Firestore 랭킹으로 전환됩니다. 값을 채우지 않으면 계속 로컬 모드로 동작합니다(각자 브라우저 안에서만 랭킹이 쌓이며, 실제 서비스에는 적합하지 않습니다).
 5. 랭킹 섹션이 화면에 보일 때만 Firestore 실시간 구독(`onSnapshot`)이 동작합니다. **2026-11-01 11:00(KST)** 이후에는 점수 등록만 차단되고, 게임 플레이와 랭킹 조회는 계속 가능합니다.
@@ -102,7 +103,10 @@ firebase deploy
 ```
 index.html            전체 마크업
 css/style.css          전체 스타일
-js/firebase-config.js  Firebase 초기화 + 보안 규칙 예시(주석)
+js/firebase-config.js  Firebase 초기화 + App Check(선택)
+firestore.rules        Firestore 보안 규칙 (콘솔에 게시)
+SECURITY.md            보안 배포 순서 / 마이그레이션 가이드
+tools/                 레거시 랭킹 1회성 마이그레이션 스크립트(관리자 PC 전용)
 js/ranking.js          플레이어 정보, 점수 등록/조회, 실시간 TOP100, 100위 밖 내 순위, 마감 처리
 js/intro.js            로딩 → 인트로 등장 → 타이핑 대화창 → 보라 이스터에그
 js/invitation.js        스크롤 reveal, 갤러리 라이트박스, 아코디언, 계좌 복사, D-day

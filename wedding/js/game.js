@@ -627,6 +627,8 @@ const WeddingGame = (() => {
     resizeCanvas();
     updateHud();
     spawnTarget();
+    // 서버에 게임 시작 시각 기록(점수 타당성 검증용). 백그라운드로 실행되어 게임 진행을 막지 않음
+    WeddingRanking.beginSession();
     WeddingSound.startBgm();
     rafId = requestAnimationFrame(loop);
   }
