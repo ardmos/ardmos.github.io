@@ -193,21 +193,36 @@ const WeddingRanking = (() => {
     openPlayerModal(() => onReady(getPlayerInfo(), true));
   }
 
-  // ---------- Firebase 익명 인증 ----------
-  // 새 랭킹(scores/{uid})은 익명 인증 uid를 문서 ID로 써서 "자기 문서만" 쓸 수 있게 합니다.
+  // ---------- 공통: 재시도 유틸 ----------
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  const LS_BEST_KEY = 'wedding_best_cache';     // 화면 표시용 내 최고점 캐시(서버 확인값/대기 중 점수)
+  const LS_QUEUE_KEY = 'wedding_pending_scores'; // 저장 실패 시 조용히 재전송할 점수 대기열
+  function readJSON(k, d){ try{ const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; }catch(e){ return d; } }
+  function writeJSON(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){ /* noop */ } }
+  function cachedBest(){ return toScore(readJSON(LS_BEST_KEY, 0)); }
+  function rememberBest(v){ const b = Math.max(cachedBest(), toScore(v)); writeJSON(LS_BEST_KEY, b); return b; }
+  function withTimeout(p, ms){
+    return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
+  }
+
+  // ---------- Firebase 익명 인증 (실패해도 게임은 절대 막지 않음, 백그라운드 재시도) ----------
   let authPromise = null;
   function ensureAuth(){
-    if (!window.__FIREBASE_READY__ || !window.firebase || !firebase.auth) return Promise.resolve(null);
+    if (!window.__FIREBASE_READY__ || !window.firebase || !firebase.auth) return new Promise(() => {});
     if (authPromise) return authPromise;
     const auth = firebase.auth();
     authPromise = new Promise((resolve) => {
-      const unsub = auth.onAuthStateChanged((user) => {
-        if (user){ unsub(); resolve(user); }
-      });
-      auth.signInAnonymously().catch((e) => {
-        console.warn('[wedding] 익명 로그인 실패', e);
-        unsub(); authPromise = null; resolve(null);
-      });
+      const unsub = auth.onAuthStateChanged((user) => { if (user){ unsub(); resolve(user); } });
+      (async () => {
+        let delay = 1000;
+        while (!auth.currentUser){
+          try{ await auth.signInAnonymously(); return; }
+          catch(e){
+            console.warn('[wedding] 익명 로그인 재시도 예정', e && e.code);
+            await sleep(delay); delay = Math.min(delay * 2, 30000);
+          }
+        }
+      })();
     });
     return authPromise;
   }
@@ -218,124 +233,164 @@ const WeddingRanking = (() => {
   function serverTs(){ return firebase.firestore.FieldValue.serverTimestamp(); }
 
   // ---------- 레거시(기존 rankings) 내 기록 조회 ----------
-  // 마이그레이션 전에는 rankings/{phoneHash}를 읽을 수 있고, 이후엔 읽기가 막혀 null이 됩니다.
   async function getLegacyBest(player){
     if (!player || !player.phoneHash || !window.__FIREBASE_READY__) return 0;
     try{
-      const doc = await window.__firestoreDB__.collection(LEGACY_COLLECTION).doc(player.phoneHash).get();
+      const doc = await withTimeout(window.__firestoreDB__.collection(LEGACY_COLLECTION).doc(player.phoneHash).get(), 4000);
       return doc.exists ? toScore(doc.data().bestScore) : 0;
     }catch(e){ return 0; }
   }
 
-  // ---------- 서버 기록 조회 (서버가 유일한 Source of Truth) ----------
+  // ---------- 내 최고점 조회 (실패해도 캐시값을 보여줌 - 화면에 실패 표시 없음) ----------
   async function getExistingBestScore(player){
     if (!player) return null;
-    if (!window.__FIREBASE_READY__) return null;
+    if (!window.__FIREBASE_READY__) return cachedBest();
     try{
-      const user = await ensureAuth();
-      if (!user) return null;
+      const user = await withTimeout(ensureAuth(), 4000);
       const [doc, legacyBest] = await Promise.all([
-        window.__firestoreDB__.collection(COLLECTION).doc(user.uid).get(),
+        withTimeout(window.__firestoreDB__.collection(COLLECTION).doc(user.uid).get(), 4000),
         getLegacyBest(player)
       ]);
       const best = doc.exists ? toScore(doc.data().bestScore) : 0;
-      return Math.max(best, legacyBest);
+      return rememberBest(Math.max(best, legacyBest));
     }catch(e){
-      console.warn('[wedding] 기존 점수 조회 실패', e);
-      return null;
+      return cachedBest();
     }
   }
 
-  // ---------- 게임 세션 시작 ----------
-  // 게임 시작 시 서버 시각(sessionStartedAt)을 찍어 두고, 제출 시 보안 규칙이
-  // "경과 시간 대비 가능한 최대 점수"를 검사합니다. 게임 UX를 막지 않도록 백그라운드로 실행.
-  let sessionPromise = null;
-  function beginSession(){
-    sessionPromise = (async () => {
-      const player = getPlayerInfo();
-      if (!player || isRankingClosed() || !window.__FIREBASE_READY__) return false;
-      try{
-        const user = await ensureAuth();
-        if (!user) return false;
-        const db = window.__firestoreDB__;
-        const ref = db.collection(COLLECTION).doc(user.uid);
-        const nickname = String(player.nickname || '').slice(0, 10);
-        // 경품 연락용 연락처는 공개 랭킹과 분리된 "쓰기 전용" 컬렉션에 저장
-        if (player.phoneDigits){
-          db.collection(CONTACTS_COLLECTION).doc(user.uid).set({
-            nickname, phoneNumber: player.phoneDigits, updatedAt: serverTs()
-          }).catch((e) => console.warn('[wedding] 연락처 저장 실패', e));
-        }
-        const startTx = () => db.runTransaction(async (tx) => {
-          const doc = await tx.get(ref);
-          if (!doc.exists){
-            tx.set(ref, {
-              nickname, bestScore: 0, lastScore: 0, playCount: 0,
-              bestScoreAt: serverTs(), createdAt: serverTs(), updatedAt: serverTs(),
-              sessionStartedAt: serverTs()
-            });
-          } else {
-            tx.update(ref, { nickname, sessionStartedAt: serverTs(), updatedAt: serverTs() });
-          }
+  // ---------- 게임 세션 시작 (백그라운드, 실패 시 지수 백오프 재시도) ----------
+  // 세션이 있으면 규칙의 "경과 시간 기반 상한" 경로로, 없으면 "고정 상한" 경로로 저장됩니다.
+  let sessionToken = 0;
+  function writeContact(db, uid, player, nickname){
+    if (!player.phoneDigits) return;
+    db.collection(CONTACTS_COLLECTION).doc(uid).set({
+      nickname, phoneNumber: player.phoneDigits, updatedAt: serverTs()
+    }).catch((e) => console.warn('[wedding] 연락처 저장 실패(다음 판에 재시도)', e && e.code));
+  }
+  async function trySessionStart(){
+    const player = getPlayerInfo();
+    const user = await withTimeout(ensureAuth(), 5000);
+    const db = window.__firestoreDB__;
+    const ref = db.collection(COLLECTION).doc(user.uid);
+    const nickname = String(player.nickname || '').slice(0, 10);
+    writeContact(db, user.uid, player, nickname);
+    await withTimeout(db.runTransaction(async (tx) => {
+      const doc = await tx.get(ref);
+      if (!doc.exists){
+        tx.set(ref, {
+          nickname, bestScore: 0, lastScore: 0, playCount: 0,
+          bestScoreAt: serverTs(), createdAt: serverTs(), updatedAt: serverTs(),
+          sessionStartedAt: serverTs()
         });
-        try{
-          await startTx();
-        }catch(e){
-          // 규칙의 연속 쓰기 간격(1초) 제한에 걸렸을 수 있으므로 한 번만 잠시 후 재시도
-          await new Promise(r => setTimeout(r, 1200));
-          await startTx();
-        }
-        return true;
-      }catch(e){
-        console.warn('[wedding] 게임 세션 시작 기록 실패', e);
-        return false;
+      } else {
+        tx.update(ref, { nickname, sessionStartedAt: serverTs(), updatedAt: serverTs() });
+      }
+    }), 8000);
+  }
+  function beginSession(){
+    const token = ++sessionToken;
+    const player = getPlayerInfo();
+    if (!player || isRankingClosed() || !window.__FIREBASE_READY__) return;
+    flushQueue(); // 이전에 못 보낸 점수가 있으면 조용히 재전송
+    (async () => {
+      let delay = 1200;
+      for (let i = 0; i < 6 && token === sessionToken; i++){
+        try{ await trySessionStart(); return; }
+        catch(e){ await sleep(delay); delay = Math.min(delay * 2, 15000); }
       }
     })();
-    return sessionPromise;
   }
 
+  // ---------- 점수 저장 (트랜잭션 1회 시도) ----------
+  async function trySave(s){
+    const player = getPlayerInfo();
+    const user = await withTimeout(ensureAuth(), 5000);
+    const db = window.__firestoreDB__;
+    const ref = db.collection(COLLECTION).doc(user.uid);
+    const nickname = String(player.nickname || '').slice(0, 10);
+    return withTimeout(db.runTransaction(async (tx) => {
+      const doc = await tx.get(ref);
+      if (!doc.exists){
+        // 세션 문서조차 못 만든 경우: 점수와 함께 바로 생성 (규칙의 고정 상한 경로)
+        tx.set(ref, {
+          nickname, bestScore: s, lastScore: s, playCount: 1,
+          bestScoreAt: serverTs(), createdAt: serverTs(), updatedAt: serverTs(),
+          sessionStartedAt: null
+        });
+        writeContact(db, user.uid, player, nickname);
+        return s;
+      }
+      const existing = doc.data();
+      const prevBest = toScore(existing.bestScore);
+      const isNewBest = s > prevBest;
+      const update = {
+        lastScore: s,
+        bestScore: isNewBest ? s : prevBest,
+        playCount: (Number(existing.playCount) || 0) + 1,
+        updatedAt: serverTs(),
+        sessionStartedAt: null
+      };
+      if (isNewBest) update.bestScoreAt = serverTs();
+      tx.update(ref, update);
+      return update.bestScore;
+    }), 8000);
+  }
+
+  // ---------- 실패한 점수 대기열 (오프라인/일시 오류 시 조용히 재전송) ----------
+  let flushing = false;
+  function enqueue(s){
+    const q = readJSON(LS_QUEUE_KEY, []);
+    q.push(s);
+    writeJSON(LS_QUEUE_KEY, q.slice(-20));
+  }
+  async function flushQueue(){
+    if (flushing || !window.__FIREBASE_READY__ || isRankingClosed()) return;
+    flushing = true;
+    try{
+      let delay = 2000;
+      for (let attempt = 0; attempt < 8; attempt++){
+        const q = readJSON(LS_QUEUE_KEY, []);
+        if (!q.length) return;
+        try{
+          rememberBest(await trySave(toScore(q[0])));
+          writeJSON(LS_QUEUE_KEY, readJSON(LS_QUEUE_KEY, []).slice(1));
+          delay = 2000;
+          await sleep(1100); // 규칙의 연속 쓰기 간격(1초) 회피
+        }catch(e){
+          await sleep(delay); delay = Math.min(delay * 2, 60000);
+        }
+      }
+    } finally {
+      flushing = false;
+    }
+  }
+  window.addEventListener('online', () => flushQueue());
+  setTimeout(() => flushQueue(), 3000);
+
   // ---------- 점수 제출 ----------
-  // 반환값: 서버 기준 최신 bestScore(레거시 기록 포함 최댓값), 실패/서버 미준비 시 null.
+  // 반환값: 표시할 최고점. 서버 저장이 지연/실패해도 null 대신 (캐시 최고점, 이번 점수) 중 큰 값을
+  // 돌려주고 뒤에서 조용히 재시도합니다 → 하객 화면에는 "확인 실패"가 나타나지 않습니다.
   async function submitScore(score){
     const player = getPlayerInfo();
     if (!player) return null;
     if (isRankingClosed()) return getExistingBestScore(player);
-    if (!window.__FIREBASE_READY__) return null;
-
-    const ok = sessionPromise ? await sessionPromise : await beginSession();
-    sessionPromise = null;
-    if (!ok) return null;
-
-    const user = await ensureAuth();
-    if (!user) return null;
-    const db = window.__firestoreDB__;
-    const ref = db.collection(COLLECTION).doc(user.uid);
     const s = toScore(score);
+    if (!window.__FIREBASE_READY__) return rememberBest(s);
+    sessionToken++; // 진행 중인 세션 재시도 중단
 
-    try{
-      const best = await db.runTransaction(async (tx) => {
-        const doc = await tx.get(ref);
-        if (!doc.exists) throw new Error('session-missing');
-        const existing = doc.data();
-        const prevBest = toScore(existing.bestScore);
-        const isNewBest = s > prevBest;
-        const update = {
-          lastScore: s,
-          bestScore: isNewBest ? s : prevBest,
-          playCount: (Number(existing.playCount) || 0) + 1,
-          updatedAt: serverTs(),
-          sessionStartedAt: null
-        };
-        if (isNewBest) update.bestScoreAt = serverTs();
-        tx.update(ref, update);
-        return update.bestScore;
-      });
-      const legacyBest = await getLegacyBest(player);
-      return Math.max(best, legacyBest);
-    }catch(e){
-      console.warn('[wedding] Firestore 점수 기록 실패', e);
-      return null;
+    for (let i = 0; i < 2; i++){
+      try{
+        const best = await trySave(s);
+        const legacyBest = await getLegacyBest(player);
+        flushQueue();
+        return rememberBest(Math.max(best, legacyBest));
+      }catch(e){
+        if (i === 0) await sleep(1200); // 간격 제한/일시 오류면 한 번 더
+      }
     }
+    enqueue(s);
+    flushQueue();
+    return rememberBest(s);
   }
 
   // ---------- 랭킹 렌더 ----------
@@ -471,7 +526,6 @@ const WeddingRanking = (() => {
     }
 
     try{
-      await ensureAuth();
       const db = window.__firestoreDB__;
       const fetchList = (col, required) => rankingQuery(db, col).get()
         .then(snap => entriesFromSnapshot(snap, col))
@@ -522,8 +576,10 @@ const WeddingRanking = (() => {
         applyEntries(mergeEntries(cols.map(c => lists[c.name])));
       };
       rankingUnsubscribe = () => { stopped = true; unsubs.forEach(u => u()); };
-      ensureAuth().then(() => {
-        if (stopped) return;
+      // 공개 읽기는 로그인 없이 바로 구독(로그인이 늦어도 랭킹 표시가 지연되지 않음).
+      // 로그인이 끝나면 "내 기록" 강조를 위해 한 번 더 렌더.
+      ensureAuth().then(() => { if (!stopped) render(); });
+      {
         cols.forEach(c => {
           unsubs.push(rankingQuery(db, c.name).onSnapshot(
             (snap) => { lists[c.name] = entriesFromSnapshot(snap, c.name); render(); },
@@ -537,7 +593,7 @@ const WeddingRanking = (() => {
             }
           ));
         });
-      });
+      }
     }catch(e){
       console.warn('[wedding] Firestore 리스너 시작 실패', e);
       renderRankingError();

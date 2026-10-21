@@ -669,13 +669,9 @@ const WeddingGame = (() => {
       ? await WeddingRanking.getExistingBestScore(WeddingRanking.getPlayerInfo())
       : await WeddingRanking.submitScore(score);
 
-    if (updatedBest === null){
-      bestScoreEl.textContent = '확인 실패';
-      bestScoreEl.classList.add('is-error');
-      return;
-    }
-
-    bestScoreCache = updatedBest;
+    // ranking.js는 저장이 지연돼도 캐시/이번 점수로 값을 돌려주고 뒤에서 재시도하므로
+    // null은 Firebase 자체가 없는 경우뿐입니다. 이때도 실패 문구 대신 이번 판 기준 값을 보여줍니다.
+    bestScoreCache = updatedBest === null ? Math.max(bestScoreCache, score) : updatedBest;
     bestScoreEl.textContent = bestScoreCache.toLocaleString();
     bestScoreEl.classList.remove('is-error');
   }

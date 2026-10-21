@@ -8,10 +8,11 @@
  *
  * 요약:
  *   - scores/{uid}       공개 랭킹(전화번호 없음). 익명 인증 uid 본인만 쓰기, 삭제 불가.
- *                        필드 화이트리스트/타입/닉네임 1~10자/점수 상한(게임 경과 시간 기반)/
- *                        서버 시각 마감(2026-11-01 11:00 KST)/연속 쓰기 간격 제한.
+ *                        필드 화이트리스트/타입/닉네임 1~10자/점수 상한(고정 50,000점, 세션 기록 시
+ *                        경과 시간 기반 최대 1,000,000점)/서버 시각 마감(2026-11-01 11:00 KST)/연속 쓰기 1초 간격.
  *   - contacts/{uid}     경품 연락용 전화번호. 본인 쓰기 전용, 클라이언트 읽기 불가.
- *   - rankings/{hash}    기존(레거시) 기록. 읽기 전용(쓰기 전면 차단). 마이그레이션 후 읽기도 차단.
+ *   - rankings/{hash}    기존(레거시) 기록. 전환 기간엔 이전 규칙 조건으로 쓰기 허용(LEGACY_WRITES_OPEN),
+ *                        종료 후 쓰기 차단, 마이그레이션 후 읽기도 차단.
  *   - legacy_scores/{id} 마이그레이션으로 만든 레거시 사본(전화번호 제거). 읽기 전용.
  *
  * 복합 인덱스 (bestScore 내림차순, bestScoreAt 오름차순): rankings, scores, legacy_scores 각각.
@@ -44,8 +45,11 @@ try{
     // App Check(reCAPTCHA v3): 콘솔에서 사이트 키를 발급받아 APP_CHECK_SITE_KEY에 넣으면 활성화됩니다.
     // 비워 두면 건너뜁니다. 콘솔에서 "적용(Enforce)"은 SECURITY.md 순서대로 마지막에 켜세요.
     if (APP_CHECK_SITE_KEY && firebase.appCheck){
+      // 실패해도 예외를 삼키고 계속 진행 → "적용(Enforce)" 전에는 토큰이 없어도 게임/랭킹 정상 동작
       try{
         firebase.appCheck().activate(APP_CHECK_SITE_KEY, true);
+        const note = document.getElementById('recaptchaNote');
+        if (note) note.hidden = false; // 배지를 숨겼으므로 Google 요구 고지 문구 표시
       }catch(e){
         console.warn('[wedding] App Check 활성화 실패', e);
       }

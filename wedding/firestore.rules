@@ -27,10 +27,24 @@ service cloud.firestore {
     // 한 발 최대 점수 = BULLSEYE 200 + 정밀 보너스 최대 19 = 219점.
     // 한 발 최소 소요 시간: 활(H-46=602px)→과녁(~102px) 약 500px를 최대 720px/s로 비행(≥0.69s)
     //   + 명중 후 STICK_DELAY 550ms ≈ 1.24s. 기기/지연 여유를 두고 0.8s(800ms)로 계산.
-    // => 이번 판 점수(lastScore) <= 219 * (게임 경과 ms + 800) / 800
-    // 게임 경과 시간은 게임 시작 시 서버가 찍은 sessionStartedAt 기준.
+    //
+    // (A) 세션 경로: 게임 시작 시 서버가 찍은 sessionStartedAt 이 있으면
+    //     lastScore <= 219 * (경과 ms + 800) / 800, 그리고 <= TIMED_CAP.
+    // (B) 고정 상한 경로: 세션 기록이 실패했거나(오프라인 등) 대기열 재전송일 때
+    //     lastScore <= FALLBACK_CAP.
+    //     과녁 속도는 80라운드까지 계속 빨라지고 이후 랜덤 변동(RANDOM_PHASE_START_ROUND=80).
+    //     80발 전부 BULLSEYE+최대보너스여도 80*219 = 17,520점. 넉넉히 약 2.85배 = 50,000점.
+    function TIMED_CAP() { return 1000000; }
+    function FALLBACK_CAP() { return 50000; }
     function maxScoreFor(elapsedMs) {
       return 219 * (elapsedMs + 800) / 800;
+    }
+    function scoreOk(d, r) {
+      return d.lastScore is int && d.lastScore >= 0
+        && (d.lastScore <= FALLBACK_CAP()
+            || (r != null && r.sessionStartedAt is timestamp
+                && d.lastScore <= TIMED_CAP()
+                && d.lastScore <= maxScoreFor(request.time.toMillis() - r.sessionStartedAt.toMillis())));
     }
     function scoreFields() {
       return ['nickname', 'bestScore', 'lastScore', 'playCount',
@@ -41,18 +55,25 @@ service cloud.firestore {
     match /scores/{uid} {
       allow read: if true;
 
-      // 첫 게임 시작 시 0점 문서 생성 (모든 시각 필드는 서버 시각이어야 함)
+      // 생성: (1) 게임 시작 시 0점 문서, 또는 (2) 세션 문서를 못 만든 채 첫 점수를 바로 저장(고정 상한)
       allow create: if isOwner(uid) && beforeDeadline()
         && request.resource.data.keys().hasOnly(scoreFields())
         && request.resource.data.keys().hasAll(scoreFields())
         && validNick(request.resource.data.nickname)
-        && request.resource.data.bestScore == 0
-        && request.resource.data.lastScore == 0
-        && request.resource.data.playCount == 0
         && request.resource.data.bestScoreAt == request.time
         && request.resource.data.createdAt == request.time
         && request.resource.data.updatedAt == request.time
-        && request.resource.data.sessionStartedAt == request.time;
+        && (
+          (request.resource.data.bestScore == 0
+            && request.resource.data.lastScore == 0
+            && request.resource.data.playCount == 0
+            && request.resource.data.sessionStartedAt == request.time)
+          ||
+          (scoreOk(request.resource.data, null)
+            && request.resource.data.bestScore == request.resource.data.lastScore
+            && request.resource.data.playCount == 1
+            && request.resource.data.sessionStartedAt == null)
+        );
 
       allow update: if isOwner(uid) && beforeDeadline()
         && request.resource.data.keys().hasOnly(scoreFields())
@@ -70,21 +91,18 @@ service cloud.firestore {
           && request.time > resource.data.updatedAt + duration.value(1, 's');
       }
 
-      // (2) 점수 제출: 세션당 1회, 경과 시간 대비 점수 상한, playCount +1, best는 max 규칙.
+      // (2) 점수 제출: 세션 경로(경과 시간 상한) 또는 고정 상한 경로. playCount +1, best는 max 규칙.
+      //     최소 게임 시간 제한은 두지 않음(정상 플레이를 거부할 수 있어서).
+      //     연속 제출 간격 1초(스팸 억제) - 클라이언트가 실패 시 조용히 재시도.
       function isSubmit() {
         let d = request.resource.data;
         let r = resource.data;
-        let elapsedMs = request.time.toMillis() - r.sessionStartedAt.toMillis();
         return d.diff(r).affectedKeys()
                  .hasOnly(['lastScore', 'bestScore', 'bestScoreAt', 'playCount',
                            'updatedAt', 'sessionStartedAt'])
-          && r.sessionStartedAt is timestamp
           && d.sessionStartedAt == null
-          && elapsedMs >= 2000
-          && d.lastScore is int
-          && d.lastScore >= 0
-          && d.lastScore <= 1000000
-          && d.lastScore <= maxScoreFor(elapsedMs)
+          && request.time > r.updatedAt + duration.value(1, 's')
+          && scoreOk(d, r)
           && d.playCount == r.playCount + 1
           && (d.lastScore > r.bestScore
                 ? (d.bestScore == d.lastScore && d.bestScoreAt == request.time)
@@ -104,11 +122,27 @@ service cloud.firestore {
         && request.resource.data.updatedAt == request.time;
     }
 
-    // ---------- 레거시 랭킹: rankings/{phoneHash} (읽기 전용) ----------
-    // 쓰기는 전면 차단. 마이그레이션(SECURITY.md 4단계) 완료 후 read 를 false 로 바꿔 재게시하세요.
+    // ---------- 레거시 랭킹: rankings/{phoneHash} ----------
+    // [전환 기간] 아직 옛 페이지를 열어 둔 하객이 실패를 겪지 않도록, 기존(이전) 규칙과
+    // 동일한 조건의 쓰기를 임시로 허용합니다. SECURITY.md 의 "전환 기간 닫기" 단계에서
+    // 아래 LEGACY_WRITES_OPEN() 을 false 로 바꿔 재게시하세요. (새 페이지는 rankings 에 쓰지 않음)
+    function LEGACY_WRITES_OPEN() { return true; }   // 전환 종료 후: false
+
     match /rankings/{docId} {
       allow read: if true;   // 마이그레이션 후: if false;
-      allow write: if false;
+      allow create: if LEGACY_WRITES_OPEN()
+        && request.resource.data.keys().hasAll(['nickname','phoneNumber','bestScore'])
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() <= 10
+        && request.resource.data.nickname.size() >= 1
+        && request.resource.data.phoneNumber is string
+        && request.resource.data.bestScore is int
+        && request.resource.data.bestScore >= 0;
+      allow update: if LEGACY_WRITES_OPEN()
+        && request.resource.data.bestScore is int
+        && request.resource.data.bestScore >= resource.data.bestScore
+        && request.resource.data.phoneNumber == resource.data.phoneNumber;
+      allow delete: if false;
     }
 
     // ---------- 레거시 사본: legacy_scores/{randomId} (전화번호 없음, 읽기 전용) ----------

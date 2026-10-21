@@ -24,6 +24,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Hahmlet:wght@300;400;500;600;700&family=Pretendard+Variable:wght@400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="css/style.css?v6">
+<style>
+  /* App Check(reCAPTCHA v3) 배지 숨김 - 대신 푸터에 Google 요구 고지 문구를 작게 표시 */
+  .grecaptcha-badge { visibility: hidden !important; }
+  .recaptcha-note { font-size: 10px; line-height: 1.4; opacity: .55; margin: 8px 16px 0; text-align: center; }
+  .recaptcha-note a { color: inherit; }
+</style>
 </head>
 <body>
 
@@ -406,6 +412,9 @@
 <footer class="footer">
   <p class="footer-heart">❤</p>
   <p>영수 &amp; 혜인의 새로운 모험에 함께해주셔서 감사합니다</p>
+  <p id="recaptchaNote" class="recaptcha-note" hidden>This site is protected by reCAPTCHA and the Google
+    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a> and
+    <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms of Service</a> apply.</p>
 </footer>
 
 <!-- ============================================= -->
@@ -444,13 +453,13 @@
 </script>
 <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=yze1g831kq"></script>
 
-<script src="js/firebase-config.js?v6"></script>
+<script src="js/firebase-config.js?v7"></script>
 <script src="js/sound.js?v5"></script>
-<script src="js/ranking.js?v6"></script>
+<script src="js/ranking.js?v7"></script>
 <script src="js/intro.js?v5"></script>
 <script src="js/invitation.js?v6"></script>
 <script src="js/tutorial.js?v1"></script>
-<script src="js/game.js?v7"></script>
+<script src="js/game.js?v8"></script>
 <script src="js/app.js?v5"></script>
 </body>
 </html>
