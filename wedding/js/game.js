@@ -187,8 +187,18 @@ const WeddingGame = (() => {
       hidePowerGauge();
     }, { passive: false });
 
-    canvas.addEventListener('pointercancel', () => { charging = false; hidePowerGauge(); });
+    canvas.addEventListener('pointercancel', (e) => {
+      charging = false;
+      hidePowerGauge();
+      // 시스템이 터치를 가져간 뒤에도 다음 누름이 막히지 않도록, 잡혀 있던 포인터만 놓는다.
+      try { canvas.releasePointerCapture(e.pointerId); } catch (err) { /* noop */ }
+    });
     canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+    // 캔버스 안에서만 iOS의 길게 누르기 메뉴·선택·드래그를 막는다. 발사 판정은 pointerup 그대로다.
+    canvas.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+    canvas.addEventListener('selectstart', (e) => e.preventDefault());
+    canvas.addEventListener('dragstart', (e) => e.preventDefault());
   }
 
   function fireArrow(heldMs){
