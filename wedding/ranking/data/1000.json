@@ -1,0 +1,560 @@
+{
+    "slot":  "1000",
+    "label":  "10:00",
+    "capturedAtKst":  "2026-11-01 10:00:00 KST",
+    "count":  69,
+    "rows":  [
+                 {
+                     "nickname":  "이상진",
+                     "phone":  "01045040530",
+                     "score":  4651,
+                     "plays":  31,
+                     "bestScoreAt":  1788949286417,
+                     "id":  "p9z9m8a"
+                 },
+                 {
+                     "nickname":  "ㅅㄱ",
+                     "phone":  "01051329473",
+                     "score":  4064,
+                     "plays":  234,
+                     "bestScoreAt":  1792656054492,
+                     "id":  "pwk2s5d"
+                 },
+                 {
+                     "nickname":  "김준석",
+                     "phone":  "01068222792",
+                     "score":  4010,
+                     "plays":  231,
+                     "bestScoreAt":  1788911172382,
+                     "id":  "pll33sf"
+                 },
+                 {
+                     "nickname":  "솜2",
+                     "phone":  "01073486770",
+                     "score":  3978,
+                     "plays":  236,
+                     "bestScoreAt":  1792504577298,
+                     "id":  "plxta0n"
+                 },
+                 {
+                     "nickname":  "KARAS",
+                     "phone":  "01045439082",
+                     "score":  3977,
+                     "plays":  111,
+                     "bestScoreAt":  1788946173380,
+                     "id":  "p83h9y8"
+                 },
+                 {
+                     "nickname":  "송기훈",
+                     "phone":  "01037326738",
+                     "score":  3970,
+                     "plays":  69,
+                     "bestScoreAt":  1788884132182,
+                     "id":  "p81ydfs"
+                 },
+                 {
+                     "nickname":  "김기준",
+                     "phone":  "01032535087",
+                     "score":  3501,
+                     "plays":  36,
+                     "bestScoreAt":  1793084602630,
+                     "id":  "p9g7h96"
+                 },
+                 {
+                     "nickname":  "김대유",
+                     "phone":  "01089205939",
+                     "score":  3314,
+                     "plays":  36,
+                     "bestScoreAt":  1793281447539,
+                     "id":  "pmukna0"
+                 },
+                 {
+                     "nickname":  "강대웅",
+                     "phone":  "01047892511",
+                     "score":  3309,
+                     "plays":  46,
+                     "bestScoreAt":  1793466380979,
+                     "id":  "pn8o69i"
+                 },
+                 {
+                     "nickname":  "재야의고수",
+                     "phone":  "01088888888",
+                     "score":  3178,
+                     "plays":  37,
+                     "bestScoreAt":  1789579230090,
+                     "id":  "pb4wci7"
+                 },
+                 {
+                     "nickname":  "나영",
+                     "phone":  "01088752042",
+                     "score":  3007,
+                     "plays":  165,
+                     "bestScoreAt":  1788343501822,
+                     "id":  "pam3cdl"
+                 },
+                 {
+                     "nickname":  "Dudn",
+                     "phone":  "01031861045",
+                     "score":  2608,
+                     "plays":  6,
+                     "bestScoreAt":  1788340063005,
+                     "id":  "pmnw2k5"
+                 },
+                 {
+                     "nickname":  "판다",
+                     "phone":  "01052413818",
+                     "score":  2606,
+                     "plays":  11,
+                     "bestScoreAt":  1792488161692,
+                     "id":  "pnc8wwb"
+                 },
+                 {
+                     "nickname":  "김용희",
+                     "phone":  "01075196483",
+                     "score":  2538,
+                     "plays":  36,
+                     "bestScoreAt":  1792457641212,
+                     "id":  "p60e5n2"
+                 },
+                 {
+                     "nickname":  "서경",
+                     "phone":  "01055484193",
+                     "score":  2411,
+                     "plays":  106,
+                     "bestScoreAt":  1793460338185,
+                     "id":  "pksszwq"
+                 },
+                 {
+                     "nickname":  "Halin",
+                     "phone":  "01020581869",
+                     "score":  2325,
+                     "plays":  17,
+                     "bestScoreAt":  1791628298933,
+                     "id":  "p3h644a"
+                 },
+                 {
+                     "nickname":  "klassic",
+                     "phone":  "01072994201",
+                     "score":  2226,
+                     "plays":  29,
+                     "bestScoreAt":  1788348732061,
+                     "id":  "py8h1iv"
+                 },
+                 {
+                     "nickname":  "김대희",
+                     "phone":  "01056151118",
+                     "score":  2088,
+                     "plays":  37,
+                     "bestScoreAt":  1791531731416,
+                     "id":  "py0d40r"
+                 },
+                 {
+                     "nickname":  "김도준",
+                     "phone":  "01020670498",
+                     "score":  1857,
+                     "plays":  24,
+                     "bestScoreAt":  1788427447604,
+                     "id":  "p3xn81d"
+                 },
+                 {
+                     "nickname":  "Kyun",
+                     "phone":  "01085057396",
+                     "score":  1851,
+                     "plays":  45,
+                     "bestScoreAt":  1788392193401,
+                     "id":  "pyasg7e"
+                 },
+                 {
+                     "nickname":  "임예지",
+                     "phone":  "01025629293",
+                     "score":  1822,
+                     "plays":  18,
+                     "bestScoreAt":  1793281662462,
+                     "id":  "p67xblt"
+                 },
+                 {
+                     "nickname":  "준길",
+                     "phone":  "01099410426",
+                     "score":  1782,
+                     "plays":  15,
+                     "bestScoreAt":  1789612211405,
+                     "id":  "pied6x8"
+                 },
+                 {
+                     "nickname":  "최충호",
+                     "phone":  "01050587407",
+                     "score":  1748,
+                     "plays":  7,
+                     "bestScoreAt":  1791566834265,
+                     "id":  "pix184x"
+                 },
+                 {
+                     "nickname":  "눈누난나",
+                     "phone":  "01063838846",
+                     "score":  1728,
+                     "plays":  18,
+                     "bestScoreAt":  1793442540109,
+                     "id":  "pm3545l"
+                 },
+                 {
+                     "nickname":  "김찬희",
+                     "phone":  "01094286483",
+                     "score":  1680,
+                     "plays":  6,
+                     "bestScoreAt":  1793492803894,
+                     "id":  "plldemv"
+                 },
+                 {
+                     "nickname":  "최사장",
+                     "phone":  "01052614756",
+                     "score":  1613,
+                     "plays":  11,
+                     "bestScoreAt":  1791101860290,
+                     "id":  "pme51rp"
+                 },
+                 {
+                     "nickname":  "김시현",
+                     "phone":  "01082227210",
+                     "score":  1470,
+                     "plays":  6,
+                     "bestScoreAt":  1788350988964,
+                     "id":  "p8tyke5"
+                 },
+                 {
+                     "nickname":  "윤병찬",
+                     "phone":  "01039343766",
+                     "score":  1370,
+                     "plays":  3,
+                     "bestScoreAt":  1793101643209,
+                     "id":  "plbvvay"
+                 },
+                 {
+                     "nickname":  "한소라",
+                     "phone":  "01044219334",
+                     "score":  1326,
+                     "plays":  7,
+                     "bestScoreAt":  1791126918695,
+                     "id":  "pnr2c1j"
+                 },
+                 {
+                     "nickname":  "추연우",
+                     "phone":  "01072081783",
+                     "score":  1314,
+                     "plays":  1,
+                     "bestScoreAt":  1790663264399,
+                     "id":  "pwimt8z"
+                 },
+                 {
+                     "nickname":  "린세김",
+                     "phone":  "01033651707",
+                     "score":  1308,
+                     "plays":  2,
+                     "bestScoreAt":  1791808458909,
+                     "id":  "p5q9lln"
+                 },
+                 {
+                     "nickname":  "현승일대가리개큼",
+                     "phone":  "01020417741",
+                     "score":  1267,
+                     "plays":  1,
+                     "bestScoreAt":  1790943763230,
+                     "id":  "p2wdqp3"
+                 },
+                 {
+                     "nickname":  "김해연",
+                     "phone":  "01023867456",
+                     "score":  1223,
+                     "plays":  1,
+                     "bestScoreAt":  1788339924145,
+                     "id":  "pm4m29g"
+                 },
+                 {
+                     "nickname":  "성현",
+                     "phone":  "01063963984",
+                     "score":  1205,
+                     "plays":  3,
+                     "bestScoreAt":  1792066340679,
+                     "id":  "pmlqy8b"
+                 },
+                 {
+                     "nickname":  "지용",
+                     "phone":  "01056303537",
+                     "score":  1186,
+                     "plays":  16,
+                     "bestScoreAt":  1788408999141,
+                     "id":  "pyvqqtv"
+                 },
+                 {
+                     "nickname":  "꽃길만 걷자!!",
+                     "phone":  "01052611602",
+                     "score":  1169,
+                     "plays":  10,
+                     "bestScoreAt":  1793449659399,
+                     "id":  "pme6zle"
+                 },
+                 {
+                     "nickname":  "서영주",
+                     "phone":  "01088734980",
+                     "score":  1063,
+                     "plays":  2,
+                     "bestScoreAt":  1791155739311,
+                     "id":  "pal17xk"
+                 },
+                 {
+                     "nickname":  "행복하세요",
+                     "phone":  "01023231234",
+                     "score":  1054,
+                     "plays":  2,
+                     "bestScoreAt":  1792972437445,
+                     "id":  "pp0n1v1"
+                 },
+                 {
+                     "nickname":  "쿠라잇",
+                     "phone":  "01094725788",
+                     "score":  1050,
+                     "plays":  1,
+                     "bestScoreAt":  1791769547943,
+                     "id":  "pjbgmzd"
+                 },
+                 {
+                     "nickname":  "축하한데이_심바",
+                     "phone":  "01077949471",
+                     "score":  1007,
+                     "plays":  4,
+                     "bestScoreAt":  1792139717485,
+                     "id":  "pvy9erl"
+                 },
+                 {
+                     "nickname":  "채채",
+                     "phone":  "01029740348",
+                     "score":  986,
+                     "plays":  10,
+                     "bestScoreAt":  1792401977718,
+                     "id":  "p5lm45i"
+                 },
+                 {
+                     "nickname":  "최민수",
+                     "phone":  "01071131351",
+                     "score":  904,
+                     "plays":  11,
+                     "bestScoreAt":  1791719313950,
+                     "id":  "pi8j3ex"
+                 },
+                 {
+                     "nickname":  "류국렬",
+                     "phone":  "01036393194",
+                     "score":  842,
+                     "plays":  2,
+                     "bestScoreAt":  1788435774163,
+                     "id":  "pmmk4rz"
+                 },
+                 {
+                     "nickname":  "덕",
+                     "phone":  "01088944012",
+                     "score":  801,
+                     "plays":  4,
+                     "bestScoreAt":  1793079700013,
+                     "id":  "pbjo2h3"
+                 },
+                 {
+                     "nickname":  "묘오",
+                     "phone":  "01031155121",
+                     "score":  800,
+                     "plays":  2,
+                     "bestScoreAt":  1791532447947,
+                     "id":  "ppzon9w"
+                 },
+                 {
+                     "nickname":  "현승일",
+                     "phone":  "01085404510",
+                     "score":  789,
+                     "plays":  5,
+                     "bestScoreAt":  1790968179252,
+                     "id":  "pywxyu0"
+                 },
+                 {
+                     "nickname":  "김상수",
+                     "phone":  "01090242248",
+                     "score":  766,
+                     "plays":  1,
+                     "bestScoreAt":  1791866444139,
+                     "id":  "p9c49g4"
+                 },
+                 {
+                     "nickname":  "영수야축하해~",
+                     "phone":  "01067552688",
+                     "score":  665,
+                     "plays":  3,
+                     "bestScoreAt":  1788339215799,
+                     "id":  "p8dh1ro"
+                 },
+                 {
+                     "nickname":  "심지",
+                     "phone":  "01096771712",
+                     "score":  641,
+                     "plays":  4,
+                     "bestScoreAt":  1790167607264,
+                     "id":  "pa40cb7"
+                 },
+                 {
+                     "nickname":  "아름이언니",
+                     "phone":  "01047551114",
+                     "score":  638,
+                     "plays":  1,
+                     "bestScoreAt":  1791697969950,
+                     "id":  "plrber9"
+                 },
+                 {
+                     "nickname":  "한진성",
+                     "phone":  "01049363818",
+                     "score":  621,
+                     "plays":  2,
+                     "bestScoreAt":  1792487723530,
+                     "id":  "pkui3st"
+                 },
+                 {
+                     "nickname":  "김서희",
+                     "phone":  "01094671409",
+                     "score":  616,
+                     "plays":  14,
+                     "bestScoreAt":  1793454571181,
+                     "id":  "pjptwrt"
+                 },
+                 {
+                     "nickname":  "하람람",
+                     "phone":  "01029592877",
+                     "score":  550,
+                     "plays":  1,
+                     "bestScoreAt":  1788341638086,
+                     "id":  "p6gx080"
+                 },
+                 {
+                     "nickname":  "하령",
+                     "phone":  "01029441755",
+                     "score":  539,
+                     "plays":  2,
+                     "bestScoreAt":  1791640126569,
+                     "id":  "p70q9d0"
+                 },
+                 {
+                     "nickname":  "김준흥",
+                     "phone":  "01083690551",
+                     "score":  539,
+                     "plays":  1,
+                     "bestScoreAt":  1793438580980,
+                     "id":  "p7uccz2"
+                 },
+                 {
+                     "nickname":  "꿀떡이",
+                     "phone":  "01052732619",
+                     "score":  520,
+                     "plays":  2,
+                     "bestScoreAt":  1793436747613,
+                     "id":  "plw14zw"
+                 },
+                 {
+                     "nickname":  "김승훈",
+                     "phone":  "01021143829",
+                     "score":  514,
+                     "plays":  1,
+                     "bestScoreAt":  1788399151182,
+                     "id":  "pg7809p"
+                 },
+                 {
+                     "nickname":  "돌핀",
+                     "phone":  "01041641864",
+                     "score":  451,
+                     "plays":  1,
+                     "bestScoreAt":  1789769571846,
+                     "id":  "p56jqi7"
+                 },
+                 {
+                     "nickname":  "1표",
+                     "phone":  "01097905876",
+                     "score":  377,
+                     "plays":  1,
+                     "bestScoreAt":  1793462905742,
+                     "id":  "ppmpw06"
+                 },
+                 {
+                     "nickname":  "서동경",
+                     "phone":  "01064244193",
+                     "score":  315,
+                     "plays":  1,
+                     "bestScoreAt":  1788353519757,
+                     "id":  "pxxqrl2"
+                 },
+                 {
+                     "nickname":  "정성우",
+                     "phone":  "01086443984",
+                     "score":  295,
+                     "plays":  1,
+                     "bestScoreAt":  1788399944885,
+                     "id":  "pk6d235"
+                 },
+                 {
+                     "nickname":  "이정은",
+                     "phone":  "01098220818",
+                     "score":  282,
+                     "plays":  1,
+                     "bestScoreAt":  1788344115236,
+                     "id":  "py0aueb"
+                 },
+                 {
+                     "nickname":  "김성호",
+                     "phone":  "01033258862",
+                     "score":  222,
+                     "plays":  5,
+                     "bestScoreAt":  1788258331040,
+                     "id":  "p3u7lta"
+                 },
+                 {
+                     "nickname":  "성창우",
+                     "phone":  "01052343914",
+                     "score":  146,
+                     "plays":  1,
+                     "bestScoreAt":  1788342678871,
+                     "id":  "pnrn4ru"
+                 },
+                 {
+                     "nickname":  "축하해요",
+                     "phone":  "01099821566",
+                     "score":  129,
+                     "plays":  2,
+                     "bestScoreAt":  1791809696113,
+                     "id":  "pghm8xf"
+                 },
+                 {
+                     "nickname":  "예원",
+                     "phone":  "01049083406",
+                     "score":  122,
+                     "plays":  2,
+                     "bestScoreAt":  1788846863194,
+                     "id":  "pm8jgsd"
+                 },
+                 {
+                     "nickname":  "Nhs",
+                     "phone":  "01040052466",
+                     "score":  0,
+                     "plays":  1,
+                     "bestScoreAt":  1788611049637,
+                     "id":  "pcbjxgu"
+                 },
+                 {
+                     "nickname":  "서희스타힐스",
+                     "phone":  "01091228862",
+                     "score":  0,
+                     "plays":  1,
+                     "bestScoreAt":  1790402327277,
+                     "id":  "p5bae03"
+                 },
+                 {
+                     "nickname":  "verify",
+                     "phone":  "01000000000",
+                     "score":  0,
+                     "plays":  1,
+                     "bestScoreAt":  1793279804729,
+                     "id":  "verify"
+                 }
+             ]
+}
